@@ -357,4 +357,10 @@
   <data name="SECURITYSCOPECUSTOM" xml:space="preserve">
     <value>Aangepaste toetsen</value>
   </data>
+  <data name="ROOTLANGUAGEUK" xml:space="preserve">
+    <value>Oekraïens</value>
+  </data>
+  <data name="ROOTLANGUAGEUKDESC" xml:space="preserve">
+    <value>Verander de cultuur van de gebruikersinterface in het Oekraïens (1058)</value>
+  </data>
 </root>

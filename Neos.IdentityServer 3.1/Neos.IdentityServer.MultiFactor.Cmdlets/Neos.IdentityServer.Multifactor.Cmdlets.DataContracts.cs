@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2022 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -237,6 +237,11 @@ namespace MFA
         public bool UseOfUserLanguages { get; set; }
 
         /// <summary>
+        /// <para type="description">Allows or not to suspend MFA for the same User on the same Machine for the same STS for the Day (0 = Disabled).</para>
+        /// </summary>
+        public int AllowPauseForDays { get; set; }
+
+        /// <summary>
         /// <para type="description">Policy attributes for warnings to users.</para>
         /// </summary>
         public PSAdvertisingDays AdvertisingDays { get; set; }
@@ -265,7 +270,7 @@ namespace MFA
         /// <para type="description">Force adfsmfa to no Use localization but a specified language.</para>
         /// </summary>
         public string ForcedLanguage { get; set; }
-
+       
         /// <summary>
         /// implicit conversion to PSConfig
         /// </summary>
@@ -284,6 +289,7 @@ namespace MFA
                     KeepMySelectedOptionOn = config.KeepMySelectedOptionOn,
                     ChangeNotificationsOn = config.ChangeNotificationsOn,
                     UseOfUserLanguages = config.UseOfUserLanguages,
+                    AllowPauseForDays = config.AllowPauseForDays,
                     DefaultProviderMethod = (PSPreferredMethod)config.DefaultProviderMethod,
                     UserFeatures = (PSUserFeaturesOptions)config.UserFeatures,
                     AdvertisingDays = (PSAdvertisingDays)config.AdvertisingDays,
@@ -316,6 +322,7 @@ namespace MFA
                     KeepMySelectedOptionOn = psconfig.KeepMySelectedOptionOn,
                     ChangeNotificationsOn = psconfig.ChangeNotificationsOn,
                     UseOfUserLanguages = psconfig.UseOfUserLanguages,
+                    AllowPauseForDays = psconfig.AllowPauseForDays,
                     DefaultProviderMethod = (PreferredMethod)psconfig.DefaultProviderMethod,
                     UserFeatures = (UserFeaturesOptions)psconfig.UserFeatures,
                     AdvertisingDays = (FlatAdvertising)psconfig.AdvertisingDays,
@@ -848,6 +855,16 @@ namespace MFA
         public string XORSecret { get; set; }
 
         /// <summary>
+        /// <para type="description">If true, updates of configuration requires Administration PIN.</para>
+        /// </summary>
+        public bool AdministrationPinEnabled { get; set; }
+
+        /// <summary>
+        /// <para type="description">Administration PIN value (Default = 1230).</para>
+        /// </summary>
+        public string AdministrationPin { get; set; }
+
+        /// <summary>
         /// <para type="description">Required PIN length wehen using aditionnal control with personal PIN.</para>
         /// </summary>
         public int PinLength { get; set; }
@@ -855,7 +872,7 @@ namespace MFA
         /// <summary>
         /// <para type="description">Default value for user's PIN.</para>
         /// </summary>
-        public int DefaultPin { get; set; }
+        public string DefaultPin { get; set; }
 
         /// <summary>
         /// <para type="description">Use MFA Password Policy.</para>
@@ -923,6 +940,8 @@ namespace MFA
                     ReplayLevel = (PSReplayLevel)mgr.ReplayLevel,
                     LibVersion = (PSSecretKeyVersion)mgr.LibVersion,
                     XORSecret = mgr.XORSecret,
+                    AdministrationPinEnabled = mgr.AdministrationPinEnabled,
+                    AdministrationPin = mgr.AdministrationPin,
                     PinLength = mgr.PinLength,
                     DefaultPin = mgr.DefaultPin,
                     UsePasswordPolicy = mgr.UsePasswordPolicy,
@@ -957,6 +976,8 @@ namespace MFA
                     ReplayLevel = (ReplayLevel)mgr.ReplayLevel,
                     LibVersion = (SecretKeyVersion)mgr.LibVersion,
                     XORSecret = mgr.XORSecret,
+                    AdministrationPinEnabled = mgr.AdministrationPinEnabled,
+                    AdministrationPin = mgr.AdministrationPin,
                     PinLength = mgr.PinLength,
                     DefaultPin = mgr.DefaultPin,
                     UsePasswordPolicy = mgr.UsePasswordPolicy,
@@ -1309,6 +1330,11 @@ namespace MFA
         public bool EnrollWizard { get; set; }
 
         /// <summary>
+        /// <para type="description">Provider Enrollment Wizard Enabled/Disabled at Registration or Invitation property.</para>
+        /// </summary>
+        public bool EnrollWizardDisabled { get; set; }
+
+        /// <summary>
         /// <para type="description">Provider Force Wizard if user dosen't complete during signing.</para>
         /// </summary>
         public PSForceWizardMode ForceWizard { get; set; }
@@ -1360,9 +1386,33 @@ namespace MFA
         public int Digits { get; set; }
 
         /// <summary>
-        /// <para type="description">TOTP Provider Code renew duration in seconds. 30s1 by default</para>
+        /// <para type="description">TOTP Provider Code renew duration in seconds. 30s by default</para>
         /// </summary>
         public int Duration { get; set; }
+
+        /// <summary>
+        /// CustomAuthenticatorLogo
+        /// <para type = "description" >File name of the image (60x60 px) of the Custom Authenticator Application</para>
+        /// </summary>
+        public string CustomAuthenticatorLogo { get; set; }
+
+        /// <summary>
+        /// CustomAuthenticatorMSStoreLink
+        /// <para type = "description" >Public store link to download Custom Authenticator Application from Microsoft Store</para>
+        /// </summary>
+        public string CustomAuthenticatorMSStoreLink { get; set; }
+
+        /// <summary>
+        /// CustomAuthenticatorGooglePlayLink
+        /// <para type = "description" >Public store link to download Custom Authenticator Application from Google Play</para>
+        /// </summary>
+        public string CustomAuthenticatorGooglePlayLink { get; set; }
+
+        /// <summary>
+        /// CustomAuthenticatorAppStoreLink
+        /// <para type = "description" >Public store link to download Custom Authenticator Application from App Store</para>
+        /// </summary>
+        public string CustomAuthenticatorAppStoreLink { get; set; }
 
         /// <summary>
         /// <para type="description">Set TOP Wizard Application list enabled/ disabled.</para>
@@ -1395,12 +1445,17 @@ namespace MFA
                     Enabled = otp.Enabled,
                     IsRequired = otp.IsRequired,
                     EnrollWizard = otp.EnrollWizard,
+                    EnrollWizardDisabled = otp.EnrollWizardDisabled,
                     ForceWizard = (PSForceWizardMode)otp.ForceWizard,
                     TOTPShadows = otp.TOTPShadows,
                     Algorithm = (MFA.PSHashMode)otp.Algorithm,
                     Digits = otp.Digits,
                     Duration = otp.Duration,
                     PinRequired = otp.PinRequired,
+                    CustomAuthenticatorLogo = otp.CustomAuthenticatorLogo,
+                    CustomAuthenticatorMSStoreLink = otp.CustomAuthenticatorMSStoreLink,
+                    CustomAuthenticatorGooglePlayLink = otp.CustomAuthenticatorGooglePlayLink,
+                    CustomAuthenticatorAppStoreLink = otp.CustomAuthenticatorAppStoreLink,
                     WizardOptions = (PSOTPWizardOptions)otp.WizardOptions,
                     FullQualifiedImplementation = otp.FullyQualifiedImplementation,
                     KeySize = (PSKeySizeMode)otp.KeySize,
@@ -1426,12 +1481,17 @@ namespace MFA
                     Enabled = otp.Enabled,
                     IsRequired = otp.IsRequired,
                     EnrollWizard = otp.EnrollWizard,
+                    EnrollWizardDisabled = otp.EnrollWizardDisabled,
                     ForceWizard = (ForceWizardMode)otp.ForceWizard,
                     TOTPShadows = otp.TOTPShadows,
                     Algorithm = (HashMode)otp.Algorithm,
                     Digits = otp.Digits,
                     Duration = otp.Duration,
                     PinRequired = otp.PinRequired,
+                    CustomAuthenticatorLogo = otp.CustomAuthenticatorLogo,
+                    CustomAuthenticatorMSStoreLink = otp.CustomAuthenticatorMSStoreLink,
+                    CustomAuthenticatorGooglePlayLink = otp.CustomAuthenticatorGooglePlayLink,
+                    CustomAuthenticatorAppStoreLink = otp.CustomAuthenticatorAppStoreLink,
                     WizardOptions = (OTPWizardOptions)otp.WizardOptions,
                     KeySize = (KeySizeMode)otp.KeySize,
                     KeysFormat = (SecretKeyFormat)otp.KeysFormat,
@@ -1558,6 +1618,7 @@ namespace MFA
                     Enabled = mails.Enabled,
                     IsRequired = mails.IsRequired,
                     EnrollWizard = mails.EnrollWizard,
+                    EnrollWizardDisabled = mails.EnrollWizardDisabled,
                     ForceWizard = (PSForceWizardMode)mails.ForceWizard,
                     From = mails.From,
                     UserName = mails.UserName,
@@ -1624,6 +1685,7 @@ namespace MFA
                     Enabled = mails.Enabled,
                     IsRequired = mails.IsRequired,
                     EnrollWizard = mails.EnrollWizard,
+                    EnrollWizardDisabled = mails.EnrollWizardDisabled,
                     ForceWizard = (ForceWizardMode)mails.ForceWizard,
                     From = mails.From,
                     UserName = mails.UserName,
@@ -2011,6 +2073,7 @@ namespace MFA
                     Enabled = otp.Enabled,
                     IsRequired = otp.IsRequired,
                     EnrollWizard = otp.EnrollWizard,
+                    EnrollWizardDisabled = otp.EnrollWizardDisabled,
                     ForceWizard = (MFA.PSForceWizardMode)otp.ForceWizard,
                     Company = otp.Company,
                     FullQualifiedImplementation = otp.FullyQualifiedImplementation,
@@ -2039,6 +2102,7 @@ namespace MFA
                     Enabled = otp.Enabled,
                     IsRequired = otp.IsRequired,
                     EnrollWizard = otp.EnrollWizard,
+                    EnrollWizardDisabled = otp.EnrollWizardDisabled,
                     ForceWizard = (ForceWizardMode)otp.ForceWizard,
                     Company = otp.Company,
                     FullyQualifiedImplementation = otp.FullQualifiedImplementation,
@@ -2090,6 +2154,7 @@ namespace MFA
                     Enabled = otp.Enabled,
                     IsRequired = otp.IsRequired,
                     EnrollWizard = false,
+                    EnrollWizardDisabled = false,
                     ForceWizard = MFA.PSForceWizardMode.Disabled,
                     PinRequired = otp.PinRequired,
                     FullQualifiedImplementation = otp.FullyQualifiedImplementation,
@@ -2116,6 +2181,7 @@ namespace MFA
                     Enabled = otp.Enabled,
                     IsRequired = otp.IsRequired,
                     EnrollWizard = false,
+                    EnrollWizardDisabled = false,
                     ForceWizard = ForceWizardMode.Disabled,
                     PinRequired = otp.PinRequired,
                     FullyQualifiedImplementation = otp.FullQualifiedImplementation,
@@ -2187,6 +2253,21 @@ namespace MFA
         public bool UseNickNames { get; set; }
 
         /// <summary>
+        /// <para type = "description" > Browsers can't use biometric authentication (eg: IE).</para>
+        /// </summary>
+        public string ForbiddenBrowsers { get; set; }
+
+        /// <summary>
+        /// <para type = "description" > Operating Systems that can use biometric authentication with user initiated action (eg: Safari for TouchID and FaceID).</para>
+        /// </summary>
+        public string InitiatedBrowsers { get; set; }
+
+        /// <summary>
+        /// <para type = "description" > Browsers that require that the counter is always 0 (eg: Safari for TouchID and FaceID).</para>
+        /// </summary>
+        public string NoCounterBrowsers { get; set; }
+
+        /// <summary>
         /// explicit operator from PSConfigBiometricProvider
         /// </summary>
         public static explicit operator PSBiometricProvider(FlatBiometricProvider otp)
@@ -2200,6 +2281,7 @@ namespace MFA
                     Enabled = otp.Enabled,
                     IsRequired = otp.IsRequired,
                     EnrollWizard = otp.EnrollWizard,
+                    EnrollWizardDisabled = otp.EnrollWizardDisabled,
                     ForceWizard = (PSForceWizardMode)otp.ForceWizard,
                     PinRequired = otp.PinRequired,
                     PinRequirements = otp.PinRequirements,
@@ -2207,6 +2289,10 @@ namespace MFA
                     UseNickNames = otp.UseNickNames,
                     FullQualifiedImplementation = otp.FullyQualifiedImplementation,
                     Parameters = otp.Parameters,
+                    ForbiddenBrowsers = otp.ForbiddenBrowsers,
+                    InitiatedBrowsers = otp.InitiatedBrowsers,
+                    NoCounterBrowsers = otp.NoCounterBrowsers,
+
                     Timeout = otp.Timeout,
                     TimestampDriftTolerance = otp.TimestampDriftTolerance,
                     ChallengeSize = otp.ChallengeSize,
@@ -2234,12 +2320,16 @@ namespace MFA
                     Enabled = otp.Enabled,
                     IsRequired = otp.IsRequired,
                     EnrollWizard = otp.EnrollWizard,
+                    EnrollWizardDisabled = otp.EnrollWizardDisabled,
                     ForceWizard = (ForceWizardMode)otp.ForceWizard,
                     PinRequired = otp.PinRequired,
                     DirectLogin = otp.DirectLogin,
                     UseNickNames = otp.UseNickNames,
                     FullyQualifiedImplementation = otp.FullQualifiedImplementation,
                     Parameters = otp.Parameters,
+                    ForbiddenBrowsers = otp.ForbiddenBrowsers,
+                    InitiatedBrowsers = otp.InitiatedBrowsers,
+                    NoCounterBrowsers = otp.NoCounterBrowsers,
 
                     Timeout = otp.Timeout,
                     TimestampDriftTolerance = otp.TimestampDriftTolerance,

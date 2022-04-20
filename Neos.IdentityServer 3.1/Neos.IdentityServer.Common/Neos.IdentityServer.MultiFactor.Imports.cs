@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2022 @redhook62 (adfsmfa@gmail.com)                                                                                                                                        //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -11,16 +11,18 @@
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,                            //
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                               //
 //                                                                                                                                                                                          //
-//                                                                                                                                                             //
+//                                                                                                                                                                                          //
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
 using Neos.IdentityServer.MultiFactor.Data;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Management.Automation;
 using System.Xml.Linq;
 
 namespace Neos.IdentityServer.MultiFactor.Administration
@@ -83,7 +85,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         public int RecordsImported
         {
-            get { return RecordsCount - ErrorsCount; }
+            get { return RecordsCount; }
         }
 
         /// <summary>
@@ -124,56 +126,18 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     public class ImportUsersADDS : ImportUsersBase
     {
         /// <summary>
-        /// DomainName property
+        /// ImportUsersADDS constructor
         /// </summary>
-        public string DomainName { get; set; }
+        public ImportUsersADDS(MFAConfig cfg) : base(cfg)
+        {
+            Parameters = new UsersADDSRecord();
+        }
 
         /// <summary>
-        /// UserName property
+        /// Parameters Property
         /// </summary>
-        public string UserName { get; set; }
-
-        /// <summary>
-        /// Password property
-        /// </summary>
-        public string Password { get; set; }
-
-        /// <summary>
-        /// LDAPPath property
-        /// </summary>
-        public string LDAPPath { get; set; }
-
-        /// <summary>
-        /// CreatedSince property
-        /// </summary>
-        public DateTime? CreatedSince { get; set; }
-
-        /// <summary>
-        /// ModifiedSince property
-        /// </summary>
-        public DateTime? ModifiedSince { get; set; }
-
-        /// <summary>
-        /// MailAttribute property
-        /// </summary>
-        public string MailAttribute { get; set; }
-
-        /// <summary>
-        /// PhoneAttribute property
-        /// </summary>
-        public string PhoneAttribute { get; set; }
-
-        /// <summary>
-        /// Method  property
-        /// </summary>
-        public PreferredMethod Method { get; set; }
-
-        /// <summary>
-        /// ImportUsersCSV constructor
-        /// </summary>
-        public ImportUsersADDS(MFAConfig cfg) : base(cfg) { }
-
-
+        public UsersADDSRecord Parameters;
+        
         /// <summary>
         /// DoImport() method implmentation
         /// </summary>
@@ -185,12 +149,12 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             try
             {
                 ADDSHost adht = Config.Hosts.ActiveDirectoryHost;
-                if (string.IsNullOrEmpty(DomainName))
-                    DomainName = adht.DomainName;
-                if (string.IsNullOrEmpty(UserName))
-                    UserName = adht.Account;
-                if (string.IsNullOrEmpty(Password))
-                    Password = adht.Password;
+                if (string.IsNullOrEmpty(Parameters.DomainName))
+                    Parameters.DomainName = adht.DomainName;
+                if (string.IsNullOrEmpty(Parameters.UserName))
+                    Parameters.UserName = adht.Account;
+                if (string.IsNullOrEmpty(Parameters.Password))
+                    Parameters.Password = adht.Password;
 
                 DataRepositoryService client = null;
                 switch (Config.StoreMode)
@@ -207,11 +171,11 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 }
 
                 Trace.WriteLine("");
-                Trace.WriteLine(string.Format("Importing for AD : {0}", LDAPPath));
+                Trace.WriteLine(string.Format("Importing for AD : {0}", Parameters.LDAPPath));
                 Trace.Indent();
-                Trace.WriteLine("Querying users from AD");
-                MFAUserList lst = client.ImportMFAUsers(DomainName, UserName, Password, LDAPPath, CreatedSince, ModifiedSince, MailAttribute, PhoneAttribute, Method, Config.Hosts.ActiveDirectoryHost.UseSSL, DisableAll);
-                Trace.WriteLine(string.Format("Querying return {0} users from AD", lst.Count.ToString()));
+                Trace.WriteLine("Query users from AD");
+                MFAUserList lst = client.ImportMFAUsers(Parameters, DisableAll);
+                Trace.WriteLine(string.Format("Query returns {0} user(s) from AD", lst.Count.ToString()));
 
                 DataRepositoryService client2 = null;
                 switch (Config.StoreMode)
@@ -239,47 +203,172 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 client2.OnKeyDataEvent += KeyDataEvent;
                 foreach (MFAUser reg in lst)
                 {
-                    Trace.TraceInformation(string.Format("Importing user {0} from AD", reg.UPN));
                     try
                     {
                         MFAUser ext = client2.GetMFAUser(reg.UPN);
                         if (ext == null)
                         {
-                            reg.PIN = Config.DefaultPin;
+                            reg.PIN = Convert.ToInt32(Config.DefaultPin);
                             reg.PreferredMethod = Config.DefaultProviderMethod;
-                            client2.AddMFAUser(reg, ForceNewKey, false);
-                            Trace.TraceInformation(string.Format("User {0} Imported in MFA", reg.UPN));
-                            if (!string.IsNullOrEmpty(reg.MailAddress))
+                        }
+                        else
+                        {
+                            if (this.Parameters.Method != PreferredMethod.None)
+                                reg.PreferredMethod = this.Parameters.Method;
+                            else
+                                reg.PreferredMethod = ext.PreferredMethod;
+                        }
+                        if (reg.PIN <= 0)
+                            reg.PIN = Convert.ToInt32(Config.DefaultPin);
+
+                        if (!Utilities.ValidateEmail(reg.MailAddress, (Config.MailProvider.Enabled && Config.MailProvider.IsRequired)))
+                            throw new Exception(string.Format("invalid mail address for user : {0}", reg.UPN));
+                        if (!Utilities.ValidatePhoneNumber(reg.PhoneNumber, (Config.ExternalProvider.Enabled && Config.ExternalProvider.IsRequired)))
+                            throw new Exception(string.Format("invalid phone number for user : {0}", reg.UPN));
+
+                        client2.AddMFAUser(reg, ForceNewKey, true);
+                        Trace.TraceInformation(string.Format("User {0} Imported in MFA", reg.UPN));
+                        if (!string.IsNullOrEmpty(reg.MailAddress))
+                        {
+                            if (SendEmail)
                             {
-                                if (SendEmail)
+                                string qrcode = KeysManager.EncodedKey(reg.UPN);
+                                CultureInfo info = null;
+                                try
                                 {
-                                    string qrcode = KeysManager.EncodedKey(reg.UPN);
-                                    CultureInfo info = null;
-                                    try
-                                    {
-                                        info = CultureInfo.CurrentUICulture;
-                                    }
-                                    catch
-                                    {
-                                        info = new CultureInfo(Config.DefaultCountryCode);
-                                    }
-                                    MailUtilities.SendKeyByEmail(reg.MailAddress, reg.UPN, qrcode, Config.MailProvider, Config, info);
-                                    Trace.TraceInformation(string.Format("Sending Sensitive mail for User {0} Imported in MFA", reg.UPN));
+                                    info = CultureInfo.CurrentUICulture;
                                 }
+                                catch
+                                {
+                                    info = new CultureInfo(Config.DefaultCountryCode);
+                                }
+                                MailUtilities.SendKeyByEmail(reg.MailAddress, reg.UPN, qrcode, Config.MailProvider, Config, info);
+                                Trace.TraceInformation(string.Format("Sending Sensitive mail for User {0}", reg.UPN));
                             }
-                            RecordsCount++;
                         }
                     }
                     catch (Exception ex)
                     {
                         ErrorsCount++;
-                        Trace.TraceError("Error importing Record N° {0} \r\r {1}", (RecordsCount + 1).ToString(), ex.Message);
+                        Trace.TraceError("Error importing User {0} : {1}", reg.UPN, ex.Message);
+                    }
+                    finally
+                    {
+                        RecordsCount++;
                     }
                 }
+                Trace.Unindent();
+                Trace.WriteLine("");
+                Trace.WriteLine(string.Format("Imported {0} User(s) from AD Source", RecordsCount));
             }
             catch (Exception ex)
             {
-                Trace.TraceError(string.Format("Error importing from AD \r\r {0}", ex.Message));
+                Trace.Unindent();
+                Trace.TraceError(string.Format("Error importing from AD : {0}", ex.Message));
+                Log.WriteEntry(string.Format("Error importing from AD : {0}", ex.Message), EventLogEntryType.Error, 20000);
+                return false;
+            }
+            finally
+            {
+                Trace.Unindent();
+                FinalizeTrace(listen);
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// DoCleanUp() method implmentation
+        /// </summary>
+        public bool DoCleanUp()
+        {
+            char sep = Path.DirectorySeparatorChar;
+            string filename = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "adcleanup-" + DateTime.Now.ToFileTime().ToString() + ".log";
+            TraceListener listen = InitializeTrace(filename);
+            try
+            {
+                ADDSHost adht = Config.Hosts.ActiveDirectoryHost;
+                if (string.IsNullOrEmpty(Parameters.DomainName))
+                    Parameters.DomainName = adht.DomainName;
+                if (string.IsNullOrEmpty(Parameters.UserName))
+                    Parameters.UserName = adht.Account;
+                if (string.IsNullOrEmpty(Parameters.Password))
+                    Parameters.Password = adht.Password;
+
+                DataRepositoryService client = null;
+                switch (Config.StoreMode)
+                {
+                    case DataRepositoryKind.ADDS:
+                        client = new ADDSDataRepositoryService(Config.Hosts.ActiveDirectoryHost, Config.DeliveryWindow);
+                        break;
+                    case DataRepositoryKind.SQL:
+                        client = new SQLDataRepositoryService(Config.Hosts.SQLServerHost, Config.DeliveryWindow);
+                        break;
+                    case DataRepositoryKind.Custom:
+                        client = CustomDataRepositoryActivator.CreateInstance(Config.Hosts.CustomStoreHost, Config.DeliveryWindow);
+                        break;
+                }
+
+                Trace.WriteLine("");
+                Trace.WriteLine("Clean Up from AD");
+                Trace.Indent();
+                Trace.WriteLine("Query deleted users from AD");
+                List<string> lst = client.CleanMFAUsers(Parameters);
+                Trace.WriteLine(string.Format("Query returns {0} deleted user(s) from AD", lst.Count.ToString()));
+
+                DataRepositoryService client2 = null;
+                switch (Config.StoreMode)
+                {
+                    case DataRepositoryKind.ADDS:
+                        Trace.WriteLine("");
+                        Trace.WriteLine("Clean Up ADDS Mode");
+                        Trace.Indent();
+                        client2 = new ADDSDataRepositoryService(Config.Hosts.ActiveDirectoryHost, Config.DeliveryWindow);
+                        break;
+                    case DataRepositoryKind.SQL:
+                        Trace.WriteLine("");
+                        Trace.WriteLine("Clean Up SQL Mode");
+                        Trace.Indent();
+                        client2 = new SQLDataRepositoryService(Config.Hosts.SQLServerHost, Config.DeliveryWindow);
+                        break;
+                    case DataRepositoryKind.Custom:
+
+                        Trace.WriteLine("");
+                        Trace.WriteLine("Clean Up Custom Store Mode");
+                        Trace.Indent();
+                        client2 = CustomDataRepositoryActivator.CreateInstance(Config.Hosts.CustomStoreHost, Config.DeliveryWindow);
+                        break;
+                }
+                client2.OnKeyDataEvent += KeyDataEvent;
+                foreach (string del in lst)
+                {
+                    MFAUser reg = client2.GetMFAUser(del);
+                    if (reg != null)
+                    {
+                        try
+                        {
+                            if (reg.UPN.ToLower().Equals(del.ToLower()))
+                            {
+                                client2.DeleteMFAUser(reg);
+                                Trace.TraceInformation(string.Format("User {0} Removed from MFA", reg.UPN));
+                                RecordsCount++;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            ErrorsCount++;
+                            Trace.TraceError("Error Cleaning User {0} from MFA : {1}", reg.UPN, ex.Message);
+                        }
+                    }
+                }
+                Trace.Unindent();
+                Trace.WriteLine("");
+                Trace.WriteLine(string.Format("Cleaned {0} Deleted MFA User(s) from AD Source", RecordsCount));
+            }
+            catch (Exception ex)
+            {
+                Trace.Unindent();
+                Trace.TraceError(string.Format("Error Cleaning Up from AD : {0}", ex.Message));
+                Log.WriteEntry(string.Format("Error Cleaning Up from AD : {0}", ex.Message), EventLogEntryType.Error, 20000);
                 return false;
             }
             finally
@@ -304,7 +393,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     KeysManager.ReadKey(user);
                     break;
                 case KeysDataManagerEventKind.Remove:
-                    KeysManager.RemoveKey(user);
+                    KeysManager.RemoveKey(user, true);
                     break;
             }
         }
@@ -351,7 +440,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     try
                     {
                         MFAUser reg = new MFAUser();
-                        reg.PIN = Config.DefaultPin;
+                        reg.PIN = Convert.ToInt32(Config.DefaultPin);
+
                         if ((ids[0].HasValue) && (!string.IsNullOrEmpty(row[ids[0].Value])))
                             reg.UPN = row[ids[0].Value];
                         else
@@ -359,13 +449,14 @@ namespace Neos.IdentityServer.MultiFactor.Administration
 
                         if ((ids[1].HasValue) && (!string.IsNullOrEmpty(row[ids[1].Value])))
                             reg.MailAddress = row[ids[1].Value];
-                        else if (Config.MailProvider.Enabled)
-                            throw new InvalidDataException("email must be provided !");
 
                         if ((ids[2].HasValue) && (!string.IsNullOrEmpty(row[ids[2].Value])))
                             reg.PhoneNumber = row[ids[2].Value];
-                        else if (Config.ExternalProvider.Enabled)
-                            throw new InvalidDataException("mobile must be provided !");
+
+                        if (!Utilities.ValidateEmail(reg.MailAddress, (Config.MailProvider.Enabled && Config.MailProvider.IsRequired)))
+                            throw new Exception(string.Format("invalid mail address for user : {0}", reg.UPN));
+                        if (!Utilities.ValidatePhoneNumber(reg.PhoneNumber, (Config.ExternalProvider.Enabled && Config.ExternalProvider.IsRequired)))
+                            throw new Exception(string.Format("invalid phone number for user : {0}", reg.UPN));
 
                         if ((ids[3].HasValue) && (!string.IsNullOrEmpty(row[ids[3].Value])))
                             reg.PreferredMethod = (PreferredMethod)Enum.Parse(typeof(PreferredMethod), row[ids[3].Value]);
@@ -385,7 +476,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     catch (Exception ex)
                     {
                         ErrorsCount++;
-                        Trace.TraceError("Error importing Record N° {0} \r\r {1}", (RecordsCount + 1).ToString(), ex.Message);
+                        Trace.TraceError("Error importing Record N° {0} : {1}", (RecordsCount + 1).ToString(), ex.Message);
                     }
                     finally
                     {
@@ -471,7 +562,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     try
                     {
                         MFAUser reg = new MFAUser();
-                        reg.PIN = Config.DefaultPin;
+                        reg.PIN = Convert.ToInt32(Config.DefaultPin);
                         if (row.Attribute("upn") != null)
                             reg.UPN = row.Attribute("upn").Value;
                         else
@@ -479,13 +570,14 @@ namespace Neos.IdentityServer.MultiFactor.Administration
 
                         if (row.Attribute("email") != null)
                             reg.MailAddress = row.Attribute("email").Value;
-                        else if (Config.MailProvider.Enabled)
-                            throw new InvalidDataException("email must be provided !");
 
                         if (row.Attribute("mobile") != null)
                             reg.PhoneNumber = row.Attribute("mobile").Value;
-                        else if (Config.ExternalProvider.Enabled)
-                            throw new InvalidDataException("mobile must be provided !");
+
+                        if (!Utilities.ValidateEmail(reg.MailAddress, (Config.MailProvider.Enabled && Config.MailProvider.IsRequired)))
+                            throw new Exception(string.Format("invalid mail address for user : {0}", reg.UPN));
+                        if (!Utilities.ValidatePhoneNumber(reg.PhoneNumber, (Config.ExternalProvider.Enabled && Config.ExternalProvider.IsRequired)))
+                            throw new Exception(string.Format("invalid phone number for user : {0}", reg.UPN));
 
                         if (row.Attribute("method") != null)
                             reg.PreferredMethod = (PreferredMethod)Enum.Parse(typeof(PreferredMethod), row.Attribute("method").Value);
@@ -505,7 +597,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     catch (Exception ex)
                     {
                         ErrorsCount++;
-                        Trace.TraceError("Error importing Record N° {0} \r\r {1}", (RecordsCount + 1).ToString(), ex.Message);
+                        Trace.TraceError("Error importing Record N° {0} : {1}", (RecordsCount + 1).ToString(), ex.Message);
                     }
                     finally
                     {

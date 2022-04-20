@@ -732,4 +732,13 @@
   <data name="CTRLWEBAUTHNCONTRAINEDMETADATA" xml:space="preserve">
     <value>Использование службы ограниченных метаданных (для фермы ADFS, не имея доступа к Интернету)</value>
   </data>
+  <data name="CTRLGLSHOWCUSTOM" xml:space="preserve">
+    <value>Показать пользовательский аутентификатор</value>
+  </data>
+  <data name="CTRGLPAUSEFORDAYS" xml:space="preserve">
+    <value>Разрешить приостановку MFA на (x) дней</value>
+  </data>
+  <data name="CTRLPROVWIZARDDISABLED" xml:space="preserve">
+    <value>Мастер отключен при регистрации</value>
+  </data>
 </root>

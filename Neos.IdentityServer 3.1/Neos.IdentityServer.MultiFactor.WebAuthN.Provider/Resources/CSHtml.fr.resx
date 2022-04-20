@@ -165,4 +165,10 @@
   <data name="BIOERRORAUTHREPLAY" xml:space="preserve">
     <value>Erreur lors du processus d’authentification ! Les données du descripteur de sécurité ont déjà été utilisées !</value>
   </data>
+  <data name="BIOUIMessage2" xml:space="preserve">
+    <value>Pour vous connecter avec votre appareil biométrique, cliquez sur « Connexion »</value>
+  </data>
+  <data name="BIOUIMessage3" xml:space="preserve">
+    <value>Pour enregistrer votre appareil biométrique, cliquez sur « Enregistrer l’appareil »</value>
+  </data>
 </root>

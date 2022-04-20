@@ -12,7 +12,7 @@ using System.Runtime.Versioning;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Neos-Sdi")]
 [assembly: AssemblyProduct("Neos.IdentityServer.Multifactor.ThreatDetection")]
-[assembly: AssemblyCopyright("Copyright @redhook62 © 2021")]
+[assembly: AssemblyCopyright("Copyright @redhook62 © 2022")]
 [assembly: AssemblyTrademark("Neos-Sdi")]
 [assembly: AssemblyCulture("")]
 
@@ -35,6 +35,6 @@ using System.Runtime.Versioning;
 // en utilisant '*', comme indiqué ci-dessous :
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("3.0.0.0")]
-[assembly: AssemblyFileVersion("3.1.2111.1")]
+[assembly: AssemblyFileVersion("3.1.2204.1")]
 [assembly: AssemblyInformationalVersion("3.0.0.0")]
 [assembly: NeutralResourcesLanguageAttribute("en")]

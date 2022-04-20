@@ -732,4 +732,13 @@
   <data name="CTRLWEBAUTHNCONTRAINEDMETADATA" xml:space="preserve">
     <value>Use o Serviço de Metadados Restritos (para a fazenda ADFS que não tem acesso à internet)</value>
   </data>
+  <data name="CTRLGLSHOWCUSTOM" xml:space="preserve">
+    <value>Mostrar autenticador personalizado</value>
+  </data>
+  <data name="CTRGLPAUSEFORDAYS" xml:space="preserve">
+    <value>Permitir que o MFA seja pausado por (x) dias</value>
+  </data>
+  <data name="CTRLPROVWIZARDDISABLED" xml:space="preserve">
+    <value>Assistente desativado na matrícula</value>
+  </data>
 </root>

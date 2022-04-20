@@ -297,4 +297,22 @@ Sie können von jetzt an Multi-Factor-Authentifizierung verwenden.</value>
   <data name="HtmlUIMRegisterDevice" xml:space="preserve">
     <value>Gerät registrieren</value>
   </data>
+  <data name="HtmlUIMPauseForToday" xml:space="preserve">
+    <value>Diese Meldung nicht mehr anzeigen</value>
+  </data>
+  <data name="HtmlUIMYes" xml:space="preserve">
+    <value>Ja</value>
+  </data>
+  <data name="HtmlUIMNo" xml:space="preserve">
+    <value>Nein</value>
+  </data>
+  <data name="HtmlUIMPauseLabel" xml:space="preserve">
+    <value>Angemeldet bleiben</value>
+  </data>
+  <data name="HtmlUIMPauseDescriptionToday" xml:space="preserve">
+    <value>Dadurch können Sie die MFA heute nicht mehr anfordern.</value>
+  </data>
+  <data name="HtmlUIMPauseDescription" xml:space="preserve">
+    <value>Auf diese Weise können Sie {0} Tage lang nicht mehr nach dem MFA fragen.</value>
+  </data>
 </root>

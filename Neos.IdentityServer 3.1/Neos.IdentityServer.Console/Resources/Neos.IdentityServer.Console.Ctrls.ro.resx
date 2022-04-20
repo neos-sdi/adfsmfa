@@ -732,4 +732,13 @@
   <data name="CTRLWEBAUTHNCONTRAINEDMETADATA" xml:space="preserve">
     <value>Utilizarea serviciului de metadate constrâns (pentru ferma ADFS care nu are acces la internet)</value>
   </data>
+  <data name="CTRLGLSHOWCUSTOM" xml:space="preserve">
+    <value>Afișare autentificare personalizată</value>
+  </data>
+  <data name="CTRGLPAUSEFORDAYS" xml:space="preserve">
+    <value>Permite MFA să fie întreruptă pentru (x) zile</value>
+  </data>
+  <data name="CTRLPROVWIZARDDISABLED" xml:space="preserve">
+    <value>Expert dezactivat la înscriere</value>
+  </data>
 </root>

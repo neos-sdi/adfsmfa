@@ -1,6 +1,5 @@
-﻿#define test
-//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+﻿//******************************************************************************************************************************************************************************************//
+// Copyright (c) 2022 @redhook62 (adfsmfa@gmail.com)                                                                                                                                        //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -12,7 +11,7 @@
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,                            //
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                               //
 //                                                                                                                                                                                          //
-//                                                                                                                                                             //
+//                                                                                                                                                                                          //
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
@@ -43,6 +42,8 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     internal static class SIDs
     {
+        internal static uint STATUS_SUCCESS = 0;
+        internal static uint STATUS_BUFFER_TOO_SMALL = 3221225507;
         internal static bool Loaded { get; private set; } = false;
         internal static bool ADFSSystemServiceAdministrationAllowed { get; set; }
         internal static bool ADFSLocalAdminServiceAdministrationAllowed { get; set; }
@@ -524,24 +525,8 @@ namespace Neos.IdentityServer.MultiFactor
             }
             catch (Exception ex)
             {
-                Log.WriteEntry("Error loading SIDs informations : \r" + ex.Message, EventLogEntryType.Error, 666);
+                Log.WriteEntry("Error loading Security informations : \r" + ex.Message, EventLogEntryType.Error, 666);
                 return false;
-            }
-        }       
-
-        /// <summary>
-        /// GetADFSServiceSID method implmentation
-        /// </summary>
-        private static string GetADFSServiceSID()
-        {
-            try
-            {
-                IntPtr ptr = GetServiceSidPtr("adfssrv");
-                return new SecurityIdentifier(ptr).Value;
-            }
-            catch (Exception)
-            {
-                return string.Empty;
             }
         }
 
@@ -551,6 +536,44 @@ namespace Neos.IdentityServer.MultiFactor
         private static string GetADFSServiceName()
         {
             return "adfssrv";
+        }
+
+        /// <summary>
+        /// GetADFSServiceSID method implmentation
+        /// </summary>
+        private static string GetADFSServiceSID()
+        {
+            NativeMethods.LSA_UNICODE_STRING lSA_UNICODE_STRING = default(NativeMethods.LSA_UNICODE_STRING);
+            lSA_UNICODE_STRING.SetTo("adfssrv");
+            int cb = 0;
+            try
+            {
+                uint num = NativeMethods.RtlCreateServiceSid(ref lSA_UNICODE_STRING, IntPtr.Zero, ref cb);
+                if (num == STATUS_BUFFER_TOO_SMALL)
+                {
+                    IntPtr intPtr = Marshal.AllocHGlobal(cb);
+                    try
+                    {
+                        if (NativeMethods.RtlCreateServiceSid(ref lSA_UNICODE_STRING, intPtr, ref cb) != STATUS_SUCCESS)
+                           throw new Win32Exception(Marshal.GetLastWin32Error());
+                        return new SecurityIdentifier(intPtr).Value;
+                    }
+                    finally
+                    {
+                        Marshal.FreeHGlobal(intPtr);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry("Error loading ADFS Service SID information : \r" + ex.Message, EventLogEntryType.Error, 666);
+                return string.Empty;
+            }
+            finally
+            {
+                lSA_UNICODE_STRING.Dispose();
+            }
+            return string.Empty;
         }
 
         /// <summary>
@@ -580,8 +603,9 @@ namespace Neos.IdentityServer.MultiFactor
                 else
                     return string.Empty;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Log.WriteEntry("Error loading ADFS Account SID information : \r" + ex.Message, EventLogEntryType.Error, 666);
                 return string.Empty;
             }
             finally
@@ -615,8 +639,9 @@ namespace Neos.IdentityServer.MultiFactor
                 else
                     return string.Empty;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Log.WriteEntry("Error loading ADFS Account Name : \r" + ex.Message, EventLogEntryType.Error, 666);
                 return string.Empty;
             }
             finally
@@ -648,8 +673,9 @@ namespace Neos.IdentityServer.MultiFactor
                 else
                     return string.Empty;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Log.WriteEntry("Error loading ADFS Administration Group SID : \r" + ex.Message, EventLogEntryType.Error, 666);
                 return string.Empty;
             }
         }
@@ -663,41 +689,11 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 return GetADFSServiceAdministrationProperties(ref tuple);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Log.WriteEntry("Error loading ADFS Administration Group Name : \r" + ex.Message, EventLogEntryType.Error, 666);
                 return string.Empty;
             }
-        }
-
-        /// <summary>
-        /// GetServiceSidPtr method implementation
-        /// </summary>
-        private static IntPtr GetServiceSidPtr(string service)
-        {
-            NativeMethods.LSA_UNICODE_STRING lSA_UNICODE_STRING = default(NativeMethods.LSA_UNICODE_STRING);
-            lSA_UNICODE_STRING.SetTo(service);
-            int cb = 0;
-            IntPtr intPtr = IntPtr.Zero;
-            IntPtr result;
-            try
-            {
-                uint num = NativeMethods.RtlCreateServiceSid(ref lSA_UNICODE_STRING, IntPtr.Zero, ref cb);
-                if (num == 3221225507u)
-                {
-                    intPtr = Marshal.AllocHGlobal(cb);
-                    num = NativeMethods.RtlCreateServiceSid(ref lSA_UNICODE_STRING, intPtr, ref cb);
-                }
-                if (num != 0u)
-                {
-                    throw new Win32Exception(Convert.ToInt32(num));
-                }
-                result = intPtr;
-            }
-            finally
-            {
-                lSA_UNICODE_STRING.Dispose();
-            }
-            return result;
         }
 
         /// <summary>
@@ -775,7 +771,7 @@ namespace Neos.IdentityServer.MultiFactor
         [SuppressUnmanagedCodeSecurity]
         internal class NativeMethods
         {
-            [DllImport("ntdll.dll")]
+            [DllImport("ntdll.dll", SetLastError = true)]
             internal static extern uint RtlCreateServiceSid(ref NativeMethods.LSA_UNICODE_STRING serviceName, IntPtr serviceSid, ref int serviceSidLength);
 
             internal struct LSA_UNICODE_STRING : IDisposable

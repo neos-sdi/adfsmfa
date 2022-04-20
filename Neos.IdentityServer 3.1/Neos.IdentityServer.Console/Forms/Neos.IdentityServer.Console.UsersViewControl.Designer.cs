@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
@@ -44,6 +45,7 @@
             this.PIN = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.OverrideMethod = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.secretKeyDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.contextMenuStripGrid = new System.Windows.Forms.ContextMenuStrip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.GridView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -77,6 +79,7 @@
             this.PIN,
             this.OverrideMethod,
             this.secretKeyDataGridViewTextBoxColumn});
+            this.GridView.ContextMenuStrip = this.contextMenuStripGrid;
             resources.ApplyResources(this.GridView, "GridView");
             this.GridView.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
             this.GridView.GridColor = System.Drawing.SystemColors.Window;
@@ -176,6 +179,11 @@
             this.secretKeyDataGridViewTextBoxColumn.Name = "secretKeyDataGridViewTextBoxColumn";
             this.secretKeyDataGridViewTextBoxColumn.ReadOnly = true;
             // 
+            // contextMenuStripGrid
+            // 
+            this.contextMenuStripGrid.Name = "contextMenuStrip1";
+            resources.ApplyResources(this.contextMenuStripGrid, "contextMenuStripGrid");
+            // 
             // UsersListView
             // 
             resources.ApplyResources(this, "$this");
@@ -189,8 +197,6 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.DataGridView GridView;
         private System.Windows.Forms.DataGridViewImageColumn IMG;
         private System.Windows.Forms.DataGridViewTextBoxColumn iDDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn uPNDataGridViewTextBoxColumn;
@@ -201,5 +207,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn PIN;
         private System.Windows.Forms.DataGridViewTextBoxColumn OverrideMethod;
         private System.Windows.Forms.DataGridViewTextBoxColumn secretKeyDataGridViewTextBoxColumn;
+        internal System.Windows.Forms.ContextMenuStrip contextMenuStripGrid;
+        internal System.Windows.Forms.DataGridView GridView;
     }
 }

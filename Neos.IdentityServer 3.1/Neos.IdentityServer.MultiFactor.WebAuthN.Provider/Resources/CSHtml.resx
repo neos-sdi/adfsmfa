@@ -172,4 +172,10 @@
   <data name="PROVIDERBIODESCRIPTION" xml:space="preserve">
     <value>Biometrics Multi-Factor Provider</value>
   </data>
+  <data name="BIOUIMessage2" xml:space="preserve">
+    <value>To login with your biometric device, click "Connection"</value>
+  </data>
+  <data name="BIOUIMessage3" xml:space="preserve">
+    <value>To register your biometric device, click "Register Device"</value>
+  </data>
 </root>

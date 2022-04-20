@@ -61,7 +61,7 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à E-mail adress.
+        ///   Recherche une chaîne localisée semblable à E-mail address.
         /// </summary>
         internal static string MMCFILTEREMAIL {
             get {

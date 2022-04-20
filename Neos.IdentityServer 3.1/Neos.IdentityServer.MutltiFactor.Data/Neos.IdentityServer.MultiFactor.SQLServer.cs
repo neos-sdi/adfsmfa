@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2022 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -108,10 +108,10 @@ namespace Neos.IdentityServer.MultiFactor.Data
                     return GetMFAUser(reg.UPN);
             }
             string request;
-            if (disableoninsert)
-                request = "UPDATE REGISTRATIONS SET MAILADDRESS = @MAILADDRESS, PHONENUMBER = @PHONENUMBER, PIN=@PIN, METHOD=@METHOD, OVERRIDE=@OVERRIDE, WHERE UPN=@UPN";
+            if (reg.PreferredMethod != PreferredMethod.None)
+                request = "UPDATE REGISTRATIONS SET MAILADDRESS = @MAILADDRESS, PHONENUMBER = @PHONENUMBER, PIN=@PIN, ENABLED=@ENABLED, METHOD=@METHOD, OVERRIDE=@OVERRIDE WHERE UPN=@UPN";
             else
-                request = "UPDATE REGISTRATIONS SET MAILADDRESS = @MAILADDRESS, PHONENUMBER = @PHONENUMBER, PIN=@PIN, METHOD=@METHOD, OVERRIDE=@OVERRIDE, ENABLED=@ENABLED WHERE UPN=@UPN";
+                request = "UPDATE REGISTRATIONS SET MAILADDRESS = @MAILADDRESS, PHONENUMBER = @PHONENUMBER, PIN=@PIN, ENABLED=@ENABLED WHERE UPN=@UPN";
 
             SqlConnection con = new SqlConnection(SQLUtils.GetFullConnectionString(SQLHost));
             SqlCommand sql = new SqlCommand(request, con);
@@ -134,27 +134,31 @@ namespace Neos.IdentityServer.MultiFactor.Data
             sql.Parameters.Add(prm3);
             prm3.Value = reg.PIN;
 
-            SqlParameter prm4 = new SqlParameter("@METHOD", SqlDbType.Int);
+            SqlParameter prm4 = new SqlParameter("@ENABLED", SqlDbType.Bit);
             sql.Parameters.Add(prm4);
-            prm4.Value = reg.PreferredMethod;
-
-            SqlParameter prm5 = new SqlParameter("@OVERRIDE", SqlDbType.VarChar);
-            sql.Parameters.Add(prm5);
-            if (reg.OverrideMethod == null)
-                prm5.Value = string.Empty;
+            if (disableoninsert)
+                prm4.Value = false;
             else
-                prm5.Value = reg.OverrideMethod;
+                prm4.Value = reg.Enabled;
 
-            if (!disableoninsert)
+            if (reg.PreferredMethod != PreferredMethod.None)
             {
-                SqlParameter prm6 = new SqlParameter("@ENABLED", SqlDbType.Bit);
+                SqlParameter prm5 = new SqlParameter("@METHOD", SqlDbType.Int);
+                sql.Parameters.Add(prm5);
+                prm5.Value = reg.PreferredMethod;
+
+                SqlParameter prm6 = new SqlParameter("@OVERRIDE", SqlDbType.VarChar);
                 sql.Parameters.Add(prm6);
-                prm6.Value = reg.Enabled;
+                if (reg.OverrideMethod == null)
+                    prm6.Value = string.Empty;
+                else
+                    prm6.Value = reg.OverrideMethod;
             }
 
             SqlParameter prm7 = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
             sql.Parameters.Add(prm7);
             prm7.Value = reg.UPN.ToLower();
+
             con.Open();
             try
             {
@@ -177,7 +181,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// AddMFAUser method implementation
         /// </summary>
-        public override MFAUser AddMFAUser(MFAUser reg, bool resetkey = true, bool canupdate = true, bool disableoninsert = false)
+        public override MFAUser AddMFAUser(MFAUser reg, bool resetkey = false, bool canupdate = true, bool disableoninsert = false)
         {
             if (SQLUtils.IsMFAUserRegistered(SQLHost, reg.UPN))
             {
@@ -221,7 +225,10 @@ namespace Neos.IdentityServer.MultiFactor.Data
 
             SqlParameter prm6 = new SqlParameter("@METHOD", SqlDbType.Int);
             sql.Parameters.Add(prm6);
-            prm6.Value = reg.PreferredMethod;
+            if (reg.PreferredMethod == PreferredMethod.None)
+                prm6.Value = PreferredMethod.Choose;
+            else
+                prm6.Value = reg.PreferredMethod;
 
             SqlParameter prm7 = new SqlParameter("@OVERRIDE", SqlDbType.VarChar);
             sql.Parameters.Add(prm7);
@@ -230,6 +237,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             else
                 prm7.Value = reg.OverrideMethod;
             con.Open();
+
             try
             {
                 int res = sql.ExecuteNonQuery();
@@ -1139,7 +1147,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// RemoveUserKey method implmentation
         /// </summary>
-        public override bool RemoveUserKey(string upn)
+        public override bool RemoveUserKey(string upn, bool fullclear)
         {
             string request1 = "UPDATE REGISTRATIONS SET SECRETKEY = NULL WHERE UPN=@UPN";
             string request2 = "DELETE FROM KEYS WHERE UPN=@UPN AND KIND=1";
@@ -1170,7 +1178,9 @@ namespace Neos.IdentityServer.MultiFactor.Data
 
                 int res1 = sql1.ExecuteNonQuery();
                 int res2 = sql2.ExecuteNonQuery();
-                int res3 = sql3.ExecuteNonQuery();
+                int res3 = 0;
+                if (fullclear)
+                    res3 = sql3.ExecuteNonQuery();
                 return (res1 == 1);
             }
             catch (Exception ex)
@@ -1413,7 +1423,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// RemoveUserKey method implmentation
         /// </summary>
-        public override bool RemoveUserKey(string upn)
+        public override bool RemoveUserKey(string upn, bool fullclear)
         {
             string request1 = "UPDATE REGISTRATIONS SET SECRETKEY = NULL WHERE UPN=@UPN";
             string request2 = "DELETE FROM KEYS WHERE UPN=@UPN AND KIND=1";
@@ -1444,7 +1454,9 @@ namespace Neos.IdentityServer.MultiFactor.Data
 
                 int res1 = sql1.ExecuteNonQuery();
                 int res2 = sql2.ExecuteNonQuery();
-                int res3 = sql3.ExecuteNonQuery();
+                int res3 = 0;
+                if (fullclear)
+                    res3 = sql3.ExecuteNonQuery();
                 return ((res1 == 1) && (res2 == 1));
             }
             catch (Exception ex)

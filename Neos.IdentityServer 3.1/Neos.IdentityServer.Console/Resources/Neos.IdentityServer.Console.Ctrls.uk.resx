@@ -1,0 +1,744 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CRTLADFSRESTARTFARMSERVICES" xml:space="preserve">
+    <value>Перезапустити всі служби федерації</value>
+  </data>
+  <data name="CRTLADFSRESTARTSERVICES" xml:space="preserve">
+    <value>Перезапустити служби fedeartion</value>
+  </data>
+  <data name="CRTLADFSSTARTSERVICES" xml:space="preserve">
+    <value>Запуск послуг fedeartion</value>
+  </data>
+  <data name="CRTLADFSSTOPSERVICES" xml:space="preserve">
+    <value>Зупинити послуги федерації</value>
+  </data>
+  <data name="CTRGLMANAGEREG" xml:space="preserve">
+    <value>Сповіщення про реєстрацію</value>
+  </data>
+  <data name="CTRGLMANAGEREGEND" xml:space="preserve">
+    <value>Кінець</value>
+  </data>
+  <data name="CTRGLMANAGEREGSTART" xml:space="preserve">
+    <value>Почати</value>
+  </data>
+  <data name="CTRLADACCOUNT" xml:space="preserve">
+    <value>Обліковий запис доступу до облікового запису</value>
+  </data>
+  <data name="CTRLADATCHECKDATEERROR" xml:space="preserve">
+    <value>Неприпустимий атрибут ADDS для дати перевірки !</value>
+  </data>
+  <data name="CTRLADATENABLEDERROR" xml:space="preserve">
+    <value>Неприпустимий атрибут ADDS для Увімкнуто !</value>
+  </data>
+  <data name="CTRLADATMETHODERROR" xml:space="preserve">
+    <value>Неприпустимий атрибут ADDS для методу !</value>
+  </data>
+  <data name="CTRLADATOVERRIDEERROR" xml:space="preserve">
+    <value>Неприпустимий атрибут ADDS для певного методу !</value>
+  </data>
+  <data name="CTRLADATPINERROR" xml:space="preserve">
+    <value>Неприпустимий атрибут ADD для пін-коду !</value>
+  </data>
+  <data name="CTRLADATRSACERTERROR" xml:space="preserve">
+    <value>Неприпустимий атрибут ADDS для сертифіката RSA !</value>
+  </data>
+  <data name="CTRLADATTACCOUNT" xml:space="preserve">
+    <value>Неприпустимий обліковий запис ADD !</value>
+  </data>
+  <data name="CTRLADATTDOMAIN" xml:space="preserve">
+    <value>Неприпустима адреса домену ADD!</value>
+  </data>
+  <data name="CTRLADATTEMAILERROR" xml:space="preserve">
+    <value>Неприпустимий атрибут ADDS для адреси електронної пошти!</value>
+  </data>
+  <data name="CTRLADATTKEY" xml:space="preserve">
+    <value>Секретний ключ</value>
+  </data>
+  <data name="CTRLADATTKEYERROR" xml:space="preserve">
+    <value>Неприпустимий атрибут ADDS для ключа !</value>
+  </data>
+  <data name="CTRLADATTMAIL" xml:space="preserve">
+    <value>Адреса електронної пошти</value>
+  </data>
+  <data name="CTRLADATTMETHOD" xml:space="preserve">
+    <value>Метод МЗС за замовчуванням</value>
+  </data>
+  <data name="CTRLADATTOVERRIDE" xml:space="preserve">
+    <value>Перевизначити метод МЗС</value>
+  </data>
+  <data name="CTRLADATTPASSWORD" xml:space="preserve">
+    <value>Неприпустимий пароль ADD !</value>
+  </data>
+  <data name="CTRLADATTPHONE" xml:space="preserve">
+    <value>Мобільний телефон</value>
+  </data>
+  <data name="CTRLADATTPHONEERROR" xml:space="preserve">
+    <value>Неприпустимий атрибут ADDS для номера телефону !</value>
+  </data>
+  <data name="CTRLADATTPIN" xml:space="preserve">
+    <value>Пін-код</value>
+  </data>
+  <data name="CTRLADATTPUBLICKEY" xml:space="preserve">
+    <value>Відкритий ключ WebAuthN</value>
+  </data>
+  <data name="CTRLADATTRIBUTES" xml:space="preserve">
+    <value>Параметри атрибутів Active Directory</value>
+  </data>
+  <data name="CTRLADATTRSACERT" xml:space="preserve">
+    <value>Сертифікат користувача RSA</value>
+  </data>
+  <data name="CTRLADATTSTATUS" xml:space="preserve">
+    <value>Стан активації користувача</value>
+  </data>
+  <data name="CTRLADATTVALIDATION" xml:space="preserve">
+    <value>Дата перевірки TOTP</value>
+  </data>
+  <data name="CTRLADATTVALIDITY" xml:space="preserve">
+    <value>Дата дії TOTP</value>
+  </data>
+  <data name="CTRLADATVALIDITYDATEERROR" xml:space="preserve">
+    <value>Неприпустимий атрибут ADD для дати дії !</value>
+  </data>
+  <data name="CTRLADCONNECTIONERROR" xml:space="preserve">
+    <value>Не вдалося підключитися до adds лісу/домену!</value>
+  </data>
+  <data name="CTRLADCONNECTIONOK" xml:space="preserve">
+    <value>Підключення на ADDS ліс / домен оперативний !</value>
+  </data>
+  <data name="CTRLADDOMAIN" xml:space="preserve">
+    <value>Доменне ім'я</value>
+  </data>
+  <data name="CTRLADFSACTIVATEMFA" xml:space="preserve">
+    <value>Увімкнути МЗС</value>
+  </data>
+  <data name="CTRLADFSDEACTIVATEMFA" xml:space="preserve">
+    <value>Вимкнути МЗС</value>
+  </data>
+  <data name="CTRLADLDAPSSL" xml:space="preserve">
+    <value>Використання захищених підключень LDAP (LDAPS)</value>
+  </data>
+  <data name="CTRLADPASSWORD" xml:space="preserve">
+    <value>Пароль</value>
+  </data>
+  <data name="CTRLADSUPERACCOUNT" xml:space="preserve">
+    <value>Служба Active Directory "Обліковий запис доступу до даних"</value>
+  </data>
+  <data name="CTRLADTEMPLATE2016" xml:space="preserve">
+    <value>ДОДАЄ схему 2016++</value>
+  </data>
+  <data name="CTRLADTEMPLATE2016ERROR" xml:space="preserve">
+    <value>Помилка при завантаженні шаблону "2016", ви повинні оновити вручну ваші атрибути !</value>
+  </data>
+  <data name="CTRLADTEMPLATEBASE" xml:space="preserve">
+    <value>ДОДАЄ схему 2012--</value>
+  </data>
+  <data name="CTRLADTEMPLATEBASEERROR" xml:space="preserve">
+    <value>Помилка при завантаженні шаблону "За замовчуванням", ви повинні оновити вручну ваші атрибути !</value>
+  </data>
+  <data name="CTRLADTEMPLATEMFA" xml:space="preserve">
+    <value>ДОДАЄ схему МЗС</value>
+  </data>
+  <data name="CTRLADTEMPLATEMFAERROR" xml:space="preserve">
+    <value>Помилка при завантаженні шаблону "МЗС", необхідно оновити вручну свої атрибути !</value>
+  </data>
+  <data name="CTRLADTEST" xml:space="preserve">
+    <value>Тест</value>
+  </data>
+  <data name="CTRLADTITLECONFIG" xml:space="preserve">
+    <value>Загальні властивості безпеки</value>
+  </data>
+  <data name="CTRLADUSEADDS" xml:space="preserve">
+    <value>Використання конфігурації active directory</value>
+  </data>
+  <data name="CTRLAZURETENANTID" xml:space="preserve">
+    <value>Azure Tenant</value>
+  </data>
+  <data name="CTRLAZURETHUMPRINT" xml:space="preserve">
+    <value>Azure Certificate ThumbPrint</value>
+  </data>
+  <data name="CTRLCANCEL" xml:space="preserve">
+    <value>Скасувати</value>
+  </data>
+  <data name="CTRLCUSTOMUSING" xml:space="preserve">
+    <value>Використовувати користувацький репозиторій</value>
+  </data>
+  <data name="CTRLDATAREPOASSEMBLY" xml:space="preserve">
+    <value>Сховище даних (повний клас)</value>
+  </data>
+  <data name="CTRLDLGMAXRETRIES" xml:space="preserve">
+    <value>Максимальна кількість спроб дозволена</value>
+  </data>
+  <data name="CTRLGLALLOWGOOGLESEARCH" xml:space="preserve">
+    <value>Показати пошук Google</value>
+  </data>
+  <data name="CTRLGLCOMANYNAME" xml:space="preserve">
+    <value>Назва компанії</value>
+  </data>
+  <data name="CTRLGLCONTACT" xml:space="preserve">
+    <value>Адміністративний контакт (електронна пошта)</value>
+  </data>
+  <data name="CTRLGLCONTRYCODE" xml:space="preserve">
+    <value>Код країни за промовчанням</value>
+  </data>
+  <data name="CTRLGLDELVERY" xml:space="preserve">
+    <value>Час перевірки (у секундах)</value>
+  </data>
+  <data name="CTRLGLENROLLWIZ" xml:space="preserve">
+    <value>Майстри реєстрації</value>
+  </data>
+  <data name="CTRLGLHASH" xml:space="preserve">
+    <value>Алгоритм хешування</value>
+  </data>
+  <data name="CTRLGLINVALIDEMAILCONTACT" xml:space="preserve">
+    <value>Неприпустимий формат електронної пошти для контакту адміністратора !</value>
+  </data>
+  <data name="CTRLGLMANAGEKMSOO" xml:space="preserve">
+    <value>Користувач може вибрати постачальника за замовчуванням</value>
+  </data>
+  <data name="CTRLGLMANAGENOTIFS" xml:space="preserve">
+    <value>Сповіщати користувачів після зміни конфігурації</value>
+  </data>
+  <data name="CTRLGLMANAGEOPTIONS" xml:space="preserve">
+    <value>Параметри керування користувачами</value>
+  </data>
+  <data name="CTRLGLMANAGEOPTS" xml:space="preserve">
+    <value>Керування параметрами</value>
+  </data>
+  <data name="CTRLGLMANAGEPWD" xml:space="preserve">
+    <value>Керування паролями</value>
+  </data>
+  <data name="CTRLGLMAXCODES" xml:space="preserve">
+    <value>Авторизована історія коду</value>
+  </data>
+  <data name="CTRLGLMFAREGISTER" xml:space="preserve">
+    <value>Реєстрація користувача</value>
+  </data>
+  <data name="CTRLGLMFAREGISTER1" xml:space="preserve">
+    <value>Адміністративна - Реєстрація перевірена підтримкою</value>
+  </data>
+  <data name="CTRLGLMFAREGISTER2" xml:space="preserve">
+    <value>Користувач - Реєстрація, здійснена користувачем</value>
+  </data>
+  <data name="CTRLGLMFAREGISTER3" xml:space="preserve">
+    <value>Некеровані - Зверніться до служби підтримки</value>
+  </data>
+  <data name="CTRLGLMFAREGISTER4" xml:space="preserve">
+    <value>Обов'язкова - Реєстрація здійснюється за допомогою підтримки</value>
+  </data>
+  <data name="CTRLGLMFASTATUS" xml:space="preserve">
+    <value>Статус МЗС</value>
+  </data>
+  <data name="CTRLGLMFASTATUS1" xml:space="preserve">
+    <value>Обов'язковий - МЗС не можна відключати</value>
+  </data>
+  <data name="CTRLGLMFASTATUS2" xml:space="preserve">
+    <value>Необов'язково - МЗС можна відключити в опціях</value>
+  </data>
+  <data name="CTRLGLMFASTATUS3" xml:space="preserve">
+    <value>Не обов'язково</value>
+  </data>
+  <data name="CTRLGLPOLICY" xml:space="preserve">
+    <value>Політика безпеки (модель)</value>
+  </data>
+  <data name="CTRLGLPROVIDER" xml:space="preserve">
+    <value>Постачальник послуг користувача за промовчанням</value>
+  </data>
+  <data name="CTRLGLREFRESH" xml:space="preserve">
+    <value>Частота оновлення (у мілісекундах)</value>
+  </data>
+  <data name="CTRLGLREPLAY" xml:space="preserve">
+    <value>Рівень захисту від повторів</value>
+  </data>
+  <data name="CTRLGLSHOWAUTHY" xml:space="preserve">
+    <value>Показати автентифікацію Authy</value>
+  </data>
+  <data name="CTRLGLSHOWGOOGLE" xml:space="preserve">
+    <value>Показати автентифікатор Google</value>
+  </data>
+  <data name="CTRLGLSHOWMICROSOFT" xml:space="preserve">
+    <value>Показати автентифікатор Microsoft</value>
+  </data>
+  <data name="CTRLGLUSEAPPS" xml:space="preserve">
+    <value>Використання програм для автентифікації (Google Authenticator, Microsoft Authenticator)</value>
+  </data>
+  <data name="CTRLGLUSEMAILS" xml:space="preserve">
+    <value>Використання сповіщень електронною поштою</value>
+  </data>
+  <data name="CTRLGLUSESMS" xml:space="preserve">
+    <value>Використовуйте SMS-сповіщення</value>
+  </data>
+  <data name="CTRLGLUSEUSERLANGS" xml:space="preserve">
+    <value>Використання мов браузера</value>
+  </data>
+  <data name="CTRLINVALIDVALUE" xml:space="preserve">
+    <value>Неприпустиме значення має бути між {0} та {1}.</value>
+  </data>
+  <data name="CTRLKEYSREPOASSEMBLY" xml:space="preserve">
+    <value>Сховище ключів (повний клас)</value>
+  </data>
+  <data name="CTRLMULTVALUED" xml:space="preserve">
+    <value>(*) Підтримує багатозначні властивості рядка</value>
+  </data>
+  <data name="CTRLMUSTACTIVATESVC" xml:space="preserve">
+    <value>Операцію перервано! ви повинні почати місцеву службу ADFS!</value>
+  </data>
+  <data name="CTRLMUSTMULTVALUED" xml:space="preserve">
+    <value>(**) Вимагати багатозначної властивості рядка</value>
+  </data>
+  <data name="CTRLNULLOREMPTYERROR" xml:space="preserve">
+    <value>Пусті або пусті значення не допускаються.</value>
+  </data>
+  <data name="CTRLPROVACTIVE" xml:space="preserve">
+    <value>Активний</value>
+  </data>
+  <data name="CTRLPROVPIN" xml:space="preserve">
+    <value>Обов'язковий пін-код</value>
+  </data>
+  <data name="CTRLPROVREQUIRED" xml:space="preserve">
+    <value>Необхідний</value>
+  </data>
+  <data name="CTRLPROVWIZARD" xml:space="preserve">
+    <value>Майстер реєстрації</value>
+  </data>
+  <data name="CTRLPROVWIZARDSTRICT" xml:space="preserve">
+    <value>Майстер примусової роботи, якщо його не завершено</value>
+  </data>
+  <data name="CTRLSAVE" xml:space="preserve">
+    <value>Рятувати</value>
+  </data>
+  <data name="CTRLSECASSEMBLY" xml:space="preserve">
+    <value>Реалізація (повний клас)</value>
+  </data>
+  <data name="CTRLSECCERTIFDURATION" xml:space="preserve">
+    <value>Термін дії</value>
+  </data>
+  <data name="CTRLSECCERTIFICATES" xml:space="preserve">
+    <value>Сертифікати</value>
+  </data>
+  <data name="CTRLSECCERTPERUSER" xml:space="preserve">
+    <value>Використання одного сертифіката на користувача</value>
+  </data>
+  <data name="CTRLSECINVALIDCERT" xml:space="preserve">
+    <value>Сертифікат не знайдено!</value>
+  </data>
+  <data name="CTRLSECINVALIDEXTERROR" xml:space="preserve">
+    <value>Неприпустиме розширення ! не вдалося завантажити!</value>
+  </data>
+  <data name="CTRLSECKEYGEN" xml:space="preserve">
+    <value>Тип згенерованого ключа</value>
+  </data>
+  <data name="CTRLSECKEYLENGTH" xml:space="preserve">
+    <value>Розмір дисплея ключа</value>
+  </data>
+  <data name="CTRLSECKEYMODE" xml:space="preserve">
+    <value>Режим ключа безпеки</value>
+  </data>
+  <data name="CTRLSECLIBLABEL" xml:space="preserve">
+    <value>Версія бібліотеки шифрування</value>
+  </data>
+  <data name="CTRLSECNEWCERT" xml:space="preserve">
+    <value>Новий сертифікат</value>
+  </data>
+  <data name="CTRLSECNEWCERTCREATED" xml:space="preserve">
+    <value>Сертифікат успішно створено!</value>
+  </data>
+  <data name="CTRLSECNEWCRYPTEDDATABASE" xml:space="preserve">
+    <value>Створення зашифрованої бази даних SQL</value>
+  </data>
+  <data name="CTRLSECNEWDATABASE" xml:space="preserve">
+    <value>Створення бази даних SQL</value>
+  </data>
+  <data name="CTRLSECPARAMS" xml:space="preserve">
+    <value>Параметри</value>
+  </data>
+  <data name="CTRLSECRSAGENERATE" xml:space="preserve">
+    <value>Підтвердити створення нового сертифіката для МЗС? Увага: Всі існуючі ключі будуть недійсними!</value>
+  </data>
+  <data name="CTRLSECTHUMPRINT" xml:space="preserve">
+    <value>Відбиток сертифіката</value>
+  </data>
+  <data name="CTRLSECWARNING" xml:space="preserve">
+    <value>Попередження! Змінення цих значень призведе до втрати всіх поточних ключів</value>
+  </data>
+  <data name="CTRLSECWIZARD" xml:space="preserve">
+    <value>Параметри майстра реєстрації</value>
+  </data>
+  <data name="CTRLSECWIZTITLE" xml:space="preserve">
+    <value>Створення нової бази даних SQL</value>
+  </data>
+  <data name="CTRLSECXORLABEL" xml:space="preserve">
+    <value>Парольна фраза</value>
+  </data>
+  <data name="CTRLSMSASSEMBLY" xml:space="preserve">
+    <value>Реалізація (повний клас)</value>
+  </data>
+  <data name="CTRLSMSASYNCCALL" xml:space="preserve">
+    <value>Асинхронні дзвінки</value>
+  </data>
+  <data name="CTRLSMSCOMPANY" xml:space="preserve">
+    <value>Назва компанії</value>
+  </data>
+  <data name="CTRLSMSIVALIDEXTERROR" xml:space="preserve">
+    <value>Неприпустиме розширення ! не вдалося завантажити!</value>
+  </data>
+  <data name="CTRLSMSPARAMS" xml:space="preserve">
+    <value>Параметри</value>
+  </data>
+  <data name="CTRLSMSSHA1" xml:space="preserve">
+    <value>Сіль SHA1</value>
+  </data>
+  <data name="CTRLSMSTIMEOUT" xml:space="preserve">
+    <value>Тайм-аут</value>
+  </data>
+  <data name="CTRLSMTPACCOUNT" xml:space="preserve">
+    <value>Обліковий запис підключення</value>
+  </data>
+  <data name="CTRLSMTPANONYMOUS" xml:space="preserve">
+    <value>Безіменний</value>
+  </data>
+  <data name="CTRLSMTPCOMPANY" xml:space="preserve">
+    <value>Назва компанії</value>
+  </data>
+  <data name="CTRLSMTPDELIVERYNOTIFICATIONS" xml:space="preserve">
+    <value>Сповіщення про доставку (помилки)</value>
+  </data>
+  <data name="CTRLSMTPFROM" xml:space="preserve">
+    <value>Адміністративний контакт (від)</value>
+  </data>
+  <data name="CTRLSMTPIDENTIFICATION" xml:space="preserve">
+    <value>Ідентифікація</value>
+  </data>
+  <data name="CTRLSMTPMAILERROR" xml:space="preserve">
+    <value>Неприпустимий формат електронної пошти!</value>
+  </data>
+  <data name="CTRLSMTPMESSAGEOK" xml:space="preserve">
+    <value>Тестове повідомлення, надіслане на</value>
+  </data>
+  <data name="CTRLSMTPPASSWORD" xml:space="preserve">
+    <value>Пароль</value>
+  </data>
+  <data name="CTRLSMTPPORT" xml:space="preserve">
+    <value>Порт</value>
+  </data>
+  <data name="CTRLSMTPPORTERROR" xml:space="preserve">
+    <value>Неприпустимий номер порту!</value>
+  </data>
+  <data name="CTRLSMTPSERVER" xml:space="preserve">
+    <value>Поштовий сервер</value>
+  </data>
+  <data name="CTRLSMTPSERVERADDRESS" xml:space="preserve">
+    <value>Адреса сервера</value>
+  </data>
+  <data name="CTRLSMTPTEST" xml:space="preserve">
+    <value>Тест</value>
+  </data>
+  <data name="CTRLSQLCONNECTERROR" xml:space="preserve">
+    <value>Не вдалося підключитися до бази даних SQL MFA!</value>
+  </data>
+  <data name="CTRLSQLCONNECTOK" xml:space="preserve">
+    <value>Підключення на MFA SQL бази даних оперативної !</value>
+  </data>
+  <data name="CTRLSQLCONNECTSTR" xml:space="preserve">
+    <value>Рядок підключення</value>
+  </data>
+  <data name="CTRLSQLCONNECTSTRERROR" xml:space="preserve">
+    <value>Неприпустимий рядок підключення SQL !</value>
+  </data>
+  <data name="CTRLSQLCREATECRYPTEDDB" xml:space="preserve">
+    <value>Створення зашифрованої бази даних МЗС</value>
+  </data>
+  <data name="CTRLSQLCREATEDB" xml:space="preserve">
+    <value>Створення бази даних МЗС</value>
+  </data>
+  <data name="CTRLSQLCRYPTUSING" xml:space="preserve">
+    <value>Використовувати завжди зашифровану функцію (SQL Server 2016 +)</value>
+  </data>
+  <data name="CTRLSQLENCRYPTNAME" xml:space="preserve">
+    <value>Ім'я ключа шифрування</value>
+  </data>
+  <data name="CTRLSQLINVALIDCERTERROR" xml:space="preserve">
+    <value>Неприпустима {0} сертифіката</value>
+  </data>
+  <data name="CTRLSQLMAXROWS" xml:space="preserve">
+    <value>Максимальна кількість рядків</value>
+  </data>
+  <data name="CTRLSQLMAXROWSERROR" xml:space="preserve">
+    <value>{0} неприпустима! має бути від 1000 до 10000000</value>
+  </data>
+  <data name="CTRLSQLNEWDBCREATED" xml:space="preserve">
+    <value>База даних МЗС {0} успішно створена!</value>
+  </data>
+  <data name="CTRLSQLNEWDBCREATED2" xml:space="preserve">
+    <value>База даних МЗС {0} успішно створена! Необхідно розгорнути новий сертифікат {1} на всіх інших серверах ADFS</value>
+  </data>
+  <data name="CTRLSQLREUSECERT" xml:space="preserve">
+    <value>Повторне використання сертифіката</value>
+  </data>
+  <data name="CTRLSQLTEST" xml:space="preserve">
+    <value>Тест</value>
+  </data>
+  <data name="CTRLSQLTHUMBPRINT" xml:space="preserve">
+    <value>Сертифікат thumprint</value>
+  </data>
+  <data name="CTRLSQLUSING" xml:space="preserve">
+    <value>Використання конфігурації SQL Server</value>
+  </data>
+  <data name="CTRLSTUSEADDS" xml:space="preserve">
+    <value>Використання служби Active Directory</value>
+  </data>
+  <data name="CTRLSTUSECUSTOM" xml:space="preserve">
+    <value>Використання настроюваного сховища</value>
+  </data>
+  <data name="CTRLSTUSESQL" xml:space="preserve">
+    <value>Використання SQL Server</value>
+  </data>
+  <data name="CTRLWEBAUTHNATTACHEMENT" xml:space="preserve">
+    <value>Вкладення автентифікатора</value>
+  </data>
+  <data name="CTRLWEBAUTHNAUTOLOGIN" xml:space="preserve">
+    <value>Швидкий вхід</value>
+  </data>
+  <data name="CTRLWEBAUTHNCHALLENGE" xml:space="preserve">
+    <value>Розмір виклику</value>
+  </data>
+  <data name="CTRLWEBAUTHNCONVEYANCE" xml:space="preserve">
+    <value>Перевага передачі атестації</value>
+  </data>
+  <data name="CTRLWEBAUTHNDRIFTTOLERANCE" xml:space="preserve">
+    <value>Допуск дрейфу часової позначки</value>
+  </data>
+  <data name="CTRLWEBAUTHNEXTENSIONS" xml:space="preserve">
+    <value>Розширення (екстерпи)</value>
+  </data>
+  <data name="CTRLWEBAUTHNRESIDENTKEY" xml:space="preserve">
+    <value>Вимагати ключ резидента</value>
+  </data>
+  <data name="CTRLWEBAUTHNROOTATTESTATION" xml:space="preserve">
+    <value>Вимагати дійсного кореневого сертифіката атестації</value>
+  </data>
+  <data name="CTRLWEBAUTHNSERVERDOMAIN" xml:space="preserve">
+    <value>Домен сервера</value>
+  </data>
+  <data name="CTRLWEBAUTHNSERVERNAME" xml:space="preserve">
+    <value>Ім'я сервера</value>
+  </data>
+  <data name="CTRLWEBAUTHNSERVERURL" xml:space="preserve">
+    <value>Url-адреса сервера</value>
+  </data>
+  <data name="CTRLWEBAUTHNTIMEOUT" xml:space="preserve">
+    <value>Тайм-аут (мс)</value>
+  </data>
+  <data name="CTRLWEBAUTHNUSERINDEX" xml:space="preserve">
+    <value>Індекс перевірки користувачів (uvi)</value>
+  </data>
+  <data name="CTRLWEBAUTHNUSERLOCATION" xml:space="preserve">
+    <value>Розташування користувача</value>
+  </data>
+  <data name="CTRLWEBAUTHNUSERMETHOD" xml:space="preserve">
+    <value>Метод перевірки користувача (uvm)</value>
+  </data>
+  <data name="CTRLWEBAUTHNUSERVERFICATION" xml:space="preserve">
+    <value>Вимога перевірки атестації користувачів</value>
+  </data>
+  <data name="CTRLCUSTOMKEYSERROR" xml:space="preserve">
+    <value>Неприпустиме розширення ! не вдалося завантажити!</value>
+  </data>
+  <data name="CTRLWEBAUTHNSHOWPII" xml:space="preserve">
+    <value>Показати конфіденційні журнали</value>
+  </data>
+  <data name="CTRLGLDURATION" xml:space="preserve">
+    <value>Тривалість</value>
+  </data>
+  <data name="CTRLGLMAXDIGITS" xml:space="preserve">
+    <value>Цифр</value>
+  </data>
+  <data name="CTRLGLTOTPWARN" xml:space="preserve">
+    <value>Підтримка rfc6238 - Ваш додаток-автентифікатор повинен підтримувати його (Yubico, Authy)</value>
+  </data>
+  <data name="CTRLPROVPINREQUIRED" xml:space="preserve">
+    <value>Увімкнути PIN-код для певного автентифікатора, якщо присутність користувача не виявлено</value>
+  </data>
+  <data name="CTRLSQLATTPASSWORD" xml:space="preserve">
+    <value>Неприпустимий пароль SQLServer !</value>
+  </data>
+  <data name="CTRLSQLATTACCOUNT" xml:space="preserve">
+    <value>Неприпустимий обліковий запис SQLServer !</value>
+  </data>
+  <data name="CTRLSQLSUPERACCOUNT" xml:space="preserve">
+    <value>"Обліковий запис А комп'ютера доступу до даних" SQL Server</value>
+  </data>
+  <data name="CTRLSQLCONNECTIONOK" xml:space="preserve">
+    <value>Підключення до SQL-сервера працює!</value>
+  </data>
+  <data name="CTRLSQLCONNECTIONERROR" xml:space="preserve">
+    <value>Не вдалося підключитися до SQL Server!</value>
+  </data>
+  <data name="CTRLPASSWORDPOLICY" xml:space="preserve">
+    <value>Політика паролів</value>
+  </data>
+  <data name="CTRLUSEPASSWORDPOLICY" xml:space="preserve">
+    <value>Активація політики паролів</value>
+  </data>
+  <data name="CTRLUSEPSOPASSWORDPOLICY" xml:space="preserve">
+    <value>Використання політики корпоративних паролів (ПСО)</value>
+  </data>
+  <data name="CTRLLOCKUSERONPASSWORDEXPIRED" xml:space="preserve">
+    <value>Блокування користувача, якщо термін дії пароля минув</value>
+  </data>
+  <data name="CTRLMAXPASSWORDAGEINDAYS" xml:space="preserve">
+    <value>Максимальний термін служби пароля</value>
+  </data>
+  <data name="CTRLWARNMAXPASSWORDAGEINDAYS" xml:space="preserve">
+    <value>Сповіщати користувача до закінчення терміну дії пароля</value>
+  </data>
+  <data name="CTRLWEBAUTHNUSENICKNAMES" xml:space="preserve">
+    <value>Запитайте назву для біометричних пристроїв</value>
+  </data>
+  <data name="CTRLSECGENKEYS" xml:space="preserve">
+    <value>Генерувати ключі</value>
+  </data>
+  <data name="CTRLSECAESWARNING" xml:space="preserve">
+    <value>Попередження! створення нових ключів призведе до недійсності всіх поточних ключів користувачів</value>
+  </data>
+  <data name="CTRLSECAESOK" xml:space="preserve">
+    <value>Нові ключі успішно створено!</value>
+  </data>
+  <data name="CTRLSECAESDEPLOYED" xml:space="preserve">
+    <value>Поточні ключі успішно розгорнуто!</value>
+  </data>
+  <data name="CTRLSECAESDELETED" xml:space="preserve">
+    <value>Поточні ключі успішно видалено!</value>
+  </data>
+  <data name="CTRLSECGENRSAKEY" xml:space="preserve">
+    <value>Головний ключ RSA</value>
+  </data>
+  <data name="CTRLWEBAUTHNCONTRAINEDMETADATA" xml:space="preserve">
+    <value>Використовувати службу обмежених метаданих (для ферми ADFS, яка не має доступу до Інтернету)</value>
+  </data>
+  <data name="CTRLGLSHOWCUSTOM" xml:space="preserve">
+    <value>Показати настроюваний автентифікатор</value>
+  </data>
+  <data name="CTRGLPAUSEFORDAYS" xml:space="preserve">
+    <value>Дозволити призупиненню роботи МЗС на (x) дні</value>
+  </data>
+  <data name="CTRLPROVWIZARDDISABLED" xml:space="preserve">
+    <value>Майстер вимкнено під час реєстрації</value>
+  </data>
+</root>

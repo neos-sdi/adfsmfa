@@ -357,4 +357,10 @@
   <data name="SECURITYSCOPECUSTOM" xml:space="preserve">
     <value>Taste particularizate</value>
   </data>
+  <data name="ROOTLANGUAGEUK" xml:space="preserve">
+    <value>Ucraineană</value>
+  </data>
+  <data name="ROOTLANGUAGEUKDESC" xml:space="preserve">
+    <value>Modificarea culturii interfeței cu utilizatorul în limba ucraineană (1058)</value>
+  </data>
 </root>

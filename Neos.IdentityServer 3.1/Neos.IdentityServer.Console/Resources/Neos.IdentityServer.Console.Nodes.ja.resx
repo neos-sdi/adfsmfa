@@ -357,4 +357,10 @@
   <data name="SECURITYSCOPECUSTOM" xml:space="preserve">
     <value>カスタムキー</value>
   </data>
+  <data name="ROOTLANGUAGEUK" xml:space="preserve">
+    <value>ウクライナ語</value>
+  </data>
+  <data name="ROOTLANGUAGEUKDESC" xml:space="preserve">
+    <value>ウクライナ語 (1058) のユーザー インターフェイスのカルチャを変更します。</value>
+  </data>
 </root>

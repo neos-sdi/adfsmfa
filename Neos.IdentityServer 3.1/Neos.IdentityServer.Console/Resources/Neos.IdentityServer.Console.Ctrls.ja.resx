@@ -732,4 +732,13 @@
   <data name="CTRLWEBAUTHNCONTRAINEDMETADATA" xml:space="preserve">
     <value>制約付きメタデータ サービスを使用する (インターネットアクセスがない ADFS ファームの場合)</value>
   </data>
+  <data name="CTRLGLSHOWCUSTOM" xml:space="preserve">
+    <value>カスタム認証システムを表示する</value>
+  </data>
+  <data name="CTRGLPAUSEFORDAYS" xml:space="preserve">
+    <value>MFA を (x) 日間一時停止できるようにする</value>
+  </data>
+  <data name="CTRLPROVWIZARDDISABLED" xml:space="preserve">
+    <value>登録時に無効になっているウィザード</value>
+  </data>
 </root>

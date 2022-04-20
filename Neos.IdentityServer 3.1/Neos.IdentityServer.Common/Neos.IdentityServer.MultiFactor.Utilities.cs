@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2022 @redhook62 (adfsmfa@gmail.com)                                                                                                                                        //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -11,7 +11,7 @@
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,                            //
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                               //
 //                                                                                                                                                                                          //
-//                                                                                                                                                             //
+//                                                                                                                                                                                          //
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
@@ -941,7 +941,7 @@ namespace Neos.IdentityServer.MultiFactor
                     KeysManager.ReadKey(user);
                     break;
                 case KeysDataManagerEventKind.Remove:
-                    KeysManager.RemoveKey(user);
+                    KeysManager.RemoveKey(user, true);
                     break;
             }
         }
@@ -991,9 +991,13 @@ namespace Neos.IdentityServer.MultiFactor
             }
             client.OnKeyDataEvent += KeyDataEvent;
             if (reg.PIN <= 0)
-                reg.PIN = cfg.DefaultPin;
+                reg.PIN = Convert.ToInt32(cfg.DefaultPin);
             if (reg.OverrideMethod == null)
                 reg.OverrideMethod = string.Empty;
+            if (!Utilities.ValidateEmail(reg.MailAddress, (cfg.MailProvider.Enabled && cfg.MailProvider.IsRequired)))
+                throw new Exception(string.Format("invalid mail address for user : {0}", reg.UPN));
+            if (!Utilities.ValidatePhoneNumber(reg.PhoneNumber, (cfg.ExternalProvider.Enabled && cfg.ExternalProvider.IsRequired)))
+                throw new Exception(string.Format("invalid phone number for user : {0}", reg.UPN));
             MFAUser newreg = client.SetMFAUser(reg, resetkey, caninsert);
             if (newreg != null)
             {
@@ -1039,9 +1043,15 @@ namespace Neos.IdentityServer.MultiFactor
                     break;
             }
             if (reg.PIN <= 0)
-                reg.PIN = cfg.DefaultPin;
+                reg.PIN = Convert.ToInt32(cfg.DefaultPin);
             if (reg.OverrideMethod == null)
                 reg.OverrideMethod = string.Empty;
+            if (reg.PreferredMethod == PreferredMethod.None)
+                reg.PreferredMethod = cfg.DefaultProviderMethod;
+            if (!Utilities.ValidateEmail(reg.MailAddress, (cfg.MailProvider.Enabled && cfg.MailProvider.IsRequired)))
+                throw new Exception(string.Format("invalid mail address for user : {0}", reg.UPN));
+            if (!Utilities.ValidatePhoneNumber(reg.PhoneNumber, (cfg.ExternalProvider.Enabled && cfg.ExternalProvider.IsRequired)))
+                throw new Exception(string.Format("invalid phone number for user : {0}", reg.UPN));
             client.OnKeyDataEvent += KeyDataEvent;
             MFAUser newreg = client.AddMFAUser(reg, resetkey, canupdate);
             if (newreg != null)
@@ -1575,11 +1585,11 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// RemoveUserKey method implmentation
         /// </summary>
-        internal static bool RemoveUserKey(MFAConfig config, string upn)
+        internal static bool RemoveUserKey(MFAConfig config, string upn, bool fullclear = true)
         {
             try
             {
-                return KeysManager.RemoveKey(upn);
+                return KeysManager.RemoveKey(upn, fullclear);
             }
             catch (Exception ex)
             {
@@ -2591,9 +2601,9 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// RemoveKey method implementation
         /// </summary>
-        internal static bool RemoveKey(string upn)
+        internal static bool RemoveKey(string upn, bool fullclear)
         {
-            return Manager.RemoveKey(upn);
+            return Manager.RemoveKey(upn, fullclear);
         }
 
         /// <summary>
@@ -2625,7 +2635,7 @@ namespace Neos.IdentityServer.MultiFactor
                 Port = mail.Port,
                 UseDefaultCredentials = false,
                 DeliveryMethod = SmtpDeliveryMethod.Network,
-                EnableSsl = mail.UseSSL
+                EnableSsl = mail.UseSSL 
             };
             if (!mail.Anonymous)
                 client.Credentials = new NetworkCredential(mail.UserName, mail.Password);
@@ -2673,30 +2683,49 @@ namespace Neos.IdentityServer.MultiFactor
                     name = upn.Remove(2, upn.IndexOf('@') - 2).Insert(2, "*********");
                 else
                     name = upn;
-                MailMessage Message = new MailMessage(mail.From, to)
+                if (!File.Exists(SystemUtilities.SystemRootDir + Path.DirectorySeparatorChar + "Logo.png"))
                 {
-                    BodyEncoding = UTF8Encoding.UTF8,
-                    IsBodyHtml = true,
-                    Body = string.Format(html, mail.Company, name, code, to)
-                };
-
-                if (mail.DeliveryNotifications)
-                    Message.DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure | DeliveryNotificationOptions.Delay;
-                else
-                    Message.DeliveryNotificationOptions = DeliveryNotificationOptions.Never;
-
-                lock (lck)
-                {
-                    Group titlegrp = Regex.Match(html, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"];
-                    if (titlegrp != null)
-                        Message.Subject = string.Format(titlegrp.Value, mail.Company, name, code, to);
-                    if (Message.Subject == string.Empty)
-                    {
-                        ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
-                        Message.Subject = Resources.GetString(ResourcesLocaleKind.CommonMail, "MailOTPTitle");
-                    }
+                    var bmp = new Bitmap(1, 1);
+                    bmp.Save(SystemUtilities.SystemRootDir + Path.DirectorySeparatorChar + "Logo.png");
                 }
-                SendMail(Message, mail);
+                using (Stream logo = new FileStream(SystemUtilities.SystemRootDir + Path.DirectorySeparatorChar + "Logo.png", FileMode.Open, FileAccess.Read))
+                {
+                    logo.Position = 0;
+                    var inlineLogo = new LinkedResource(logo, "image/png")
+                    {
+                        ContentId = Guid.NewGuid().ToString()
+                    };
+
+                    MailAddress mailfrom = Utilities.MakeMailAddress(mail.From);
+                    MailAddress mailto = Utilities.MakeMailAddress(to);
+                    MailMessage Message = new MailMessage(mailfrom, mailto)
+                    {
+                        BodyEncoding = UTF8Encoding.UTF8,
+                        IsBodyHtml = true,
+                        Body = string.Format(html, mail.Company, name, code, mailto.Address, inlineLogo.ContentId)
+                    };
+
+                    if (mail.DeliveryNotifications)
+                        Message.DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure | DeliveryNotificationOptions.Delay;
+                    else
+                        Message.DeliveryNotificationOptions = DeliveryNotificationOptions.Never;
+
+                    lock (lck)
+                    {
+                        Group titlegrp = Regex.Match(html, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"];
+                        if (titlegrp != null)
+                            Message.Subject = string.Format(titlegrp.Value, mail.Company, name, code, mailto.Address, inlineLogo.ContentId);
+                        if (Message.Subject == string.Empty)
+                        {
+                            ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
+                            Message.Subject = Resources.GetString(ResourcesLocaleKind.CommonMail, "MailOTPTitle");
+                        }
+                    }
+                    var view = AlternateView.CreateAlternateViewFromString(Message.Body, null, "text/html");
+                    view.LinkedResources.Add(inlineLogo);
+                    Message.AlternateViews.Add(view);
+                    SendMail(Message, mail);
+                }
             }
             catch (SmtpException sm)
             {
@@ -2747,30 +2776,54 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 string sendermail = GetUserBusinessEmail(user.UPN);
                 string html = StripEmailContent(htmlres);
-                MailMessage Message = new MailMessage(mail.From, to);
-                if (!string.IsNullOrEmpty(sendermail))
-                    Message.CC.Add(sendermail);
-                Message.BodyEncoding = UTF8Encoding.UTF8;
-                Message.IsBodyHtml = true;
-                Message.Body = string.Format(htmlres, mail.Company, user.UPN, user.MailAddress, user.PhoneNumber, user.PreferredMethod);
-
-                if (mail.DeliveryNotifications)
-                    Message.DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure | DeliveryNotificationOptions.Delay;
-                else
-                    Message.DeliveryNotificationOptions = DeliveryNotificationOptions.Never;
-
-                lock (lck)
+                if (!File.Exists(SystemUtilities.SystemRootDir + Path.DirectorySeparatorChar + "Logo.png"))
                 {
-                    Group titlegrp = Regex.Match(html, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"];
-                    if (titlegrp != null)
-                        Message.Subject = string.Format(titlegrp.Value, mail.Company, user.UPN, user.MailAddress, user.PhoneNumber, user.PreferredMethod);
-                    if (Message.Subject == string.Empty)
-                    {
-                        ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
-                        Message.Subject = string.Format(Resources.GetString(ResourcesLocaleKind.CommonMail, "MailAdminTitle"), user.UPN);
-                    }
+                    var bmp = new Bitmap(1, 1);
+                    bmp.Save(SystemUtilities.SystemRootDir + Path.DirectorySeparatorChar + "Logo.png");
                 }
-                SendMail(Message, mail);
+                using (Stream logo = new FileStream(SystemUtilities.SystemRootDir + Path.DirectorySeparatorChar + "Logo.png", FileMode.Open, FileAccess.Read))
+                {
+                    logo.Position = 0;
+                    var inlineLogo = new LinkedResource(logo, "image/png")
+                    {
+                        ContentId = Guid.NewGuid().ToString()
+                    };
+
+                    MailAddress mailfrom = Utilities.MakeMailAddress(mail.From);
+                    MailAddress mailto = Utilities.MakeMailAddress(to);
+                    MailAddress mailuser = Utilities.MakeMailAddress(user.MailAddress);
+
+                    MailMessage Message = new MailMessage(mailfrom, mailto);
+                    if (!string.IsNullOrEmpty(sendermail))
+                    {
+                        MailAddress mailcc = Utilities.MakeMailAddress(sendermail);
+                        Message.CC.Add(mailcc);
+                    }
+                    Message.BodyEncoding = UTF8Encoding.UTF8;
+                    Message.IsBodyHtml = true;
+                    Message.Body = string.Format(htmlres, mail.Company, user.UPN, user.MailAddress, user.PhoneNumber, user.PreferredMethod, inlineLogo.ContentId);
+
+                    if (mail.DeliveryNotifications)
+                        Message.DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure | DeliveryNotificationOptions.Delay;
+                    else
+                        Message.DeliveryNotificationOptions = DeliveryNotificationOptions.Never;
+
+                    lock (lck)
+                    {
+                        Group titlegrp = Regex.Match(html, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"];
+                        if (titlegrp != null)
+                            Message.Subject = string.Format(titlegrp.Value, mail.Company, user.UPN, mailuser.Address, user.PhoneNumber, user.PreferredMethod, inlineLogo.ContentId);
+                        if (Message.Subject == string.Empty)
+                        {
+                            ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
+                            Message.Subject = string.Format(Resources.GetString(ResourcesLocaleKind.CommonMail, "MailAdminTitle"), user.UPN);
+                        }
+                    }
+                    var view = AlternateView.CreateAlternateViewFromString(Message.Body, null, "text/html");
+                    view.LinkedResources.Add(inlineLogo);
+                    Message.AlternateViews.Add(view);
+                    SendMail(Message, mail);
+                }
             }
             catch (SmtpException sm)
             {
@@ -2824,43 +2877,62 @@ namespace Neos.IdentityServer.MultiFactor
 
                 string sendermail = GetUserBusinessEmail(upn);
                 string html = StripEmailContent(htmlres);
-                using (Stream qrcode = QRUtilities.GetQRCodeStream(upn, key, config))
+                if (!File.Exists(SystemUtilities.SystemRootDir + Path.DirectorySeparatorChar + "Logo.png"))
                 {
-                    qrcode.Position = 0;
-                    var inlineLogo = new LinkedResource(qrcode, "image/png")
+                    var bmp = new Bitmap(1, 1);
+                    bmp.Save(SystemUtilities.SystemRootDir + Path.DirectorySeparatorChar + "Logo.png");
+                }
+                using (Stream logo = new FileStream(SystemUtilities.SystemRootDir + Path.DirectorySeparatorChar + "Logo.png", FileMode.Open, FileAccess.Read))
+                {
+                    logo.Position = 0;
+                    var inlineLogo = new LinkedResource(logo, "image/png")
                     {
                         ContentId = Guid.NewGuid().ToString()
                     };
-
-                    MailMessage Message = new MailMessage(mail.From, to);
-                    if (!string.IsNullOrEmpty(sendermail))
-                        Message.CC.Add(sendermail);
-                    Message.BodyEncoding = UTF8Encoding.UTF8;
-                    Message.IsBodyHtml = true;
-
-                    if (mail.DeliveryNotifications)
-                        Message.DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure | DeliveryNotificationOptions.Delay;
-                    else
-                        Message.DeliveryNotificationOptions = DeliveryNotificationOptions.Never;
-
-                    lock (lck)
+                    using (Stream qrcode = QRUtilities.GetQRCodeStream(upn, key, config))
                     {
-                        Group titlegrp = Regex.Match(html, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"];
-                        if (titlegrp != null)
-                            Message.Subject = string.Format(titlegrp.Value, mail.Company, upn, key, inlineLogo.ContentId, to);
-                        if (Message.Subject == string.Empty)
+                        qrcode.Position = 0;
+                        var inlineKey = new LinkedResource(qrcode, "image/png")
                         {
-                            ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
-                            Message.Subject = Resources.GetString(ResourcesLocaleKind.CommonMail, "MailKeyTitle");
+                            ContentId = Guid.NewGuid().ToString()
+                        };
+                        MailAddress mailfrom = Utilities.MakeMailAddress(mail.From);
+                        MailAddress mailto = Utilities.MakeMailAddress(to);
+                        MailMessage Message = new MailMessage(mailfrom, mailto);
+                        if (!string.IsNullOrEmpty(sendermail))
+                        {
+                            MailAddress mailcc = Utilities.MakeMailAddress(sendermail);
+                            Message.CC.Add(mailcc);
                         }
-                    }
-                    Message.Priority = MailPriority.High;
+                        Message.BodyEncoding = UTF8Encoding.UTF8;
+                        Message.IsBodyHtml = true;
 
-                    string body = string.Format(html, mail.Company, upn, key, inlineLogo.ContentId, to);
-                    var view = AlternateView.CreateAlternateViewFromString(body, null, "text/html");
-                    view.LinkedResources.Add(inlineLogo);
-                    Message.AlternateViews.Add(view);
-                    SendMail(Message, mail);
+                        if (mail.DeliveryNotifications)
+                            Message.DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure | DeliveryNotificationOptions.Delay;
+                        else
+                            Message.DeliveryNotificationOptions = DeliveryNotificationOptions.Never;
+
+                        lock (lck)
+                        {
+                            Group titlegrp = Regex.Match(html, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"];
+                            if (titlegrp != null)
+                                Message.Subject = string.Format(titlegrp.Value, mail.Company, upn, key, inlineKey.ContentId, to, inlineLogo.ContentId);
+                            if (Message.Subject == string.Empty)
+                            {
+                                ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
+                                Message.Subject = Resources.GetString(ResourcesLocaleKind.CommonMail, "MailKeyTitle");
+                            }
+                        }
+                        Message.Priority = MailPriority.High;
+                        IEnumerable<string> xkey = key.Split(40);
+                        string skey = "<br>"+string.Join("<br>", xkey);
+                        string body = string.Format(html, mail.Company, upn, skey, inlineKey.ContentId, to, inlineLogo.ContentId);
+                        var view = AlternateView.CreateAlternateViewFromString(body, null, "text/html");
+                        view.LinkedResources.Add(inlineKey);
+                        view.LinkedResources.Add(inlineLogo);
+                        Message.AlternateViews.Add(view);
+                        SendMail(Message, mail);
+                    }
                 }
             }
             catch (SmtpException sm)
@@ -2915,31 +2987,50 @@ namespace Neos.IdentityServer.MultiFactor
                         htmlres = Resources.GetString(ResourcesLocaleKind.CommonMail, "MailNotifications");
                     }
                 }
-                string html = StripEmailContent(htmlres);
-                MailMessage Message = new MailMessage(mail.From, user.MailAddress)
+                if (!File.Exists(SystemUtilities.SystemRootDir + Path.DirectorySeparatorChar + "Logo.png"))
                 {
-                    BodyEncoding = UTF8Encoding.UTF8,
-                    IsBodyHtml = true,
-                    Body = string.Format(html, user.UPN, mail.Company, user.MailAddress)
-                };
-
-                if (mail.DeliveryNotifications)
-                    Message.DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure | DeliveryNotificationOptions.Delay;
-                else
-                    Message.DeliveryNotificationOptions = DeliveryNotificationOptions.Never;
-
-                lock (lck)
-                {
-                    Group titlegrp = Regex.Match(html, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"];
-                    if (titlegrp != null)
-                        Message.Subject = string.Format(titlegrp.Value, user.UPN, mail.Company, user.MailAddress);
-                    if (Message.Subject == string.Empty)
-                    {
-                        ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
-                        Message.Subject = string.Format(Resources.GetString(ResourcesLocaleKind.CommonMail, "MailNotificationsTitle"), user.UPN);
-                    }
+                    var bmp = new Bitmap(1, 1);
+                    bmp.Save(SystemUtilities.SystemRootDir + Path.DirectorySeparatorChar + "Logo.png");
                 }
-                SendMail(Message, mail);
+                using (Stream logo = new FileStream(SystemUtilities.SystemRootDir + Path.DirectorySeparatorChar + "Logo.png", FileMode.Open, FileAccess.Read))
+                {
+                    logo.Position = 0;
+                    var inlineLogo = new LinkedResource(logo, "image/png")
+                    {
+                        ContentId = Guid.NewGuid().ToString()
+                    };
+                    string html = StripEmailContent(htmlres);
+                    MailAddress mailfrom = Utilities.MakeMailAddress(mail.From);
+                    MailAddress mailuser = Utilities.MakeMailAddress(user.MailAddress);
+
+                    MailMessage Message = new MailMessage(mailfrom, mailuser)
+                    {
+                        BodyEncoding = UTF8Encoding.UTF8,
+                        IsBodyHtml = true,
+                        Body = string.Format(html, user.UPN, mail.Company, mailuser.Address, inlineLogo.ContentId)
+                    };
+
+                    if (mail.DeliveryNotifications)
+                        Message.DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure | DeliveryNotificationOptions.Delay;
+                    else
+                        Message.DeliveryNotificationOptions = DeliveryNotificationOptions.Never;
+
+                    lock (lck)
+                    {
+                        Group titlegrp = Regex.Match(html, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"];
+                        if (titlegrp != null)
+                            Message.Subject = string.Format(titlegrp.Value, user.UPN, mail.Company, mailuser.Address, inlineLogo.ContentId);
+                        if (Message.Subject == string.Empty)
+                        {
+                            ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
+                            Message.Subject = string.Format(Resources.GetString(ResourcesLocaleKind.CommonMail, "MailNotificationsTitle"), user.UPN);
+                        }
+                    }
+                    var view = AlternateView.CreateAlternateViewFromString(Message.Body, null, "text/html");
+                    view.LinkedResources.Add(inlineLogo);
+                    Message.AlternateViews.Add(view);
+                    SendMail(Message, mail);
+                }
             }
             catch (SmtpException sm)
             {
@@ -2983,8 +3074,8 @@ namespace Neos.IdentityServer.MultiFactor
 
                 if (string.IsNullOrEmpty(email))
                     return string.Empty;
-                else
-                    return email.Substring(email.IndexOf("@", 0));
+                var addr = Utilities.MakeMailAddress(email);
+                return addr.Address.Substring(addr.Address.IndexOf("@", 0));
             }
             catch
             {
@@ -3139,7 +3230,7 @@ namespace Neos.IdentityServer.MultiFactor
                     BroadcastNotification(config, NotificationsKind.ConfigurationCreated, Environment.MachineName, true, true);
                 }
             }
-            ClaimsUtilities.LoadIdentityClaim();
+            ADDSClaimsUtilities.LoadIdentityClaim();
             return config;
         }
 
@@ -3192,6 +3283,8 @@ namespace Neos.IdentityServer.MultiFactor
                         config.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(config.Hosts.ActiveDirectoryHost.Password, "ADDS Super Account Password");
                         config.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(config.Hosts.SQLServerHost.SQLPassword, "SQL Super Account Password");
                         config.MailProvider.Password = MSIS.Decrypt(config.MailProvider.Password, "Mail Provider Account Password");
+                        config.DefaultPin = MSIS.Decrypt(config.DefaultPin.ToString(), "Default Users Pin");
+                        config.AdministrationPin = MSIS.Decrypt(config.AdministrationPin.ToString(), "Administration Pin");
                     };
                     ADDSUtils.LoadForests(config.Hosts.ActiveDirectoryHost.DomainName, config.Hosts.ActiveDirectoryHost.Account, config.Hosts.ActiveDirectoryHost.Password, config.Hosts.ActiveDirectoryHost.UseSSL, true);
                     KeysManager.Initialize(config);  // Important
@@ -3247,6 +3340,8 @@ namespace Neos.IdentityServer.MultiFactor
                                 config.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(config.Hosts.ActiveDirectoryHost.Password, "ADDS Super Account Password");
                                 config.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(config.Hosts.SQLServerHost.SQLPassword, "SQL Super Account Password");
                                 config.MailProvider.Password = MSIS.Decrypt(config.MailProvider.Password, "Mail Provider Account Password");
+                                config.DefaultPin = MSIS.Decrypt(config.DefaultPin, "Default Users Pin");
+                                config.AdministrationPin = MSIS.Decrypt(config.AdministrationPin, "Administration Pin");
                             };
                             ADDSUtils.LoadForests(config.Hosts.ActiveDirectoryHost.DomainName, config.Hosts.ActiveDirectoryHost.Account, config.Hosts.ActiveDirectoryHost.Password, config.Hosts.ActiveDirectoryHost.UseSSL, true);
                             KeysManager.Initialize(config);  // Important
@@ -3351,6 +3446,8 @@ namespace Neos.IdentityServer.MultiFactor
                         config.Hosts.ActiveDirectoryHost.Password = MSIS.Encrypt(config.Hosts.ActiveDirectoryHost.Password, "ADDS Super Account Password");
                         config.Hosts.SQLServerHost.SQLPassword = MSIS.Encrypt(config.Hosts.SQLServerHost.SQLPassword, "SQL Super Account Password");
                         config.MailProvider.Password = MSIS.Encrypt(config.MailProvider.Password, "Mail Provider Account Password");
+                        config.DefaultPin = MSIS.Encrypt(config.DefaultPin, "Default Users Pin");
+                        config.AdministrationPin = MSIS.Encrypt(config.AdministrationPin, "Administration Pin");
                     };
                 }
                 config.LastUpdated = DateTime.UtcNow;
@@ -3414,6 +3511,8 @@ namespace Neos.IdentityServer.MultiFactor
                         config.Hosts.ActiveDirectoryHost.Password = MSIS.Encrypt(config.Hosts.ActiveDirectoryHost.Password, "ADDS Super Account Password");
                         config.Hosts.SQLServerHost.SQLPassword = MSIS.Encrypt(config.Hosts.SQLServerHost.SQLPassword, "SQL Super Account Password");
                         config.MailProvider.Password = MSIS.Encrypt(config.MailProvider.Password, "Mail Provider Account Password");
+                        config.DefaultPin = MSIS.Encrypt(config.DefaultPin, "Default Users Pin");
+                        config.AdministrationPin = MSIS.Encrypt(config.AdministrationPin, "Administration Pin");
                     };
                 }
                 XmlConfigSerializer xmlserializer = new XmlConfigSerializer(typeof(MFAConfig));
@@ -3717,6 +3816,41 @@ namespace Neos.IdentityServer.MultiFactor
             return type[0].Trim();
         }
 
+
+        /// <summary>
+        /// ValidateEmail method implementation
+        /// </summary>
+        public static MailAddress MakeMailAddress(string email)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(email))
+                    throw new ArgumentNullException("MailAddress", "Email address not provided !") ;
+                int f = email.IndexOf('<');
+                int l = email.IndexOf('>');
+                int f2 = email.IndexOf('[');
+                int l2 = email.IndexOf(']');
+                string trueemail = email;
+                string displayname = string.Empty;
+                if ((f >= 0) && (l > f))
+                {
+                    trueemail = email.Substring(f + 1, (l - f) - 1);
+                    displayname = email.Substring(0, f - 1).Trim();
+                }
+                else if ((f2 >= 0) && (l2 > f2))
+                {
+                    trueemail = email.Substring(f2 + 1, (l2 - f2) - 1);
+                    displayname = email.Substring(0, f2 - 1).Trim();
+                }
+                return new System.Net.Mail.MailAddress(trueemail, displayname);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(ex.Message, EventLogEntryType.Error, 800);
+                return null;
+            }
+        }
+
         /// <summary>
         /// ValidateEmail method implementation
         /// </summary>
@@ -3729,11 +3863,8 @@ namespace Neos.IdentityServer.MultiFactor
                         return false;
                     else
                         return true;
-                var addr = new System.Net.Mail.MailAddress(email);
-                if (addr.Address != email)
-                    return false;
-                else
-                    return true;
+                var addr = MakeMailAddress(email);
+                return true;
             }
             catch (Exception ex)
             {
@@ -3844,7 +3975,10 @@ namespace Neos.IdentityServer.MultiFactor
                 if (string.IsNullOrEmpty(email))
                     return string.Empty;
                 else
-                    return email.Remove(0, email.IndexOf('@') + 1);
+                {
+                    var addr = MakeMailAddress(email);
+                    return addr.Host;
+                }
             }
             catch
             {
@@ -3900,8 +4034,15 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 case WizardContextMode.Invitation:
                 case WizardContextMode.Registration:
-                    return false;
+                    if (prov == null)
+                        return false;
+                    if (prov.IsRequired)
+                        return false;
+                    else
+                        return true;
                 case WizardContextMode.ForceWizard:
+                    if (prov == null)
+                        return false;
                     if ((usercontext.UIMode == mode) && (prov.ForceEnrollment == ForceWizardMode.Strict))
                         return false;
                     else
@@ -3926,48 +4067,54 @@ namespace Neos.IdentityServer.MultiFactor
                     goto case PreferredMethod.Code;
                 case PreferredMethod.Code:
                     IExternalProvider prov1 = RuntimeAuthProvider.GetProvider(PreferredMethod.Code);
-                    if ((prov1 != null) && (prov1.Enabled))
-                    {
-                        isrequired = prov1.IsRequired;
-                        usercontext.EnrollPageID = PreferredMethod.Code;
-                        return PreferredMethod.Code;
-                    }
-                    else
+                    if (prov1 == null)
                         goto case PreferredMethod.Email;
+                    if (!prov1.Enabled)
+                        goto case PreferredMethod.Email;
+                    if ((!prov1.IsRequired) && (prov1.WizardDisabled))
+                        goto case PreferredMethod.Email;
+                    isrequired = prov1.IsRequired;
+                    usercontext.EnrollPageID = PreferredMethod.Code;
+                    return PreferredMethod.Code;
                 case PreferredMethod.Email:
                     IExternalProvider prov2 = RuntimeAuthProvider.GetProvider(PreferredMethod.Email);
-                    if ((prov2 != null) && (prov2.Enabled))
-                    {
-                        isrequired = prov2.IsRequired;
-                        usercontext.EnrollPageID = PreferredMethod.Email;
-                        return PreferredMethod.Email;
-                    }
-                    else
+                    if (prov2 == null)
                         goto case PreferredMethod.External;
+                    if (!prov2.Enabled)
+                        goto case PreferredMethod.External;
+                    if ((!prov2.IsRequired) && (prov2.WizardDisabled))
+                        goto case PreferredMethod.External;
+                    isrequired = prov2.IsRequired;
+                    usercontext.EnrollPageID = PreferredMethod.Email;
+                    return PreferredMethod.Email;
                 case PreferredMethod.External:
                     IExternalProvider prov3 = RuntimeAuthProvider.GetProvider(PreferredMethod.External);
-                    if ((prov3 != null) && (prov3.Enabled) && (!(prov3 is NeosPlugProvider)))
-                    {
-                        isrequired = prov3.IsRequired;
-                        usercontext.EnrollPageID = PreferredMethod.External;
-                        return PreferredMethod.External;
-                    }
-                    else
+                    if (prov3 == null)
                         goto case PreferredMethod.Azure;
+                    if (!prov3.Enabled)
+                        goto case PreferredMethod.Azure;
+                    if ((!prov3.IsRequired) && (prov3.WizardDisabled))
+                        goto case PreferredMethod.Azure;
+                    if (prov3 is NeosPlugProvider)
+                        goto case PreferredMethod.Azure;
+                    isrequired = prov3.IsRequired;
+                    usercontext.EnrollPageID = PreferredMethod.External;
+                    return PreferredMethod.External;
                 case PreferredMethod.Azure:
                     goto case PreferredMethod.Biometrics;
                 case PreferredMethod.Biometrics:
                     IExternalProvider prov4 = RuntimeAuthProvider.GetProvider(PreferredMethod.Biometrics);
                     if (usercontext.BioNotSupported)
                         goto case PreferredMethod.Pin;
-                    if ((prov4 != null) && (prov4.Enabled))
-                    {
-                        isrequired = prov4.IsRequired;
-                        usercontext.EnrollPageID = PreferredMethod.Biometrics;
-                        return PreferredMethod.Biometrics;
-                    }
-                    else
+                    if (prov4 == null)
                         goto case PreferredMethod.Pin;
+                    if (!prov4.Enabled)
+                        goto case PreferredMethod.Pin;
+                    if ((!prov4.IsRequired) && (prov4.WizardDisabled))
+                        goto case PreferredMethod.Pin;
+                    isrequired = prov4.IsRequired;
+                    usercontext.EnrollPageID = PreferredMethod.Biometrics;
+                    return PreferredMethod.Biometrics;
                 case PreferredMethod.Pin:
                     if (RuntimeAuthProvider.IsPinCodeRequired(usercontext))
                     {
@@ -4012,32 +4159,27 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// CheckForUserAgent method implementation
         /// </summary>
-        internal static void CheckForUserAgent(MFAConfig config, AuthenticationContext usercontext, string userplatform)
+        internal static void CheckForUserAgent(MFAConfig config, AuthenticationContext usercontext, string useragent)
         {
-            string platform = userplatform;
-            usercontext.Platform = userplatform;
-            if (!string.IsNullOrEmpty(platform))
+            usercontext.BrowserDetected = useragent;
+            if (!string.IsNullOrEmpty(usercontext.BrowserDetected))
             {
-                if (platform.ToLower().Contains("safari"))
-                {
-                    usercontext.DirectLogin = false;
-                    return;
-                }
-                if (platform.ToLower().Contains("trident/7.0") || platform.ToLower().Contains("msie"))
+                if (CheckForbiddenBrowsers(config.WebAuthNProvider.Configuration, usercontext))
                 {
                     usercontext.BioNotSupported = true;
                     usercontext.DirectLogin = false;
                     return;
                 }
-                if (IsApplePlatForm(usercontext))
+                if (CheckInitiatedBrowsers(config.WebAuthNProvider.Configuration, usercontext))
                 {
+                    usercontext.BioNotSupported = false;
                     usercontext.DirectLogin = false;
                     return;
                 }
-                // else "Android", "Chrome OS", "Linux", "Windows", or "Unknown"
             }
             else
             {
+                usercontext.BioNotSupported = false;
                 usercontext.DirectLogin = false;
                 return;
             }
@@ -4046,40 +4188,113 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
-        /// IsAppleDevice method implmentation
+        /// BrowserDetection method implmentation
+        /// Checking userAgent browser's value. userAgentData is not supported by many browsers
         /// </summary>
-        internal static bool IsAppleDevice(AuthenticationContext usercontext)
+        internal static string BrowserDetection(string useragent)
         {
-            if (usercontext.Platform.ToLower().Contains("safari"))
+            if (string.IsNullOrEmpty(useragent))
             {
-#if psysuck
-                Log.WriteEntry("Detected Safari", EventLogEntryType.Warning, 101);
-#endif
-                return true;
+                return "Unknown";
             }
-            if (IsApplePlatForm(usercontext))
+            if (useragent.ToLower().IndexOf("firefox") > -1)
             {
-#if psysuck
-                Log.WriteEntry("Detected Apple Platform", EventLogEntryType.Warning, 101);
-#endif
-                return true;
+                return "Firefox";
+            }
+            if (useragent.ToLower().IndexOf("samsungbrowser") > -1)
+            {
+                return "Samsung";
+            }
+            if (useragent.ToLower().IndexOf("cldc") > -1)
+            {
+                return "Nokia";
+            }
+            if ((useragent.ToLower().IndexOf("opera") > -1) || (useragent.ToUpper().IndexOf("OPR") > -1))
+            {
+                return "Opera";
+            }
+            if ((useragent.ToLower().IndexOf("trident") > -1) || (useragent.ToLower().IndexOf("msie") > -1) || (useragent.ToLower().IndexOf("windows phone") > -1))
+            {
+                return "IE";
+            }
+            if (useragent.ToLower().IndexOf("edge") > -1)
+            {
+                return "EdgeLegacy";
+            }
+            if (useragent.ToLower().IndexOf("edg") > -1)
+            {
+                return "Edge";
+            }
+            if (useragent.ToLower().IndexOf("chrome") > -1)
+            {
+                return "Chrome";
+            }
+            if (useragent.ToLower().IndexOf("safari") > -1)
+            {
+                return "Safari";
+            }
+            return "Unknown";
+        }
+
+        /// <summary>
+        /// CheckForbiddenBrowsers method implmentation
+        /// </summary>
+        private static bool CheckForbiddenBrowsers(WebAuthNProviderConfig config, AuthenticationContext usercontext)
+        {
+            string[] data = config.ForbiddenBrowsers.Split(';');
+            foreach (string s in data)
+            {
+                string x = s.Trim();
+                if (string.IsNullOrEmpty(x))
+                    continue;
+                if (x.StartsWith("#"))
+                    continue;
+                if (usercontext.BrowserDetected.ToLower().Equals(x.ToLower()))
+                {
+                    return true;
+                }
             }
             return false;
         }
 
         /// <summary>
-        /// IsApplePlatForm method implmentation
+        /// CheckInitiatedBrowsers method implementation
         /// </summary>
-        private static bool IsApplePlatForm(AuthenticationContext usercontext)
+        private static bool CheckInitiatedBrowsers(WebAuthNProviderConfig config, AuthenticationContext usercontext)
         {
-            if (!string.IsNullOrEmpty(usercontext.Platform))
+            string[] data = config.InitiatedBrowsers.Split(';');
+            foreach (string s in data)
             {
-                if (usercontext.Platform.ToLower().Equals("ios") || usercontext.Platform.ToLower().Equals("macos") || usercontext.Platform.ToLower().Equals("osx"))
+                string x = s.Trim();
+                if (string.IsNullOrEmpty(x))
+                    continue;
+                if (x.StartsWith("#"))
+                    continue;
+                if (usercontext.BrowserDetected.ToLower().Equals(x.ToLower()))
+                {
                     return true;
-                if (usercontext.Platform.ToLower().Contains("macintosh") || usercontext.Platform.ToLower().Contains("iphone") || usercontext.Platform.ToLower().Contains("ipad") || usercontext.Platform.ToLower().Contains("ipod"))
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// IsNoCounterDevice method implmentation
+        /// </summary>
+        internal static bool IsNoCounterDevice(WebAuthNProviderConfig config, AuthenticationContext usercontext)
+        {
+            string[] data = config.NoCounterBrowsers.Split(';');
+            foreach (string s in data)
+            {
+                string x = s.Trim();
+                if (string.IsNullOrEmpty(x))
+                    continue;
+                if (x.StartsWith("#"))
+                    continue;
+                if (usercontext.BrowserDetected.ToLower().Equals(x.ToLower()))
+                {
                     return true;
-                if (usercontext.Platform.ToLower().Equals("mac os x") || usercontext.Platform.ToLower().Equals("macintel") || usercontext.Platform.ToLower().Equals("mac_powerpc") || usercontext.Platform.ToLower().Equals("mac_68k"))
-                    return true; 
+                }
             }
             return false;
         }
@@ -4142,9 +4357,21 @@ namespace Neos.IdentityServer.MultiFactor
             }
         }
     }
-#endregion
 
-#region WebAuthNCredentialInformation
+    public static class StringExtensions
+    {
+        public static IEnumerable<string> Split(this string str, int n)
+        {
+            if (String.IsNullOrEmpty(str) || n < 1)
+            {
+                throw new ArgumentException();
+            }
+            return Enumerable.Range(0, str.Length / n).Select(i => str.Substring(i * n, n));
+        }
+    }
+    #endregion
+
+    #region WebAuthNCredentialInformation
     /// <summary>
     /// WebAuthNCredentialInformation class
     /// </summary>
@@ -4162,5 +4389,5 @@ namespace Neos.IdentityServer.MultiFactor
         public uint SignatureCounter { get; set; }
         public string NickName { get; set; }
     }
-#endregion
+    #endregion
 }

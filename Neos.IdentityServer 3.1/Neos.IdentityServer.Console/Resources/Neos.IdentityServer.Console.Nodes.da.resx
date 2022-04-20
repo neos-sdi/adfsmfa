@@ -226,7 +226,7 @@
     <value>Ændre brugergrænsefladens kultur på engelsk (1033)</value>
   </data>
   <data name="ROOTSCOPENODEDESC" xml:space="preserve">
-    <value>Mfa</value>
+    <value>MFA</value>
   </data>
   <data name="SECURITYSCOPENODEDESC" xml:space="preserve">
     <value>Sikkerhedskonfiguration</value>
@@ -356,5 +356,11 @@
   </data>
   <data name="SECURITYSCOPECUSTOM" xml:space="preserve">
     <value>Brugerdefinerede taster</value>
+  </data>
+  <data name="ROOTLANGUAGEUK" xml:space="preserve">
+    <value>Ukrainsk</value>
+  </data>
+  <data name="ROOTLANGUAGEUKDESC" xml:space="preserve">
+    <value>Ændre kulturen i brugergrænsefladen på ukrainsk (1058)</value>
   </data>
 </root>

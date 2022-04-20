@@ -113,6 +113,7 @@
     <EmbeddedResource Include="Ressources\errors_strings.ro.resx" />
     <EmbeddedResource Include="Ressources\errors_strings.ru.resx" />
     <EmbeddedResource Include="Ressources\errors_strings.sv.resx" />
+    <EmbeddedResource Include="Ressources\errors_strings.uk.resx" />
     <EmbeddedResource Include="Ressources\infos_strings.da.resx" />
     <EmbeddedResource Include="Ressources\infos_strings.de.resx" />
     <EmbeddedResource Include="Ressources\infos_strings.es.resx" />
@@ -130,6 +131,7 @@
     <EmbeddedResource Include="Ressources\infos_strings.ro.resx" />
     <EmbeddedResource Include="Ressources\infos_strings.ru.resx" />
     <EmbeddedResource Include="Ressources\infos_strings.sv.resx" />
+    <EmbeddedResource Include="Ressources\infos_strings.uk.resx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

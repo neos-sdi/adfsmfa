@@ -70,10 +70,8 @@ namespace Neos.IdentityServer.MultiFactor.Common.Resources {
         ///    &lt;body&gt; 
         ///        &lt;table dir=&quot;ltr&quot;&gt;
         ///            &lt;tr&gt;
-        ///                &lt;td id=&quot;i1&quot; style=&quot;padding:0;font-family:&apos;Segoe UI Semibold&apos;, &apos;Segoe UI Bold&apos;, &apos;Segoe UI&apos;, &apos;Helvetica Neue Medium&apos;, Arial, sans-serif;font-size:17px;color:#707070;&quot;&gt;{0} Account&lt;/td&gt;
-        ///            &lt;/tr&gt; 
-        ///            &lt;tr&gt;
-        ///                &lt; [le reste de la chaîne a été tronqué]&quot;;.
+        ///	    &lt;tr&gt;
+        ///                &lt;td id=&quot;i0&quot; style=&quot;padding:0;padding-top:25px;font-family:&apos;Segoe UI&apos;, Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;&quot;&gt;&lt;span style=&quot;font-family:&apos;Segoe UI Bold&apos;, &apos;Segoe UI Semibold&apos;, &apos;Segoe UI&apos;, &apos;Helvetica Neue  [le reste de la chaîne a été tronqué]&quot;;.
         /// </summary>
         public static string MailAdminContent {
             get {
@@ -99,11 +97,8 @@ namespace Neos.IdentityServer.MultiFactor.Common.Resources {
         ///    &lt;/head&gt; 
         ///    &lt;body&gt; 
         ///        &lt;table dir=&quot;ltr&quot;&gt;
-        ///            &lt;tr&gt;
-        ///                &lt;td id=&quot;i1&quot; style=&quot;padding:0;font-family:&apos;Segoe UI Semibold&apos;, &apos;Segoe UI Bold&apos;, &apos;Segoe UI&apos;, &apos;Helvetica Neue Medium&apos;, Arial, sans-serif;font-size:17px;color:#707070;&quot;&gt;{0} Account&lt;/td&gt;
-        ///            &lt;/tr&gt; 
-        ///            &lt;tr&gt;
-        ///                &lt; [le reste de la chaîne a été tronqué]&quot;;.
+        ///	    &lt;tr&gt;
+        ///                &lt;td id=&quot;i0&quot; style=&quot;padding:0;padding-top:25px;font-family:&apos;Segoe UI&apos;, Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;&quot;&gt;&lt;span style=&quot;font-family:&apos;Segoe UI Bold&apos;, &apos;Segoe UI Semibold&apos;, &apos;Segoe UI&apos;, &apos;Helvetica Neue Medium&apos;, Arial, sa [le reste de la chaîne a été tronqué]&quot;;.
         /// </summary>
         public static string MailKeyContent {
             get {
@@ -129,11 +124,8 @@ namespace Neos.IdentityServer.MultiFactor.Common.Resources {
         ///&lt;/head&gt;
         ///&lt;body&gt;
         ///    &lt;table dir=&quot;ltr&quot;&gt;
-        ///        &lt;tr&gt;
-        ///            &lt;td id=&quot;i2&quot; style=&quot;padding:0;font-family:&apos;Segoe UI Light&apos;, &apos;Segoe UI&apos;, &apos;Helvetica Neue Medium&apos;, Arial, sans-serif;font-size:41px;color:#2672ec;&quot;&gt;Your security information has been changed&lt;/td&gt;
-        ///        &lt;/tr&gt;
-        ///        &lt;tr&gt;
-        ///            &lt;td id=&quot;i3&quot; style=&quot;padding:0;padding-top:2 [le reste de la chaîne a été tronqué]&quot;;.
+        ///&lt;tr&gt;
+        ///            &lt;td id=&quot;i0&quot; style=&quot;padding:0;padding-top:25px;font-family:&apos;Segoe UI&apos;, Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;&quot;&gt;&lt;span style=&quot;font-family:&apos;Segoe UI Bold&apos;, &apos;Segoe UI Semibold&apos;, &apos;Segoe UI&apos;, &apos;Helvetica Neue Medium&apos;, Arial, sans-serif;font-size:18px;font-weight:bold [le reste de la chaîne a été tronqué]&quot;;.
         /// </summary>
         public static string MailNotifications {
             get {
@@ -158,12 +150,9 @@ namespace Neos.IdentityServer.MultiFactor.Common.Resources {
         ///  &lt;base target=&quot;_blank&quot;&gt; 
         /// &lt;/head&gt; 
         /// &lt;body&gt; 
-        ///  &lt;table dir=&quot;ltr&quot;&gt; 
-        ///   &lt;tr&gt; 
-        ///    &lt;td id=&quot;i1&quot; style=&quot;padding:0;font-family:&apos;Segoe UI Semibold&apos;, &apos;Segoe UI Bold&apos;, &apos;Segoe UI&apos;, &apos;Helvetica Neue Medium&apos;, Arial, sans-serif;font-size:17px;color:#707070;&quot;&gt;{0} account&lt;/td&gt; 
-        ///   &lt;/tr&gt; 
-        ///   &lt;tr&gt; 
-        ///    &lt;td id=&quot;i2&quot; style=&quot;padding:0;font-family:&apos;Segoe UI Light&apos;, &apos;Segoe UI&apos;, &apos;Hel [le reste de la chaîne a été tronqué]&quot;;.
+        ///  &lt;table dir=&quot;ltr&quot;&gt;
+        ///   &lt;tr&gt;
+        ///    &lt;td id=&quot;i0&quot; style=&quot;padding:0;padding-top:25px;font-family:&apos;Segoe UI&apos;, Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;&quot;&gt;&lt;span style=&quot;font-family:&apos;Segoe UI Bold&apos;, &apos;Segoe UI Semibold&apos;, &apos;Segoe UI&apos;, &apos;Helvetica Neue Medium&apos;, Arial, sans-serif;font-size:18px;font-weight:bold; [le reste de la chaîne a été tronqué]&quot;;.
         /// </summary>
         public static string MailOTPContent {
             get {

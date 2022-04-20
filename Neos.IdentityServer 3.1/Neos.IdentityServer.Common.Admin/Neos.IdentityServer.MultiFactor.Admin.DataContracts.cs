@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2022 @redhook62 (adfsmfa@gmail.com)                                                                                                                                        //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -11,7 +11,7 @@
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,                            //
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                               //
 //                                                                                                                                                                                          //
-//                                                                                                                                                             //
+//                                                                                                                                                                                          //
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
@@ -64,6 +64,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public bool KeepMySelectedOptionOn { get; set; }
         public bool ChangeNotificationsOn { get; set; }
         public bool UseOfUserLanguages { get; set; }
+        public int AllowPauseForDays { get; set; }
         public FlatAdvertising AdvertisingDays { get; set; }
         public ADFSUserInterfaceKind UiKind { get; set; }
         public bool UseUIPaginated { get; set; }
@@ -88,7 +89,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             CustomUpdatePassword = cfg.CustomUpdatePassword;
             KeepMySelectedOptionOn = cfg.KeepMySelectedOptionOn;
             ChangeNotificationsOn = cfg.ChangeNotificationsOn;
-            UseOfUserLanguages = cfg.UseOfUserLanguages;           
+            UseOfUserLanguages = cfg.UseOfUserLanguages;
+            AllowPauseForDays = cfg.AllowPauseForDays;
             AdvertisingDays = (FlatAdvertising)cfg.AdvertisingDays;
             UseUIPaginated = cfg.UseUIPaginated;
             UiKind = cfg.UiKind;
@@ -114,6 +116,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             cfg.KeepMySelectedOptionOn = KeepMySelectedOptionOn;
             cfg.ChangeNotificationsOn = ChangeNotificationsOn;
             cfg.UseOfUserLanguages = UseOfUserLanguages;
+            cfg.AllowPauseForDays = AllowPauseForDays;
             cfg.AdvertisingDays = (ConfigAdvertising)AdvertisingDays;
             cfg.UseUIPaginated = UseUIPaginated;
             cfg.UiKind = cfg.UiKind;
@@ -415,8 +418,10 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public ReplayLevel ReplayLevel { get; set; }
         public SecretKeyVersion LibVersion { get; set; }
         public string XORSecret { get; set; }
+        public bool AdministrationPinEnabled { get; set; }
+        public string AdministrationPin { get; set; }
         public int PinLength { get; set; }
-        public int DefaultPin { get; set; }
+        public string DefaultPin { get; set; }
         public bool UsePasswordPolicy { get; set; }
         public bool UsePSOPasswordPolicy { get; set; }
         public bool LockUserOnPasswordExpiration { get; set; }
@@ -443,8 +448,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             MaxRetries = cfg.MaxRetries;
             ReplayLevel = cfg.ReplayLevel;
             LibVersion = keys.KeyVersion;
+            AdministrationPinEnabled = cfg.AdministrationPinEnabled;
             PinLength = cfg.PinLength;
-            DefaultPin = cfg.DefaultPin;
             UsePasswordPolicy = keys.UsePasswordPolicy;
             UsePSOPasswordPolicy = keys.UsePSOPasswordPolicy;
             LockUserOnPasswordExpiration = keys.LockUserOnPasswordExpiration;
@@ -458,6 +463,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 Password = MSIS.Encrypt(adds.Password, "ADDS Super Account Password");
                 SQLPassword = MSIS.Encrypt(sql.SQLPassword, "SQL Super Account Password");
                 XORSecret = MSIS.Encrypt(keys.XORSecret, "Pass Phrase Encryption");
+                DefaultPin = MSIS.Encrypt(cfg.DefaultPin, "Default Users Pin");
+                AdministrationPin = MSIS.Encrypt(cfg.AdministrationPin, "Administration Pin");
             };
         }
 
@@ -476,8 +483,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             cfg.MaxRetries = this.MaxRetries;
             cfg.ReplayLevel = this.ReplayLevel;
             keys.KeyVersion = this.LibVersion;
+            cfg.AdministrationPinEnabled = this.AdministrationPinEnabled;
             cfg.PinLength = this.PinLength;
-            cfg.DefaultPin = this.DefaultPin;
             keys.UsePasswordPolicy = this.UsePasswordPolicy;
             keys.UsePSOPasswordPolicy = this.UsePSOPasswordPolicy;
             keys.LockUserOnPasswordExpiration = this.LockUserOnPasswordExpiration;
@@ -491,7 +498,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 adds.Password = MSIS.Decrypt(Password, "ADDS Super Account Password");
                 sql.SQLPassword = MSIS.Decrypt(SQLPassword, "SQL Super Account Password");
                 keys.XORSecret = MSIS.Decrypt(XORSecret, "Pass Phrase Encryption");
-
+                cfg.DefaultPin = MSIS.Decrypt(DefaultPin, "Default Users Pin");
+                cfg.AdministrationPin = MSIS.Decrypt(AdministrationPin, "Administration Pin");
             };
             ManagementService.ADFSManager.WriteConfiguration(host);
         }
@@ -718,6 +726,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public bool Enabled { get; set; }
         public bool IsRequired { get; set; }
         public bool EnrollWizard { get; set; }
+        public bool EnrollWizardDisabled { get; set; }
         public bool PinRequired { get; set; }
         public ForceWizardMode ForceWizard { get; set; }
         public string FullyQualifiedImplementation { get; set; }
@@ -761,6 +770,10 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public OTPWizardOptions WizardOptions { get; set; }
         public KeySizeMode KeySize { get; set; }
         public SecretKeyFormat KeysFormat { get; set; }
+        public string CustomAuthenticatorLogo { get; set; }
+        public string CustomAuthenticatorMSStoreLink { get; set; }
+        public string CustomAuthenticatorGooglePlayLink { get; set; }
+        public string CustomAuthenticatorAppStoreLink { get; set; }
 
         /// <summary>
         /// Kind  Property
@@ -785,12 +798,17 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             this.Enabled = otp.Enabled;
             this.IsRequired = otp.IsRequired;
             this.EnrollWizard = otp.EnrollWizard;
+            this.EnrollWizardDisabled = otp.EnrollWizardDisabled;
             this.ForceWizard = otp.ForceWizard;
             this.Algorithm = otp.Algorithm;
             this.Digits = otp.TOTPDigits;
             this.Duration = otp.TOTPDuration;
             this.TOTPShadows = otp.TOTPShadows;
             this.WizardOptions = otp.WizardOptions;
+            this.CustomAuthenticatorLogo = otp.CustomAuthenticatorLogo;
+            this.CustomAuthenticatorMSStoreLink = otp.CustomAuthenticatorMSStoreLink;
+            this.CustomAuthenticatorGooglePlayLink = otp.CustomAuthenticatorGooglePlayLink;
+            this.CustomAuthenticatorAppStoreLink = otp.CustomAuthenticatorAppStoreLink;
             this.KeySize = cfg.KeysConfig.KeySize;
             this.KeysFormat = cfg.KeysConfig.KeyFormat;
             this.PinRequired = otp.PinRequired;
@@ -811,12 +829,17 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             otp.Enabled = this.Enabled;
             otp.IsRequired = this.IsRequired;
             otp.EnrollWizard = this.EnrollWizard;
+            otp.EnrollWizardDisabled = this.EnrollWizardDisabled;
             otp.ForceWizard = this.ForceWizard;
             otp.Algorithm = this.Algorithm;
             otp.TOTPShadows = this.TOTPShadows;
             otp.TOTPDigits = this.Digits;
             otp.TOTPDuration = this.Duration;
             otp.WizardOptions = this.WizardOptions;
+            otp.CustomAuthenticatorLogo = this.CustomAuthenticatorLogo;
+            otp.CustomAuthenticatorMSStoreLink = this.CustomAuthenticatorMSStoreLink;
+            otp.CustomAuthenticatorGooglePlayLink = this.CustomAuthenticatorGooglePlayLink;
+            otp.CustomAuthenticatorAppStoreLink = this.CustomAuthenticatorAppStoreLink;
             cfg.KeysConfig.KeySize = this.KeySize;
             cfg.KeysConfig.KeyFormat = this.KeysFormat;
             otp.PinRequired = this.PinRequired;
@@ -882,6 +905,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             IsDirty = cfg.IsDirty;
             Enabled = mail.Enabled;
             EnrollWizard = mail.EnrollWizard;
+            EnrollWizardDisabled = mail.EnrollWizardDisabled;
             ForceWizard = mail.ForceWizard;
             From = mail.From;
             UserName = mail.UserName;
@@ -945,6 +969,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             CheckUpdates(host);
             mail.Enabled = Enabled;
             mail.EnrollWizard = EnrollWizard;
+            mail.EnrollWizardDisabled = EnrollWizardDisabled;
             mail.ForceWizard = ForceWizard;
             mail.From = From;
             mail.UserName = UserName;
@@ -1035,6 +1060,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             this.Enabled = otp.Enabled;
             this.IsRequired = otp.IsRequired;
             this.EnrollWizard = otp.EnrollWizard;
+            this.EnrollWizardDisabled = otp.EnrollWizardDisabled;
             this.ForceWizard = otp.ForceWizard;
             this.Company = otp.Company;
             this.FullyQualifiedImplementation = otp.FullQualifiedImplementation;
@@ -1058,6 +1084,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             otp.Enabled = this.Enabled;
             otp.IsRequired = this.IsRequired;
             otp.EnrollWizard = this.EnrollWizard;
+            otp.EnrollWizardDisabled = EnrollWizardDisabled;
             otp.ForceWizard = this.ForceWizard;
             otp.Company = this.Company;
             otp.FullQualifiedImplementation = this.FullyQualifiedImplementation;
@@ -1103,6 +1130,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             this.Enabled = otp.Enabled;
             IsRequired = otp.IsRequired;
             this.EnrollWizard = false;
+            this.EnrollWizardDisabled = true;
             this.ForceWizard = ForceWizardMode.Disabled;
             this.TenantId = otp.TenantId;
             this.ThumbPrint = otp.ThumbPrint;
@@ -1121,6 +1149,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             CheckUpdates(host);
             otp.Enabled = Enabled;
             otp.EnrollWizard = false;
+            otp.EnrollWizardDisabled = true;
             otp.IsRequired = IsRequired;
             otp.ForceWizard = ForceWizardMode.Disabled;
             otp.TenantId = this.TenantId;
@@ -1146,7 +1175,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public string Origin { get; set; }
         public bool DirectLogin { get; set; }
         public bool UseNickNames { get; set; }
-
+        public string ForbiddenBrowsers { get; set; }
+        public string InitiatedBrowsers { get; set; }
+        public string NoCounterBrowsers { get; set; }
 
         /// <summary>
         /// Kind  Property
@@ -1173,6 +1204,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             this.Enabled = otp.Enabled;
             this.IsRequired = otp.IsRequired;
             this.EnrollWizard = otp.EnrollWizard;
+            this.EnrollWizardDisabled = otp.EnrollWizardDisabled;
             this.ForceWizard = otp.ForceWizard;
             this.DirectLogin = otp.DirectLogin;
             this.PinRequired = otp.PinRequired;
@@ -1180,6 +1212,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             this.PinRequirements = otp.PinRequirements;
             this.FullyQualifiedImplementation = otp.FullQualifiedImplementation;
             this.Parameters = otp.Parameters.Data;
+            this.ForbiddenBrowsers = otp.Configuration.ForbiddenBrowsers;
+            this.InitiatedBrowsers = otp.Configuration.InitiatedBrowsers;
+            this.NoCounterBrowsers = otp.Configuration.NoCounterBrowsers;
 
             this.Timeout = otp.Configuration.Timeout;
             this.TimestampDriftTolerance = otp.Configuration.TimestampDriftTolerance;
@@ -1202,6 +1237,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             CheckUpdates(host);
             otp.Enabled = this.Enabled;
             otp.EnrollWizard = this.EnrollWizard;
+            otp.EnrollWizardDisabled = this.EnrollWizardDisabled;
             otp.ForceWizard = this.ForceWizard;
             otp.IsRequired = this.IsRequired;
             otp.PinRequirements = this.PinRequirements;
@@ -1210,6 +1246,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             otp.UseNickNames = this.UseNickNames;
             otp.FullQualifiedImplementation = this.FullyQualifiedImplementation;
             otp.Parameters.Data = this.Parameters;
+            otp.Configuration.ForbiddenBrowsers = ForbiddenBrowsers;
+            otp.Configuration.InitiatedBrowsers = InitiatedBrowsers;
+            otp.Configuration.NoCounterBrowsers = NoCounterBrowsers;
 
             otp.Configuration.Timeout = this.Timeout;
             otp.Configuration.TimestampDriftTolerance = this.TimestampDriftTolerance;

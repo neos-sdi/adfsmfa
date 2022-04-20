@@ -297,4 +297,22 @@ Du kommer att kunna använda MFA validering i framtiden.</value>
   <data name="HtmlUIMRegisterDevice" xml:space="preserve">
     <value>Registrera enhet</value>
   </data>
+  <data name="HtmlUIMPauseForToday" xml:space="preserve">
+    <value>Visa inte det här meddelandet igen</value>
+  </data>
+  <data name="HtmlUIMYes" xml:space="preserve">
+    <value>Ja</value>
+  </data>
+  <data name="HtmlUIMNo" xml:space="preserve">
+    <value>Nej</value>
+  </data>
+  <data name="HtmlUIMPauseLabel" xml:space="preserve">
+    <value>Hålla kontakten ?</value>
+  </data>
+  <data name="HtmlUIMPauseDescriptionToday" xml:space="preserve">
+    <value>Detta gör att du kan sluta ansöka om MFA idag.</value>
+  </data>
+  <data name="HtmlUIMPauseDescription" xml:space="preserve">
+    <value>Detta gör att du kan sluta be om MFA i {0} dagar.</value>
+  </data>
 </root>

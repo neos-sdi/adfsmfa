@@ -1,21 +1,20 @@
 # Security Policy
 
+Binary builds are always signed !
+
+Verify that the thumprint signature is : 86d7e03b3fb10a062f39bd98119856165b64c827
+
 ## Supported Versions
 
-Use this section to tell people about which versions of your project are
-currently being supported with security updates.
+For security flows that need a quickly update.
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 5.1.x   | :white_check_mark: |
-| 5.0.x   | :x:                |
-| 4.0.x   | :white_check_mark: |
-| < 4.0   | :x:                |
+| 3.1.x   | :white_check_mark: |
+| 3.0.x   | :x:                |
+| 2.5.x   | :x: |
+| < 2.0   | :x:                |
 
 ## Reporting a Vulnerability
 
-Use this section to tell people how to report a vulnerability.
-
-Tell them where to go, how often they can expect to get an update on a
-reported vulnerability, what to expect if the vulnerability is accepted or
-declined, etc.
+Please report any vulnerability to adfsmfa@gmail.com

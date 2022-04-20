@@ -297,4 +297,22 @@ Możesz spróbować operacji ponownie, wybierając "Powrót".</value>
   <data name="HtmlUIMRegisterDevice" xml:space="preserve">
     <value>Zarejestruj urządzenie</value>
   </data>
+  <data name="HtmlUIMPauseForToday" xml:space="preserve">
+    <value>Nie pokazuj ponownie tego komunikatu</value>
+  </data>
+  <data name="HtmlUIMYes" xml:space="preserve">
+    <value>Tak</value>
+  </data>
+  <data name="HtmlUIMNo" xml:space="preserve">
+    <value>Nie</value>
+  </data>
+  <data name="HtmlUIMPauseLabel" xml:space="preserve">
+    <value>Pozostań w kontakcie ?</value>
+  </data>
+  <data name="HtmlUIMPauseDescriptionToday" xml:space="preserve">
+    <value>Pozwala to na zaprzestanie ubiegania się o MSZ już dziś.</value>
+  </data>
+  <data name="HtmlUIMPauseDescription" xml:space="preserve">
+    <value>Dzięki temu możesz przestać prosić o MSZ przez {0} dni.</value>
+  </data>
 </root>

@@ -20,7 +20,7 @@ This extension works with Active Directory or an SQL Server Database for storing
 ## Downloads
 - <https://github.com/neos-sdi/adfsmfa/releases>
 
-- <https://github.com/neos-sdi/adfsmfa/releases/download/3.1/adfsmfa.3.1.2111.1.msi>
+- <https://github.com/neos-sdi/adfsmfa/releases/download/3.1/adfsmfa.3.1.2204.1.msi>
 
 ## Building Solution
 
@@ -31,7 +31,7 @@ ___
 
 ___
 ## Features
-* Localized UI French/English/Spanish/Italian/German/Dutch/Portuguese/Polish/Swedish/Romanian/Russian/Danish/Japanese, Quebec
+* Localized UI French/English/Spanish/Italian/German/Dutch/Portuguese/Polish/Swedish/Romanian/Russian/Danish/Japanese/Quebec/Ukrainian
 * TOTP, Email, Phone, Biometric, Azure Providers for MFA
 * Run with ADFS 2012 R2, 2016 and 2019
 * Secret Keys length (Guid, 128, 256, 384 & 512 bytes) RNG generator

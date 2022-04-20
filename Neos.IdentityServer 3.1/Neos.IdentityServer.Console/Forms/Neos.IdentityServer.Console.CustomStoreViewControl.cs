@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2022 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -18,6 +18,7 @@
 using Microsoft.ManagementConsole;
 using Microsoft.ManagementConsole.Advanced;
 using Neos.IdentityServer.Console.Controls;
+using Neos.IdentityServer.Console.Forms;
 using Neos.IdentityServer.MultiFactor.Administration;
 using System;
 using System.ComponentModel;
@@ -194,7 +195,28 @@ namespace Neos.IdentityServer.Console
                 this._isnotifenabled = false;
                 try
                 {
-                    ManagementService.ADFSManager.WriteConfiguration(null);
+                    bool result = true;
+                    if ((ManagementService.Config.AdministrationPinEnabled) && (!ManagementService.PinValidated))
+                    {
+                        AdminPinWizard Wizard = new AdminPinWizard();
+                        Wizard.AdminPin = ManagementService.ADFSManager.Config.AdministrationPin;
+                        DialogResult dresult = this.SnapIn.Console.ShowDialog(Wizard);
+                        if (dresult == DialogResult.Abort)
+                        {
+                            this.Cursor = Cursors.Default;
+                            MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                            {
+                                Text = Wizard.ErrorMessage,
+                                Buttons = MessageBoxButtons.OK,
+                                Icon = MessageBoxIcon.Error
+                            };
+                            this.SnapIn.Console.ShowDialog(messageBoxParameters);
+                        }
+                        result = (dresult == DialogResult.OK);
+                        ManagementService.PinValidated = result;
+                    }
+                    if (result)
+                        ManagementService.ADFSManager.WriteConfiguration(null);
                 }
                 catch (Exception ex)
                 {

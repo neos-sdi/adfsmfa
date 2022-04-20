@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2022 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -17,6 +17,7 @@
 //******************************************************************************************************************************************************************************************//
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
 using Microsoft.IdentityServer.Web.Authentication.External;
 using Neos.IdentityServer.MultiFactor.Common;
@@ -58,8 +59,16 @@ namespace Neos.IdentityServer.MultiFactor
                     };
                     break;
                 case ADFSUserInterfaceKind.Custom:
-                    _adapter = LoadCustomAdapterPresentation(in provider, context.Lcid);
-                    _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
+                    try
+                    {
+                        _adapter = LoadCustomAdapterPresentation(in provider, context.Lcid);
+                        _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.WriteEntry("Error during loading custom adapter presentation: " + ex.ToString(), EventLogEntryType.Error, 80002);
+                        throw new Exception("Error during loading custom adapter presentation: " + ex.Message);
+                    }
                     break;
             }
             _adapter.Provider = provider;
@@ -97,8 +106,16 @@ namespace Neos.IdentityServer.MultiFactor
                     };
                     break;
                 case ADFSUserInterfaceKind.Custom:
-                    _adapter = LoadCustomAdapterPresentation(in provider, context.Lcid);
-                    _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
+                    try
+                    { 
+                        _adapter = LoadCustomAdapterPresentation(in provider, context.Lcid);
+                        _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.WriteEntry("Error during loading custom adapter presentation: " + ex.ToString(), EventLogEntryType.Error, 80002);
+                        throw new Exception("Error during loading custom adapter presentation: " + ex.Message);
+                    }
                     break;
             }
             _adapter.Provider = provider;
@@ -136,8 +153,16 @@ namespace Neos.IdentityServer.MultiFactor
                     };
                     break;
                 case ADFSUserInterfaceKind.Custom:
-                    _adapter = LoadCustomAdapterPresentation(in provider, context.Lcid);
-                    _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
+                    try
+                    {
+                        _adapter = LoadCustomAdapterPresentation(in provider, context.Lcid);
+                        _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.WriteEntry("Error during loading custom adapter presentation: " + ex.ToString(), EventLogEntryType.Error, 80002);
+                        throw new Exception("Error during loading custom adapter presentation: " + ex.Message);
+                    }
                     break;
             }
             _adapter.Provider = provider;
@@ -175,8 +200,16 @@ namespace Neos.IdentityServer.MultiFactor
                     };
                     break;
                 case ADFSUserInterfaceKind.Custom:
-                    _adapter = LoadCustomAdapterPresentation(in provider, context.Lcid);
-                    _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
+                    try
+                    {
+                        _adapter = LoadCustomAdapterPresentation(in provider, context.Lcid);
+                        _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.WriteEntry("Error during loading custom adapter presentation: " + ex.ToString(), EventLogEntryType.Error, 80002);
+                        throw new Exception("Error during loading custom adapter presentation: " + ex.Message);
+                    }
                     break;
             }
             _adapter.Provider = provider;
@@ -215,8 +248,16 @@ namespace Neos.IdentityServer.MultiFactor
                     };
                     break;
                 case ADFSUserInterfaceKind.Custom:
-                    _adapter = LoadCustomAdapterPresentation(in provider, context.Lcid);
-                    _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
+                    try
+                    {
+                        _adapter = LoadCustomAdapterPresentation(in provider, context.Lcid);
+                        _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.WriteEntry("Error during loading custom adapter presentation: " + ex.ToString(), EventLogEntryType.Error, 80002);
+                        throw new Exception("Error during loading custom adapter presentation: " + ex.Message);
+                    }
                     break;
             }
             _adapter.Provider = provider;
@@ -459,6 +500,27 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
+        /// GetFormPreRenderHtmlPauseForDays implementation
+        /// </summary>
+        public string GetFormPreRenderHtmlPauseForDays(AuthenticationContext usercontext)
+        {
+            if (Provider.Config.AllowPauseForDays == 0)
+                return ReplacePlaceHolders(_adapter.GetFormPreRenderHtmlPauseForDays(usercontext));
+            else
+                return string.Empty;
+        }
+
+        /// <summary>
+        /// GetFormHtmlPauseForDays implementation
+        /// </summary>
+        public string GetFormHtmlPauseForDays(AuthenticationContext usercontext)
+        {
+            if (Provider.Config.AllowPauseForDays == 0)
+                return ReplacePlaceHolders(_adapter.GetFormHtmlPauseForDays(usercontext));
+            else
+                return string.Empty;
+        }
+        /// <summary>
         /// GetFormPreRenderHtmlLocking implementation
         /// </summary>
         public string GetFormPreRenderHtmlLocking(AuthenticationContext usercontext)
@@ -670,7 +732,9 @@ namespace Neos.IdentityServer.MultiFactor
                 _holders.Add(new PlaceHolders() { TagName = "##MANAGEACCOUNT##", FiledName = "manageaccount" });
                 _holders.Add(new PlaceHolders() { TagName = "##OPTIONITEM##", FiledName = "optionitem" });
                 _holders.Add(new PlaceHolders() { TagName = "##PLATFORM##", FiledName = "userplatform" });
+                _holders.Add(new PlaceHolders() { TagName = "##AGENT##", FiledName = "useragent" });
                 _holders.Add(new PlaceHolders() { TagName = "##LANGUAGE##", FiledName = "userlanguage" });
+                _holders.Add(new PlaceHolders() { TagName = "##PAUSEDELAY##", FiledName = "pausefordays" });
             }
         }
         #endregion
@@ -860,6 +924,10 @@ namespace Neos.IdentityServer.MultiFactor
                     result += GetFormRenderHtmlHeader(Context);
                     result += GetFormHtmlBypass(Context);
                     break;
+                case ProviderPageMode.PauseDelay:
+                    result += GetFormRenderHtmlHeader(Context);
+                    result += GetFormHtmlPauseForDays(Context);
+                    break;
                 case ProviderPageMode.Locking:
                     result += GetFormRenderHtmlHeader(Context);
                     result += GetFormHtmlLocking(Context);
@@ -955,6 +1023,10 @@ namespace Neos.IdentityServer.MultiFactor
                     result += GetFormPreRenderHtmlHeader(Context);
                     result += GetFormPreRenderHtmlBypass(Context);
                     break;
+                case ProviderPageMode.PauseDelay:
+                    result += GetFormPreRenderHtmlHeader(Context);
+                    result += GetFormPreRenderHtmlPauseForDays(Context);
+                    break;
                 case ProviderPageMode.Locking:
                     result += GetFormPreRenderHtmlHeader(Context);
                     result += GetFormPreRenderHtmlLocking(Context);
@@ -1024,6 +1096,8 @@ namespace Neos.IdentityServer.MultiFactor
         public abstract string GetFormHtmlChangePassword(AuthenticationContext usercontext);
         public abstract string GetFormPreRenderHtmlBypass(AuthenticationContext usercontext);
         public abstract string GetFormHtmlBypass(AuthenticationContext usercontext);
+        public abstract string GetFormPreRenderHtmlPauseForDays(AuthenticationContext usercontext);
+        public abstract string GetFormHtmlPauseForDays(AuthenticationContext usercontext);
         public abstract string GetFormPreRenderHtmlLocking(AuthenticationContext usercontext);
         public abstract string GetFormHtmlLocking(AuthenticationContext usercontext);
         public abstract string GetFormPreRenderHtmlSendCodeRequest(AuthenticationContext usercontext);
@@ -1123,14 +1197,6 @@ namespace Neos.IdentityServer.MultiFactor
                     else
                         result += "<div id=\"error\" class=\"fieldMargin error smallText\"><label id=\"errorText\" name=\"errorText\" for=\"\">" + usercontext.UIMessage + "</label></div>";
                 }
-              /*  else
-                {
-                    result += "<br/>";
-                    if (IsMessage)
-                        result += "<div id=\"error\" class=\"fieldMargin smallText\" style=\"color: #6FA400\"><label id=\"errorText\" name=\"errorText\" for=\"\">" + usercontext.UIMessage + "</label></div>";
-                    else
-                        result += "<div id=\"error\" class=\"fieldMargin error smallText\"><label id=\"errorText\" name=\"errorText\" for=\"\">" + usercontext.UIMessage + "</label></div>";
-                } */
             }
             return result;
         }
@@ -1261,39 +1327,32 @@ namespace Neos.IdentityServer.MultiFactor
 
             result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>" + CR;
             result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>" + CR;
-            result += "<input id=\"##PLATFORM##\" type=\"hidden\" name=\"##PLATFORM##\" />" + CR;
+            result += "<input id=\"##AGENT##\" type=\"hidden\" name=\"##AGENT##\" />" + CR;
             result += "<input id=\"##LANGUAGE##\" type=\"hidden\" name=\"##LANGUAGE##\" />" + CR;
             result += "</form>" + CR;
             return result;
 
         }
 
+        /// <summary>
+        /// GetFormPreRenderHtmlPreset method implementation
+        /// </summary>
         public override string GetFormPreRenderHtmlPreset(AuthenticationContext usercontext)
         {
             string result = "<script type='text/javascript'>" + CR;
             result += "function QueryUserSessionProperties(frm)" + CR;
             result += "{" + CR;
-            result += "   var xplatform = document.getElementById('userplatform');" + CR;
             result += "   try" + CR;
             result += "   {" + CR;
-            result += "      if (xplatform)" + CR;
+            result += "      var xagent = document.getElementById('useragent');" + CR;
+            result += "      if (xagent)" + CR;
             result += "      {" + CR;
-            result += "         xplatform.value = navigator.userAgentData.platform;" + CR;
+            result += "         xagent.value = navigator.userAgent;" + CR;
             result += "      }" + CR;
             result += "   }" + CR;
             result += "   catch(e)" + CR;
             result += "   {" + CR;
-            result += "      try" + CR;
-            result += "      {" + CR;
-            result += "         if (xplatform)" + CR;
-            result += "         {" + CR;
-            result += "            xplatform.value = navigator.userAgent;" + CR;
-            result += "         }" + CR;
-            result += "      }" + CR;
-            result += "      catch(e)" + CR;
-            result += "      {" + CR;
-            result += "         xplatform.value = null;" + CR;
-            result += "      }" + CR;
+            result += "         xagent.value = null;" + CR;
             result += "   }" + CR;
 
             result += "   try" + CR;
@@ -1308,16 +1367,16 @@ namespace Neos.IdentityServer.MultiFactor
             result += "   {" + CR;
             result += "         xlanguage.value = null;" + CR;
             result += "   }" + CR;
+            // ICI : DETECTION BIOMETRIQUE : Browser, Présence Device etc..
             result += "   document.getElementById('presetForm').submit();" + CR;
             result += "   return true;" + CR;
             result += "}" + CR;
             result += "</script>" + CR + CR;
             return result;
         }
-#endregion
+        #endregion
 
-
-#region QRCode
+        #region QRCode
         /// <summary>
         /// GetFormPreRenderHtmlShowQRCode implementation
         /// </summary>
@@ -1340,9 +1399,9 @@ namespace Neos.IdentityServer.MultiFactor
             result += "</form>";
             return result;
         }
-#endregion
+        #endregion
 
-#region Donut
+        #region Donut
         /// <summary>
         /// GetPartHtmlDonut method implementation
         /// </summary>
@@ -1542,9 +1601,9 @@ namespace Neos.IdentityServer.MultiFactor
 
             return result;
         }
-#endregion
+        #endregion
 
-#region WebAuthN Support
+        #region WebAuthN Support
         /// <summary>
         /// GetFormHtmlWebAuthNSupport method implementation
         /// </summary>
@@ -1555,22 +1614,10 @@ namespace Neos.IdentityServer.MultiFactor
             result += "{" + CR;
             result += "      try" + CR;
             result += "      {" + CR;
-            result += "         if (window.PublicKeyCredential === undefined || typeof window.PublicKeyCredential !== \"function\")" + CR;
+            result += "         if (window.PublicKeyCredential === undefined)" + CR;
             result += "         {" + CR;
-            result += "             SetWebAuthNDetectionError(\"Biometric authentication not supported\");" + CR;
+            result += "             SetWebAuthNDetectionError(\"Biometric device NOT available or NOT CONFIGURED in your operating system. Please close this browser, configure the device first and try again or use another method !\");" + CR;
             result += "             return false;" + CR;
-            result += "         }" + CR;
-            result += "         else" + CR;
-            result += "         {" + CR;
-            result += "             if (window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable())" + CR;
-            result += "             {" + CR;
-            result += "                 return true;" + CR;
-            result += "             }" + CR;
-            result += "             else" + CR;
-            result += "             {" + CR;
-            result += "                 SetWebAuthNDetectionError(\"Biometric authentication not supported\");" + CR;
-            result += "                 return false;" + CR;
-            result += "             }" + CR;
             result += "         }" + CR;
             result += "      }" + CR;
             result += "      catch (e)" + CR;
@@ -1578,6 +1625,7 @@ namespace Neos.IdentityServer.MultiFactor
             result += "         SetJsError(e.message);" + CR;
             result += "         return false;" + CR;
             result += "      }" + CR;
+            result += "      return true;" + CR;
             result += "}" + CR;
             return result;
         }
@@ -1661,7 +1709,7 @@ namespace Neos.IdentityServer.MultiFactor
             result += "   if (frm !== null)" + CR;
             result += "      frm.preventDefault();" + CR;
 #endif
-            result += "   if (detectWebAuthNSupport() === true)" + CR;
+            result += "   if (detectWebAuthNSupport() == true)" + CR;
             result += "   {" + CR;
             result += "      let makeCredentialOptions;" + CR;
             result += "      try" + CR;
@@ -1669,8 +1717,9 @@ namespace Neos.IdentityServer.MultiFactor
             result += "         makeCredentialOptions = " + usercontext.CredentialOptions + ";" + CR;
             result += "         makeCredentialOptions.challenge = coerceToArrayBuffer(makeCredentialOptions.challenge);" + CR;
             result += "         makeCredentialOptions.user.id = coerceToArrayBuffer(makeCredentialOptions.user.id);" + CR;
-            result += "         makeCredentialOptions.excludeCredentials = makeCredentialOptions.excludeCredentials.map((c) => {c.id = coerceToArrayBuffer(c.id); return c;});" + CR;
-            result += "        if (makeCredentialOptions.authenticatorSelection.authenticatorAttachment === null)" + CR;
+            result += "         if (makeCredentialOptions.excludeCredentials !== null) " + CR;
+            result += "             makeCredentialOptions.excludeCredentials = makeCredentialOptions.excludeCredentials.map((c) => {c.id = coerceToArrayBuffer(c.id); return c;});" + CR;
+            result += "         if (makeCredentialOptions.authenticatorSelection.authenticatorAttachment === null)" + CR;
             result += "           makeCredentialOptions.authenticatorSelection.authenticatorAttachment = undefined;" + CR;
             result += "      }" + CR;
             result += "      catch (e)" + CR;
@@ -1698,7 +1747,7 @@ namespace Neos.IdentityServer.MultiFactor
             result += "   }" + CR;
             result += "   else" + CR;
             result += "   {" + CR;
-            result += "      SetWebAuthNDetectionError(\"Biometric authentication not supported\");" + CR;
+            result += "      SetWebAuthNDetectionError(\"Biometric authentication not supported\");" + CR;           
             result += "      return false;" + CR;
             result += "   }" + CR;
             result += "}" + CR;
@@ -1741,7 +1790,7 @@ namespace Neos.IdentityServer.MultiFactor
             result += "   if (frm !== null)" + CR;
             result += "      frm.preventDefault();" + CR;
 #endif
-            result += "   if (detectWebAuthNSupport() === true)" + CR;
+            result += "   if (detectWebAuthNSupport() == true)" + CR;
             result += "   {" + CR;
             result += "      let makeAssertionOptions;" + CR;
             result += "      try" + CR;

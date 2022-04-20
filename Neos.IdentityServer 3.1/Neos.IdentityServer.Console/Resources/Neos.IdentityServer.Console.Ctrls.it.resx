@@ -732,4 +732,13 @@
   <data name="CTRLWEBAUTHNCONTRAINEDMETADATA" xml:space="preserve">
     <value>Utilizzare il servizio metadati vincolati (per la farm ADFS che non dispone di accesso a Internet)</value>
   </data>
+  <data name="CTRLGLSHOWCUSTOM" xml:space="preserve">
+    <value>Mostra autenticatore personalizzato</value>
+  </data>
+  <data name="CTRGLPAUSEFORDAYS" xml:space="preserve">
+    <value>Consenti la sospensione dell'MFA per (x) giorni</value>
+  </data>
+  <data name="CTRLPROVWIZARDDISABLED" xml:space="preserve">
+    <value>Procedura guidata disabilitata al momento dell'iscrizione</value>
+  </data>
 </root>

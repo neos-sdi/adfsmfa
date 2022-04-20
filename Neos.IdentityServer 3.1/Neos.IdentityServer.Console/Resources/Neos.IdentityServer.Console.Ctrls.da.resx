@@ -732,4 +732,13 @@
   <data name="CTRLWEBAUTHNCONTRAINEDMETADATA" xml:space="preserve">
     <value>Brug begrænset metadatatjeneste (til ADFS-farm, der ikke har internetadgang)</value>
   </data>
+  <data name="CTRLGLSHOWCUSTOM" xml:space="preserve">
+    <value>Vis brugerdefineret godkender</value>
+  </data>
+  <data name="CTRGLPAUSEFORDAYS" xml:space="preserve">
+    <value>Tillad, at MFA sættes på pause i (x) dage</value>
+  </data>
+  <data name="CTRLPROVWIZARDDISABLED" xml:space="preserve">
+    <value>Guide deaktiveret ved tilmelding</value>
+  </data>
 </root>

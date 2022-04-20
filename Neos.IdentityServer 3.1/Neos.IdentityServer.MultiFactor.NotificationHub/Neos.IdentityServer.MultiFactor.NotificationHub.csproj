@@ -113,7 +113,19 @@
     <EmbeddedResource Include="Neos.IdentityServer.HubService.resx">
       <DependentUpon>Neos.IdentityServer.HubService.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Neos.IdentityServer.HubService.uk-UA.resx">
+      <DependentUpon>Neos.IdentityServer.HubService.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Neos.IdentityServer.HubService.uk.resx">
+      <DependentUpon>Neos.IdentityServer.HubService.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ProjectInstaller.resx">
+      <DependentUpon>ProjectInstaller.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProjectInstaller.uk-UA.resx">
+      <DependentUpon>ProjectInstaller.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProjectInstaller.uk.resx">
       <DependentUpon>ProjectInstaller.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>

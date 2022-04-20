@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2022 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -482,6 +482,7 @@ namespace Neos.IdentityServer.MultiFactor
         private int _maxretries = 3;
         private string _issuer;
         private int _pinlength = 4;
+        private int _allowpause = 0;
 
         /// <summary>
         /// Constructor
@@ -508,7 +509,9 @@ namespace Neos.IdentityServer.MultiFactor
                 DeliveryWindow = 300;
                 Issuer = "MFA";
                 PinLength = 4;
-                DefaultPin = 1234;
+                DefaultPin = "1234";
+                AdministrationPin = "1230";
+                AdministrationPinEnabled = false;
                 MaxRetries = 3;
                 UiKind = ADFSUserInterfaceKind.Default;
                 DefaultProviderMethod = PreferredMethod.Choose;
@@ -538,6 +541,9 @@ namespace Neos.IdentityServer.MultiFactor
                 OTPProvider.Algorithm = HashMode.SHA1;
                 OTPProvider.EnrollWizard = true;
                 OTPProvider.PinRequired = false;
+                OTPProvider.CustomAuthenticatorLogo = "Aegis.png";
+                OTPProvider.CustomAuthenticatorGooglePlayLink = "https://play.google.com/store/apps/details?id=com.beemdevelopment.aegis&hl=en&gl=US";
+                OTPProvider.WizardOptions = OTPWizardOptions.MicrosoftAuthenticator | OTPWizardOptions.GoogleAuthenticator | OTPWizardOptions.AuthyAuthenticator | OTPWizardOptions.GoogleSearch;
                 OTPProvider.Parameters.Data = string.Empty;
                 OTPProvider.FullQualifiedImplementation = string.Empty;
 
@@ -566,13 +572,13 @@ namespace Neos.IdentityServer.MultiFactor
                 ExternalProvider.Parameters.Data = string.Empty;
                 ExternalProvider.FullQualifiedImplementation = string.Empty;
                 if (ExternalProvider.FullQualifiedImplementation.ToLower().StartsWith("neos.identityserver.multifactor.sms.smscall"))
-                    ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.Multifactor.Samples.SMSCall, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey();
+                    ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.Multifactor.Samples.SMSCall, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, " + AssemblyPublicKeyUtilities.GetAssemblyPublicKey();
                 if (ExternalProvider.FullQualifiedImplementation.ToLower().StartsWith("neos.identityserver.multifactor.samples.smscall"))
-                    ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.SMSCall, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey();
+                    ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.SMSCall, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, " + AssemblyPublicKeyUtilities.GetAssemblyPublicKey();
                 if (ExternalProvider.FullQualifiedImplementation.ToLower().StartsWith("neos.identityserver.multifactor.sms.neossmsprovider"))
-                    ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.NeosSMSProvider, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey();
+                    ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.NeosSMSProvider, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, " + AssemblyPublicKeyUtilities.GetAssemblyPublicKey();
                 if (ExternalProvider.FullQualifiedImplementation.ToLower().StartsWith("neos.identityserver.multifactor.samples.neossmsprovider"))
-                    ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.NeosSMSProvider, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey();
+                    ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.NeosSMSProvider, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, " + AssemblyPublicKeyUtilities.GetAssemblyPublicKey();
 
                 AzureProvider.TenantId = "contoso.onmicrosoft.com";
                 AzureProvider.ThumbPrint = Thumbprint.Demo;
@@ -592,8 +598,8 @@ namespace Neos.IdentityServer.MultiFactor
                 Hosts.SQLServerHost.ThumbPrint = Thumbprint.Demo;
                 Hosts.SQLServerHost.MaxRows = 10000;
 
-                Hosts.CustomStoreHost.DataRepositoryFullyQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.InMemoryDataRepositoryService, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey();
-                Hosts.CustomStoreHost.KeysRepositoryFullyQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.InMemoryKeys2RepositoryService, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey();
+                Hosts.CustomStoreHost.DataRepositoryFullyQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.InMemoryDataRepositoryService, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, " + AssemblyPublicKeyUtilities.GetAssemblyPublicKey();
+                Hosts.CustomStoreHost.KeysRepositoryFullyQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.InMemoryKeys2RepositoryService, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, " + AssemblyPublicKeyUtilities.GetAssemblyPublicKey();
             }
         }
 
@@ -640,10 +646,15 @@ namespace Neos.IdentityServer.MultiFactor
             Hosts.SQLServerHost.IsAlwaysEncrypted = false;
 
             if (string.IsNullOrEmpty(Hosts.CustomStoreHost.DataRepositoryFullyQualifiedImplementation))
-                Hosts.CustomStoreHost.DataRepositoryFullyQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.InMemoryDataRepositoryService, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey();
+                Hosts.CustomStoreHost.DataRepositoryFullyQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.InMemoryDataRepositoryService, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, " + AssemblyPublicKeyUtilities.GetAssemblyPublicKey();
             if (string.IsNullOrEmpty(Hosts.CustomStoreHost.KeysRepositoryFullyQualifiedImplementation))
-                Hosts.CustomStoreHost.KeysRepositoryFullyQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.InMemoryKeys2RepositoryService, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey();
+                Hosts.CustomStoreHost.KeysRepositoryFullyQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.InMemoryKeys2RepositoryService, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, " + AssemblyPublicKeyUtilities.GetAssemblyPublicKey();
 
+            if (string.IsNullOrEmpty(OTPProvider.CustomAuthenticatorLogo))
+            {
+                OTPProvider.CustomAuthenticatorLogo = "Aegis.png";
+                OTPProvider.CustomAuthenticatorGooglePlayLink = "https://play.google.com/store/apps/details?id=com.beemdevelopment.aegis&hl=en&gl=US";
+            }
             if (string.IsNullOrEmpty(MailProvider.From))
                 MailProvider.From = "sender.email@contoso.com";
             if (string.IsNullOrEmpty(MailProvider.UserName))
@@ -673,13 +684,13 @@ namespace Neos.IdentityServer.MultiFactor
             if (this.ExternalProvider != null)
             {
                 if (ExternalProvider.FullQualifiedImplementation.ToLower().StartsWith("neos.identityserver.multifactor.sms.smscall"))
-                    ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.Multifactor.Samples.SMSCall, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey();
+                    ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.Multifactor.Samples.SMSCall, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, " + AssemblyPublicKeyUtilities.GetAssemblyPublicKey();
                 if (ExternalProvider.FullQualifiedImplementation.ToLower().StartsWith("neos.identityserver.multifactor.samples.smscall"))
-                    ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.SMSCall, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey();
+                    ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.SMSCall, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, " + AssemblyPublicKeyUtilities.GetAssemblyPublicKey();
                 if (ExternalProvider.FullQualifiedImplementation.ToLower().StartsWith("neos.identityserver.multifactor.sms.neossmsprovider"))
-                    ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.NeosSMSProvider, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey();
+                    ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.NeosSMSProvider, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, " + AssemblyPublicKeyUtilities.GetAssemblyPublicKey();
                 if (ExternalProvider.FullQualifiedImplementation.ToLower().StartsWith("neos.identityserver.multifactor.samples.neossmsprovider"))
-                    ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.NeosSMSProvider, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey();
+                    ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.NeosSMSProvider, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, " + AssemblyPublicKeyUtilities.GetAssemblyPublicKey();
                 if (string.IsNullOrEmpty(this.ExternalProvider.Company))
                     this.ExternalProvider.Company = "Contoso";
                 if (string.IsNullOrEmpty(this.ExternalProvider.Sha1Salt))
@@ -717,8 +728,14 @@ namespace Neos.IdentityServer.MultiFactor
             }
         }
 
+        [XmlAttribute("AdministrationPinEnabled")]
+        public bool AdministrationPinEnabled { get; set; } = false;
+
+        [XmlAttribute("AdministrationPin")]
+        public string AdministrationPin { get; set; } = "1230";
+
         [XmlAttribute("DefaultPin")]
-        public int DefaultPin { get; set; } = 1234;
+        public string DefaultPin { get; set; } = "1234";
 
         [XmlAttribute("KMSOO")]
         public bool KeepMySelectedOptionOn { get; set; } = true;
@@ -741,6 +758,24 @@ namespace Neos.IdentityServer.MultiFactor
                 if (value <= 0)
                     throw new ArgumentOutOfRangeException();
                 _maxretries = value;
+            }
+        }
+
+        [XmlAttribute("AllowPauseForDays")]
+        public int AllowPauseForDays
+        {
+            get
+            {
+                return _allowpause;
+            }
+            set
+            {
+                if (value < 0)
+                    _allowpause = 0;
+                else if (value > 90)
+                    _allowpause = 90;
+                else
+                    _allowpause = value;
             }
         }
 
@@ -962,6 +997,7 @@ namespace Neos.IdentityServer.MultiFactor
         public abstract bool Enabled { get; set; }
         public abstract bool PinRequired { get; set; }
         public abstract bool EnrollWizard { get; set; }
+        public abstract bool EnrollWizardDisabled { get; set; }
         public abstract bool IsRequired { get; set; }
         public abstract ForceWizardMode ForceWizard { get; set; }
     }
@@ -981,16 +1017,17 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public OTPProviderParams(OTPProvider prov) : base()
         {
-            this.Data = prov;
-            this.TOTPShadows = prov.TOTPShadows;
-            this.Algorithm = prov.Algorithm;
-            this.Digits = prov.TOTPDigits;
-            this.Duration = prov.TOTPDuration;
-            this.Enabled = prov.Enabled;
-            this.IsRequired = prov.IsRequired;
-            this.PinRequired = prov.PinRequired;
-            this.EnrollWizard = prov.EnrollWizard;
-            this.ForceWizard = prov.ForceWizard;
+            Data = prov;
+            TOTPShadows = prov.TOTPShadows;
+            Algorithm = prov.Algorithm;
+            Digits = prov.TOTPDigits;
+            Duration = prov.TOTPDuration;
+            Enabled = prov.Enabled;
+            IsRequired = prov.IsRequired;
+            PinRequired = prov.PinRequired;
+            EnrollWizard = prov.EnrollWizard;
+            EnrollWizardDisabled = prov.EnrollWizardDisabled;
+            ForceWizard = prov.ForceWizard;
         }
 
         public OTPProvider Data { get; set; }
@@ -1003,6 +1040,7 @@ namespace Neos.IdentityServer.MultiFactor
         public override bool IsRequired { get; set; }
         public override bool PinRequired { get; set; }
         public override bool EnrollWizard { get; set; }
+        public override bool EnrollWizardDisabled { get; set; }
         public override ForceWizardMode ForceWizard { get; set; }
     }
 
@@ -1026,6 +1064,7 @@ namespace Neos.IdentityServer.MultiFactor
             IsRequired = prov.IsRequired;
             PinRequired = prov.PinRequired;
             EnrollWizard = prov.EnrollWizard;
+            EnrollWizardDisabled = prov.EnrollWizardDisabled;
             ForceWizard = prov.ForceWizard;
             SendDeliveryNotifications = prov.DeliveryNotifications;
         }
@@ -1035,6 +1074,7 @@ namespace Neos.IdentityServer.MultiFactor
         public override bool IsRequired { get; set; }
         public override bool PinRequired { get; set; }
         public override bool EnrollWizard { get; set; }
+        public override bool EnrollWizardDisabled { get; set; }
         public override ForceWizardMode ForceWizard { get; set; }
         public bool SendDeliveryNotifications { get; set; }
     }
@@ -1059,6 +1099,7 @@ namespace Neos.IdentityServer.MultiFactor
             IsRequired = prov.IsRequired;
             PinRequired = prov.PinRequired;
             EnrollWizard = prov.EnrollWizard;
+            EnrollWizardDisabled = prov.EnrollWizardDisabled;
             ForceWizard = prov.ForceWizard;
         }
 
@@ -1067,6 +1108,7 @@ namespace Neos.IdentityServer.MultiFactor
         public override bool IsRequired { get; set; }
         public override bool PinRequired { get; set; }
         public override bool EnrollWizard { get; set; }
+        public override bool EnrollWizardDisabled { get; set; }
         public override ForceWizardMode ForceWizard { get; set; }
     }
 
@@ -1086,13 +1128,14 @@ namespace Neos.IdentityServer.MultiFactor
         public AzureProviderParams(AzureProvider prov, string adfsid, string company) : base()
         {
             Data = prov;
-            this.ADFSIdentifier = adfsid;
-            this.CompanyName = company;
-            this.Enabled = prov.Enabled;
-            this.IsRequired = prov.IsRequired;
-            this.PinRequired = prov.PinRequired;
-            this.EnrollWizard = prov.EnrollWizard;
-            this.ForceWizard = ForceWizardMode.Disabled;
+            ADFSIdentifier = adfsid;
+            CompanyName = company;
+            Enabled = prov.Enabled;
+            IsRequired = prov.IsRequired;
+            PinRequired = prov.PinRequired;
+            EnrollWizard = prov.EnrollWizard;
+            EnrollWizardDisabled = prov.EnrollWizardDisabled;
+            ForceWizard = ForceWizardMode.Disabled;
         }
 
         public AzureProvider Data { get; set; }
@@ -1102,6 +1145,7 @@ namespace Neos.IdentityServer.MultiFactor
         public override bool IsRequired { get; set; }
         public override bool PinRequired { get; set; }
         public override bool EnrollWizard { get; set; }
+        public override bool EnrollWizardDisabled { get; set; }
         public override ForceWizardMode ForceWizard { get; set; }
     }
 
@@ -1120,17 +1164,18 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public WebAuthNProviderParams(MFAConfig Cfg, WebAuthNProvider prov) : base()
         {
-            this.Config = Cfg;
-            this.Data = prov;
-            this.Enabled = prov.Enabled;
-            this.IsRequired = prov.IsRequired;
-            this.PinRequired = prov.PinRequired;
-            this.PinRequirements = prov.PinRequirements;
-            this.EnrollWizard = prov.EnrollWizard;
-            this.ForceWizard = prov.ForceWizard;
-            this.Configuration = prov.Configuration;
-            this.Options = prov.Options;
-            this.DirectLogin = prov.DirectLogin;
+            Config = Cfg;
+            Data = prov;
+            Enabled = prov.Enabled;
+            IsRequired = prov.IsRequired;
+            PinRequired = prov.PinRequired;
+            PinRequirements = prov.PinRequirements;
+            EnrollWizard = prov.EnrollWizard;
+            EnrollWizardDisabled = prov.EnrollWizardDisabled;
+            ForceWizard = prov.ForceWizard;
+            Configuration = prov.Configuration;
+            Options = prov.Options;
+            DirectLogin = prov.DirectLogin;
         }
 
         public MFAConfig Config { get; set; }
@@ -1140,6 +1185,7 @@ namespace Neos.IdentityServer.MultiFactor
         public override bool PinRequired { get; set; }
         public virtual WebAuthNPinRequirements PinRequirements { get; set; }
         public override bool EnrollWizard { get; set; }
+        public override bool EnrollWizardDisabled { get; set; }
         public bool DirectLogin { get; set; }
         public override ForceWizardMode ForceWizard { get; set; }
         public WebAuthNProviderConfig Configuration { get; set; } = new WebAuthNProviderConfig();
@@ -1352,6 +1398,8 @@ namespace Neos.IdentityServer.MultiFactor
     public class ExternalOTPProvider
     {
         private XmlCDataSection _cdata;
+        private bool _wizenabled = true;
+        private bool _wizdisabled = false;
 
         [XmlAttribute("Enabled")]
         public bool Enabled { get; set; } = true;
@@ -1364,6 +1412,25 @@ namespace Neos.IdentityServer.MultiFactor
 
         [XmlAttribute("EnrollWizard")]
         public bool EnrollWizard { get; set; } = true;
+
+        [XmlAttribute("EnrollWizardDisabled")]
+        public bool EnrollWizardDisabled
+        {
+            get
+            {
+                if (IsRequired)
+                    return false;
+                else
+                    return _wizdisabled;
+            }
+            set
+            {
+                if (IsRequired)
+                    _wizdisabled = false;
+                else
+                    _wizdisabled = value;
+            }
+        }
 
         [XmlAttribute("ForceWizard")]
         public ForceWizardMode ForceWizard { get; set; } = ForceWizardMode.Disabled;
@@ -1415,6 +1482,7 @@ namespace Neos.IdentityServer.MultiFactor
     public class AzureProvider
     {
         private XmlCDataSection _cdata;
+        private bool _wizdisabled = false;
 
         [XmlAttribute("Enabled")]
         public bool Enabled { get; set; } = false;
@@ -1427,6 +1495,25 @@ namespace Neos.IdentityServer.MultiFactor
 
         [XmlAttribute("EnrollWizard")]
         public bool EnrollWizard { get; set; } = false;
+
+        [XmlAttribute("EnrollWizardDisabled")]
+        public bool EnrollWizardDisabled
+        {
+            get
+            {
+                if (IsRequired)
+                    return false;
+                else
+                    return _wizdisabled;
+            }
+            set
+            {
+                if (IsRequired)
+                    _wizdisabled = false;
+                else
+                    _wizdisabled = value;
+            }
+        }
 
         [XmlAttribute("ForceWizard")]
         public ForceWizardMode ForceWizard { get; set; } = ForceWizardMode.Disabled;
@@ -1473,6 +1560,8 @@ namespace Neos.IdentityServer.MultiFactor
     {
         private XmlCDataSection _cdata;
         private readonly List<string> _blocked = new List<string>();
+        private bool _wizenabled = true;
+        private bool _wizdisabled = false;
 
         [XmlAttribute("Enabled")]
         public bool Enabled { get; set; } = true;
@@ -1485,6 +1574,25 @@ namespace Neos.IdentityServer.MultiFactor
 
         [XmlAttribute("EnrollWizard")]
         public bool EnrollWizard { get; set; } = true;
+
+        [XmlAttribute("EnrollWizardDisabled")]
+        public bool EnrollWizardDisabled
+        {
+            get
+            {
+                if (IsRequired)
+                    return false;
+                else
+                    return _wizdisabled;
+            }
+            set
+            {
+                if (IsRequired)
+                    _wizdisabled = false;
+                else
+                    _wizdisabled = value;
+            }
+        }
 
         [XmlAttribute("ForceWizard")]
         public ForceWizardMode ForceWizard { get; set; } = ForceWizardMode.Disabled;
@@ -1577,6 +1685,8 @@ namespace Neos.IdentityServer.MultiFactor
         private XmlCDataSection _cdata;
         private int _digits = 6;
         private int _duration = 30;
+        private bool _wizenabled = true;
+        private bool _wizdisabled = false;
 
         [XmlAttribute("Enabled")]
         public bool Enabled { get; set; } = true;
@@ -1589,6 +1699,25 @@ namespace Neos.IdentityServer.MultiFactor
 
         [XmlAttribute("EnrollWizard")]
         public bool EnrollWizard { get; set; } = true;
+
+        [XmlAttribute("EnrollWizardDisabled")]
+        public bool EnrollWizardDisabled
+        {
+            get
+            {
+                if (IsRequired)
+                    return false;
+                else
+                    return _wizdisabled;
+            }
+            set
+            {
+                if (IsRequired)
+                    _wizdisabled = false;
+                else
+                    _wizdisabled = value;
+            }
+        }
 
         [XmlAttribute("ForceWizard")]
         public ForceWizardMode ForceWizard { get; set; } = ForceWizardMode.Disabled;
@@ -1629,6 +1758,18 @@ namespace Neos.IdentityServer.MultiFactor
         [XmlAttribute("WizardOptions")]
         public OTPWizardOptions WizardOptions { get; set; } = OTPWizardOptions.All;
 
+        [XmlAttribute("CustomAuthenticatorLogo")]
+        public string CustomAuthenticatorLogo { get; set; } = "Aegis.png";
+
+        [XmlAttribute("CustomAuthenticatorMSStoreLink")]
+        public string CustomAuthenticatorMSStoreLink { get; set; }
+
+        [XmlAttribute("CustomAuthenticatorGooglePlayLink")]
+        public string CustomAuthenticatorGooglePlayLink { get; set; } = "https://play.google.com/store/apps/details?id=com.beemdevelopment.aegis&hl=en&gl=US";
+
+        [XmlAttribute("CustomAuthenticatorAppStoreLink")]
+        public string CustomAuthenticatorAppStoreLink { get; set; }
+
         [XmlAttribute("FullQualifiedImplementation")]
         public string FullQualifiedImplementation { get; set; }
 
@@ -1666,6 +1807,7 @@ namespace Neos.IdentityServer.MultiFactor
         private XmlCDataSection _cdata;
         private WebAuthNProviderConfig _cfg;
         private WebAuthNProviderOptions _opt;
+        private bool _wizdisabled = false;
 
         [XmlAttribute("Enabled")]
         public bool Enabled { get; set; } = true;
@@ -1681,6 +1823,25 @@ namespace Neos.IdentityServer.MultiFactor
 
         [XmlAttribute("EnrollWizard")]
         public bool EnrollWizard { get; set; } = true;
+
+        [XmlAttribute("EnrollWizardDisabled")]
+        public bool EnrollWizardDisabled
+        {
+            get
+            {
+                if (IsRequired)
+                    return false;
+                else
+                    return _wizdisabled;
+            }
+            set
+            {
+                if (IsRequired)
+                    _wizdisabled = false;
+                else
+                    _wizdisabled = value;
+            }
+        }
 
         [XmlAttribute("ForceWizard")]
         public ForceWizardMode ForceWizard { get; set; } = ForceWizardMode.Disabled;
@@ -1856,6 +2017,16 @@ namespace Neos.IdentityServer.MultiFactor
                 _origin = value;
             }
         }
+
+        [XmlAttribute("ForbiddenBrowsers")]
+        public string ForbiddenBrowsers { get; set; } = "ie;samsung;nokia";
+
+        [XmlAttribute("InitiatedBrowsers")]
+        public string InitiatedBrowsers { get; set; } = "safari";
+
+        [XmlAttribute("NoCounterBrowsers")]
+        public string NoCounterBrowsers { get; set; } = "safari";
+
     }
 
     /// <summary>
@@ -2196,10 +2367,10 @@ namespace Neos.IdentityServer.MultiFactor
         public int MaxRows { get; set; } = 10000;
 
         [XmlAttribute("DataRepositoryFullyQualifiedImplementation")]
-        public string DataRepositoryFullyQualifiedImplementation { get; set; } = "Neos.IdentityServer.MultiFactor.Data.InMemoryDataRepositoryService, Neos.IdentityServer.MultiFactor.Repository.Samples, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey();
+        public string DataRepositoryFullyQualifiedImplementation { get; set; } = "Neos.IdentityServer.MultiFactor.Data.InMemoryDataRepositoryService, Neos.IdentityServer.MultiFactor.Repository.Samples, Version=3.0.0.0, Culture=neutral, " + AssemblyPublicKeyUtilities.GetAssemblyPublicKey();
 
         [XmlAttribute("KeysRepositoryFullyQualifiedImplementation")]
-        public string KeysRepositoryFullyQualifiedImplementation { get; set; } = "Neos.IdentityServer.MultiFactor.Data.InMemoryKeys2RepositoryService, Neos.IdentityServer.MultiFactor.Repository.Samples, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey();
+        public string KeysRepositoryFullyQualifiedImplementation { get; set; } = "Neos.IdentityServer.MultiFactor.Data.InMemoryKeys2RepositoryService, Neos.IdentityServer.MultiFactor.Repository.Samples, Version=3.0.0.0, Culture=neutral, " + AssemblyPublicKeyUtilities.GetAssemblyPublicKey();
 
         [XmlElement("Parameters", typeof(XmlCDataSection))]
         public XmlCDataSection Parameters

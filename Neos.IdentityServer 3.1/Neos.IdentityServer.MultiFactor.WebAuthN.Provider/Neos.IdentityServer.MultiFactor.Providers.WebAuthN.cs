@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2022 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -42,6 +42,11 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         public MFAConfig Config { get; set; }
         public bool DirectLogin { get; private set; }
         public int ChallengeSize { get; private set; }
+        public string ForbiddenBrowsers { get; private set; }
+        public string ForbiddenOperatingSystems { get; private set; }
+        public string InitiatedBrowsers { get; private set; }
+        public string InitiatedOperatingSystems { get; private set; }
+        public string NoCounterBrowsers { get; private set; }
         public string ConveyancePreference { get; private set; }
         public string Attachement { get; private set; }
         public bool Extentions { get; private set; }
@@ -220,7 +225,18 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         public override string GetUIMessage(AuthenticationContext ctx)
         {
             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
-            return Resources.GetString(ResourcesLocaleKind.FIDOHtml, "BIOUIMessage"); 
+            switch (ctx.UIMode)
+            {
+                case ProviderPageMode.EnrollBiometrics:
+                    return Resources.GetString(ResourcesLocaleKind.FIDOHtml, "BIOUIMessage3");
+                case ProviderPageMode.SendAuthRequest:
+                    if (ctx.DirectLogin)
+                        return Resources.GetString(ResourcesLocaleKind.FIDOHtml, "BIOUIMessage");
+                    else
+                        return Resources.GetString(ResourcesLocaleKind.FIDOHtml, "BIOUIMessage2");
+                default:
+                    return Resources.GetString(ResourcesLocaleKind.FIDOHtml, "BIOUIMessage");
+            }           
         }
 
         /// <summary>
@@ -384,6 +400,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                         Enabled = param.Enabled;
                         IsRequired = param.IsRequired;
                         WizardEnabled = param.EnrollWizard;
+                        WizardDisabled = param.EnrollWizardDisabled;
                         ForceEnrollment = param.ForceWizard;
                         PinRequired = param.PinRequired;
                         PinRequirements = param.PinRequirements;
@@ -395,6 +412,9 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                         UserVerificationRequirement = param.Options.UserVerificationRequirement.ToEnum<UserVerificationRequirement>();
                         RequireResidentKey = param.Options.RequireResidentKey;
                         ChallengeSize = param.Configuration.ChallengeSize;
+                        ForbiddenBrowsers = param.Configuration.ForbiddenBrowsers;
+                        InitiatedBrowsers = param.Configuration.InitiatedBrowsers;
+                        NoCounterBrowsers = param.Configuration.NoCounterBrowsers;
                         Fido2Configuration fido = new Fido2Configuration()
                         {
                             ServerDomain = param.Configuration.ServerDomain,
@@ -566,15 +586,16 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         /// </summary>
         public List<WebAuthNCredentialInformation> GetUserStoredCredentials(string upn)
         {
-            List<WebAuthNCredentialInformation> wcreds = new List<WebAuthNCredentialInformation>();
-            MFAWebAuthNUser user = RuntimeRepository.GetUser(Config, upn);
+            List<WebAuthNCredentialInformation> wcreds = new List<WebAuthNCredentialInformation>();            
             try
             {
+                MFAWebAuthNUser user = RuntimeRepository.GetUser(Config, upn);
                 if (user != null)
                 {
                     List<MFAUserCredential> creds = RuntimeRepository.GetCredentialsByUser(Config, user);
                     if (creds.Count == 0)
-                        return wcreds;
+                        return null;
+                       // return wcreds;
                     foreach (MFAUserCredential st in creds)
                     {
                         WebAuthNCredentialInformation itm = new WebAuthNCredentialInformation()
@@ -669,8 +690,12 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                         Extensions = this.Extentions,                       
                         UserVerificationMethod = this.UserVerificationMethod                       
                     };
+                    CredentialCreateOptions options = null;
 
-                    CredentialCreateOptions options = _webathn.GetRegisterCredentialOptions(user.ToCore(), existingKeys.ToCore(), authenticatorSelection, attType.ToEnum<AttestationConveyancePreference>(), exts);
+                    if (existingKeys.Count > 0)
+                        options = _webathn.GetRegisterCredentialOptions(user.ToCore(), existingKeys.ToCore(), authenticatorSelection, attType.ToEnum<AttestationConveyancePreference>(), exts);
+                    else
+                        options = _webathn.GetRegisterCredentialOptions(user.ToCore(), null, authenticatorSelection, attType.ToEnum<AttestationConveyancePreference>(), exts);
                     string result = options.ToJson();
                     ctx.CredentialOptions = result;
                     return result;
@@ -764,7 +789,6 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
             try
             {
                 List<MFAPublicKeyCredentialDescriptor> existingCredentials = new List<MFAPublicKeyCredentialDescriptor>();
-
                 if (!string.IsNullOrEmpty(ctx.UPN))
                 {
                     var user = RuntimeRepository.GetUser(Config, ctx.UPN);
@@ -780,7 +804,12 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                 };
                
                 UserVerificationRequirement uv = this.UserVerificationRequirement;
-                AssertionOptions options = _webathn.GetAssertionOptions(existingCredentials.ToCore(), uv, exts);
+                AssertionOptions options = null;
+                if (existingCredentials.Count > 0)
+                    options = _webathn.GetAssertionOptions(existingCredentials.ToCore(), uv, exts);
+                else
+                    options = _webathn.GetAssertionOptions(null, uv, exts);
+
                 string result = options.ToJson();
                 ctx.AssertionOptions = result;
                 return result;
@@ -823,18 +852,17 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                             throw new Exception("Unknown credentials");
                         }
 
-                        // Check Replay 
                         AuthenticatorData authData = new AuthenticatorData(clientResponse.Response.AuthenticatorData);
-
-                        bool isapple = Utilities.IsAppleDevice(ctx);
+                        bool isnocount = Utilities.IsNoCounterDevice(this.Config.WebAuthNProvider.Configuration, ctx);
                         uint authCounter = 0;
                         uint storedCounter = 0;
 
-                        if (!isapple)
+                        if (!isnocount)
                         {
                             authCounter = authData.SignCount;
                             storedCounter = creds.SignatureCounter;
                         }
+                        else
                         if ((authCounter > 0) && (authCounter <= storedCounter))
                         {
                             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
@@ -851,8 +879,10 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
 
                         // Apple counter always 0
                         AssertionVerificationResult res = _webathn.SetAssertionResult(clientResponse, options, creds.PublicKey, storedCounter, callback).Result;
-                        if (!isapple)
+                        if (!isnocount)
+                        {
                             RuntimeRepository.UpdateCounter(Config, user, res.CredentialId, res.Counter);
+                        }
                         else
                         {
                             RuntimeRepository.UpdateCounter(Config, user, res.CredentialId, 0);
@@ -917,7 +947,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                 return (int)AuthenticationResponseKind.Error;
             }
         }
-#endregion
+        #endregion
     }
 
 

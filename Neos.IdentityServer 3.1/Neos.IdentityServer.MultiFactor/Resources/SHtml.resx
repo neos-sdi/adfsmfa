@@ -297,4 +297,22 @@ Click "Continue"</value>
   <data name="HtmlUIMRegisterDevice" xml:space="preserve">
     <value>Register Device</value>
   </data>
+  <data name="HtmlUIMPauseForToday" xml:space="preserve">
+    <value>Do not show this message again</value>
+  </data>
+  <data name="HtmlUIMYes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="HtmlUIMNo" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="HtmlUIMPauseLabel" xml:space="preserve">
+    <value>Stay connected ?</value>
+  </data>
+  <data name="HtmlUIMPauseDescriptionToday" xml:space="preserve">
+    <value>This allows you to stop asking for the MFA today.</value>
+  </data>
+  <data name="HtmlUIMPauseDescription" xml:space="preserve">
+    <value>This allows you to stop asking for the MFA for {0} days.</value>
+  </data>
 </root>

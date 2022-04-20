@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2022 @redhook62 (adfsmfa@gmail.com)                                                                                                                                        //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -11,23 +11,17 @@
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,                            //
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                               //
 //                                                                                                                                                                                          //
-//                                                                                                                                                             //
+//                                                                                                                                                                                          //
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
-using Neos.IdentityServer.MultiFactor;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Net;
 using System.Reflection;
 using System.Security.Cryptography;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 
 namespace Neos.IdentityServer.MultiFactor.Common
@@ -64,6 +58,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
         private bool _enabled;
         private bool _pinenabled = false;
         private bool _wizenabled = true;
+        private bool _wizdisabled = false;
 
         public abstract PreferredMethod Kind { get; }
         public abstract bool IsBuiltIn { get; }
@@ -165,6 +160,31 @@ namespace Neos.IdentityServer.MultiFactor.Common
                     _wizenabled = false;
                 else
                     _wizenabled = value; 
+            }
+        }
+
+        /// <summary>
+        /// WizardDisabled property implmentation
+        /// </summary>
+        public virtual bool WizardDisabled
+        {
+            get
+            {
+                if (IsRequired)
+                    return false;
+                if (!_wizenabled)
+                    return false;
+                else
+                    return _wizdisabled;
+            }
+            set
+            {
+                if (IsRequired)
+                    _wizdisabled = false;
+                if (!_wizenabled)
+                    _wizdisabled = false;
+                else
+                    _wizdisabled = value;
             }
         }
 
@@ -837,6 +857,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
                         Enabled = param.Enabled;
                         IsRequired = param.IsRequired;
                         WizardEnabled = param.EnrollWizard;
+                        WizardDisabled = param.EnrollWizardDisabled;
                         ForceEnrollment = param.ForceWizard;
                         PinRequired = param.PinRequired;
                         Duration = param.Duration;
@@ -1315,6 +1336,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
                         Enabled = param.Enabled;
                         IsRequired = param.IsRequired;
                         WizardEnabled = param.EnrollWizard;
+                        WizardDisabled = param.EnrollWizardDisabled;
                         ForceEnrollment = param.ForceWizard;
                         PinRequired = param.PinRequired;
                         _isinitialized = true;
@@ -1771,6 +1793,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
                         Enabled = param.Enabled;
                         IsRequired = param.IsRequired;
                         WizardEnabled = param.EnrollWizard;
+                        WizardDisabled = param.EnrollWizardDisabled;
                         ForceEnrollment = param.ForceWizard;
                         PinRequired = param.PinRequired;
                         DeliveryNotifications = param.SendDeliveryNotifications;
@@ -2179,6 +2202,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
                     Enabled = false;
                     IsRequired = false;
                     WizardEnabled = false;
+                    WizardDisabled = true;
                     ForceEnrollment = ForceWizardMode.Disabled;
                     PinRequired = false;
                     _isinitialized = true;

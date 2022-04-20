@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="MailAdminContent" xml:space="preserve">
+    <value>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt; 
+&lt;html&gt; 
+    &lt;head&gt; 
+        &lt;title&gt;&lt;/title&gt; 
+        &lt;base target="blank"&gt; 
+    &lt;/head&gt; 
+    &lt;body&gt; 
+        &lt;table dir="ltr"&gt;
+            &lt;tr&gt;
+	    &lt;tr&gt;
+                &lt;td id="i0" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;&lt;span style="font-family:'Segoe UI Bold', 'Segoe UI Semibold', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:18px;font-weight:bold;color:#2a2a2a;"&gt; &lt;img id="logo" src="cid:{5}" /&gt;&lt;/span&gt; &lt;/td&gt;
+            &lt;/tr&gt;
+                &lt;td id="i1" style="padding:0;font-family:'Segoe UI Semibold', 'Segoe UI Bold', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:17px;color:#707070;"&gt;обліковий запис {0}&lt;/td&gt;
+            &lt;/tr&gt; 
+            &lt;tr&gt;
+                &lt;td id="i2" style="padding:0;font-family:'Segoe UI Light', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:41px;color:#2672ec;"&gt;Реєстрація користувача&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td id="i3" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Для того, щоб підвищити безпеку вашого облікового запису, ми активували механізм багатофакторної аутентифікації.&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td id="i3a" style="padding:0;padding-top:0px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Ця функція безпеки повинна бути активована нами за допомогою
+Інформація, яку ви щойно нам надали.&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td id="i4" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Наведена нижче інформація дозволить нам підтвердити вашу особу.&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td id="i4" style="padding:0;padding-top:15px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Ім'я користувача: &lt;a dir="ltr" id="iAccount" class="link" style="color:#2672ec;text-
+
+decoration:none;"&gt; {1} &lt;/a&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td id="i5" style="padding:0;padding-top:10px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Додаткова адреса електронної пошти: &lt;a dir="ltr" id="iEmail" class="link" style="color:#2672ec;text-decoration:none;"&gt; {2} &lt;/a&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td id="i6" style="padding:0;padding-top:10px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Номер мобільного телефону : &lt;a dir="ltr" id="iPhone" class="link" style="color:#2672ec;text-decoration:none;"&gt; {3} &lt;/a&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td id="i7" style="padding:0;padding-top:10px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Метод атентування за замовчуванням: &lt;a dir="ltr" id="iMethod" class="link" style="color:#2672ec;text-decoration:none;"&gt; {4} &lt;/a&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td id="i8" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;З повагою&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td id="i9" style="padding:0;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Команда {0} облікових записів&lt;/td&gt;
+            &lt;/tr&gt;
+        &lt;/table&gt;
+         &lt;br /&gt; 
+    &lt;/body&gt; 
+&lt;/html&gt;</value>
+  </data>
+  <data name="MailAdminTitle" xml:space="preserve">
+    <value>Адміністративний запит на реєстрацію {0}</value>
+  </data>
+  <data name="MailKeyContent" xml:space="preserve">
+    <value>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt; 
+&lt;html&gt; 
+    &lt;head&gt; 
+        &lt;title&gt;&lt;/title&gt; 
+        &lt;base target="blank"&gt; 
+    &lt;/head&gt; 
+    &lt;body&gt; 
+        &lt;table dir="ltr"&gt;
+	    &lt;tr&gt;
+                &lt;td id="i0" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;&lt;span style="font-family:'Segoe UI Bold', 'Segoe UI Semibold', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:18px;font-weight:bold;color:#2a2a2a;"&gt; &lt;img id="logo" src="cid:{5}" /&gt;&lt;/span&gt; &lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td id="i1" style="padding:0;font-family:'Segoe UI Semibold', 'Segoe UI Bold', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:17px;color:#707070;"&gt;обліковий запис {0}&lt;/td&gt;
+            &lt;/tr&gt; 
+            &lt;tr&gt;
+                &lt;td id="i2" style="padding:0;font-family:'Segoe UI Light', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:41px;color:#2672ec;"&gt;Ключ безпеки&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td id="i3" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;З метою підвищення безпеки вашого облікового запису ми активували двоетапну перевірку, наведена нижче інформація дозволить нам підтвердити вашу особу. Ці відомості потрібно ввести в застосунку для автентифікації.&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td id="i3" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Будь ласка, використовуйте такий ключ безпеки для {0} облікового запису: &lt;a dir="ltr" id="iAccount" class="link" style="color:#2672ec;text-decoration:none;"&gt; {1}. &lt;/a&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td id="i4" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Ключ безпеки: &lt;span style="font-family:'Segoe UI Bold', 'Segoe UI Semibold', 'Segoe 
+
+UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:18px;font-weight:bold;color:#2a2a2a;"&gt; {2}&lt;/span&gt; &lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td id="i5" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Ви також можете відсканувати наступний QR-код зі свого мобільного додатка для аутентифікації 
+
+(Google Автентифікатор, Microsoft Authenticator).&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td id="i6" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;&lt;span style="font-family:'Segoe UI Bold', 'Segoe UI Semibold', 'Segoe UI', 
+
+'Helvetica Neue Medium', Arial, sans-serif;font-size:18px;font-weight:bold;color:#2a2a2a;"&gt; &lt;img id="qr" src="cid:{3}" /&gt;&lt;/span&gt; &lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td id="i7" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Цей електронний лист є дуже конфіденційним, будь ласка, не розголошуйте його вміст. Якщо ви сумніваєтеся, будь ласка, зв'яжіться з 
+
+{0} команда облікового запису, щоб надати вам новий секретний ключ.&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td id="i8" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;З найщирішими побажаннями&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td id="i9" style="padding:0;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Команда {0} облікових записів&lt;/td&gt;
+            &lt;/tr&gt;
+        &lt;/table&gt;
+         &lt;br /&gt; 
+    &lt;/body&gt; 
+&lt;/html&gt;</value>
+  </data>
+  <data name="MailKeyTitle" xml:space="preserve">
+    <value>Відомості про безпеку</value>
+  </data>
+  <data name="MailNotifications" xml:space="preserve">
+    <value>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;&lt;/title&gt;
+    &lt;base target="blank"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;table dir="ltr"&gt;
+&lt;tr&gt;
+            &lt;td id="i0" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;&lt;span style="font-family:'Segoe UI Bold', 'Segoe UI Semibold', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:18px;font-weight:bold;color:#2a2a2a;"&gt; &lt;img id="logo" src="cid:{3}" /&gt;&lt;/span&gt; &lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td id="i2" style="padding:0;font-family:'Segoe UI Light', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:41px;color:#2672ec;"&gt;Відомості про безпеку змінено&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td id="i3" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Ми отримали запит на змінення відомостей про безпеку вашого облікового запису {0}. Якщо ви не просили про будь-які зміни, зверніться за допомогою до довідкової служби або скиньте відомості про безпеку.&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td id="i7" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;З найщирішими побажаннями&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td id="i8" style="padding:0;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Команда {1} облікових записів&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/table&gt;
+    &lt;br /&gt;
+&lt;/body&gt;
+&lt;/html&gt;</value>
+  </data>
+  <data name="MailNotificationsTitle" xml:space="preserve">
+    <value>Оповіщення системи безпеки про обліковий запис {0}</value>
+  </data>
+  <data name="MailOTPContent" xml:space="preserve">
+    <value>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt; 
+&lt;html&gt; 
+ &lt;head&gt; 
+  &lt;title&gt;&lt;/title&gt; 
+  &lt;base target="blank"&gt; 
+ &lt;/head&gt; 
+ &lt;body&gt; 
+  &lt;table dir="ltr"&gt;
+   &lt;tr&gt;
+    &lt;td id="i0" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;&lt;span style="font-family:'Segoe UI Bold', 'Segoe UI Semibold', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:18px;font-weight:bold;color:#2a2a2a;"&gt; &lt;img id="logo" src="cid:{4}" /&gt;&lt;/span&gt; &lt;/td&gt;
+   &lt;/tr&gt; 
+   &lt;tr&gt; 
+    &lt;td id="i1" style="padding:0;font-family:'Segoe UI Semibold', 'Segoe UI Bold', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:17px;color:#707070;"&gt;обліковий запис {0}&lt;/td&gt; 
+   &lt;/tr&gt; 
+   &lt;tr&gt; 
+    &lt;td id="i2" style="padding:0;font-family:'Segoe UI Light', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:41px;color:#2672ec;"&gt;Код безпеки&lt;/td&gt; 
+   &lt;/tr&gt; 
+   &lt;tr&gt; 
+    &lt;td id="i3" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Використовуйте цей код безпеки для облікового запису {0}: &lt;a dir="ltr" id="iAccount" class="link" style="color:#2672ec;text-decoration:none;"&gt; {1}. &lt;/a&gt;&lt;/td&gt; 
+   &lt;/tr&gt; 
+   &lt;tr&gt; 
+    &lt;td id="i4" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Код безпеки: &lt;span style="font-family:'Segoe UI Bold', 'Segoe UI Semibold', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:18px;font-weight:bold;color:#2a2a2a;"&gt; {2}&lt;/span&gt; &lt;/td&gt; 
+   &lt;/tr&gt; 
+   &lt;tr&gt; 
+    &lt;td id="i6" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Якщо ви не запросили код, ви можете ігнорувати це повідомлення.&lt;/td&gt; 
+   &lt;/tr&gt; 
+   &lt;tr&gt; 
+    &lt;td id="i7" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;З найщирішими побажаннями&lt;/td&gt; 
+    &lt;/tr&gt; 
+   &lt;tr&gt; 
+    &lt;td id="i8" style="padding:0;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Команда {0} облікових записів&lt;/td&gt; 
+   &lt;/tr&gt; 
+  &lt;/table&gt; 
+  &lt;br /&gt; 
+ &lt;/body&gt; 
+&lt;/html&gt;</value>
+  </data>
+  <data name="MailOTPTitle" xml:space="preserve">
+    <value>Код безпеки</value>
+  </data>
+</root>

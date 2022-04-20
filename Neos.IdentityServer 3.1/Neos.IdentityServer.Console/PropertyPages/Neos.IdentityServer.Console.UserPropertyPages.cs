@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2022 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -184,7 +184,7 @@ namespace Neos.IdentityServer.Console
             if (usersFormView == null)
                 return;
             MFAUserList registrations = GetSharedUserData();
-            userPropertiesControl.GetUserControlData(registrations);
+            control.GetUserControlData(registrations);
             foreach (MFAUser reg in registrations)
             {
                 reg.IsApplied = false;
@@ -202,7 +202,7 @@ namespace Neos.IdentityServer.Console
             if (usersFormView == null)
                 return;
             MFAUserList registrations = GetSharedUserData();
-            userPropertiesControl.SetUserControlData(registrations, disablesync);
+            control.SetUserControlData(registrations, disablesync);
         }
 
         /// <summary>
@@ -293,7 +293,7 @@ namespace Neos.IdentityServer.Console
                             Icon = MessageBoxIcon.Error
                         };
                         ParentSheet.ShowDialog(messageBoxParameters);
-                        ParentSheet.SetActivePage(1);
+                        ParentSheet.SetActivePage(0);
                         result = false;
                     }
                 }

@@ -1,5 +1,5 @@
 <Root>
-	<User upn="user1@contoso.com" email="email1@gmail.com" mobile="601020304" method="Choose" enabled="true" />
-        <User upn="user2@contoso.com" email="email2@live.com" mobile="601020304" method="Choose" enabled="true" />
-        <User upn="user3@contoso.com" email="email3@yahoo.com" mobile="601020304" method="Code" enabled="false" />
+	<User upn="user1@contoso.com" email="Test1 [email1@gmail.com]" mobile="601020304" method="Choose" enabled="true" />
+  <User upn="user2@contoso.com" email="Test2 [email2@live.com]" mobile="601020304" method="Choose" enabled="true" />
+  <User upn="user3@contoso.com" email="Test3 [email3@yahoo.com]" mobile="601020304" method="Code" enabled="false" />
 </Root>

@@ -297,4 +297,22 @@
   <data name="HtmlUIMRegisterDevice" xml:space="preserve">
     <value>Регистрация устройства</value>
   </data>
+  <data name="HtmlUIMPauseForToday" xml:space="preserve">
+    <value>Больше не показывать это сообщение</value>
+  </data>
+  <data name="HtmlUIMYes" xml:space="preserve">
+    <value>Да</value>
+  </data>
+  <data name="HtmlUIMNo" xml:space="preserve">
+    <value>Нет</value>
+  </data>
+  <data name="HtmlUIMPauseLabel" xml:space="preserve">
+    <value>Оставайтесь на связи ?</value>
+  </data>
+  <data name="HtmlUIMPauseDescriptionToday" xml:space="preserve">
+    <value>Это позволяет уже сегодня прекратить подавать заявки на МИД.</value>
+  </data>
+  <data name="HtmlUIMPauseDescription" xml:space="preserve">
+    <value>Это позволяет перестать запрашивать МИД на {0} дней.</value>
+  </data>
 </root>

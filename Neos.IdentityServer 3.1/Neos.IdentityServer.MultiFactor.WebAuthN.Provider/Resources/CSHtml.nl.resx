@@ -165,4 +165,10 @@
   <data name="BIOERRORAUTHREPLAY" xml:space="preserve">
     <value>Fout tijdens verificatieproces ! Beveiligingsbeschrijvingsgegevens zijn al eerder gebruikt!</value>
   </data>
+  <data name="BIOUIMessage2" xml:space="preserve">
+    <value>Om in te loggen met uw biometrische apparaat, klikt u op "Verbinding"</value>
+  </data>
+  <data name="BIOUIMessage3" xml:space="preserve">
+    <value>Om uw biometrische apparaat te registreren, klikt u op "Apparaat registreren"</value>
+  </data>
 </root>

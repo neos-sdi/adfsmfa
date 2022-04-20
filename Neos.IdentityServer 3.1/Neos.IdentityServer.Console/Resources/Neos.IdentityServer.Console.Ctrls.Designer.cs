@@ -124,6 +124,15 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Allow MFA to be paused for (x) days.
+        /// </summary>
+        internal static string CTRGLPAUSEFORDAYS {
+            get {
+                return ResourceManager.GetString("CTRGLPAUSEFORDAYS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Access account.
         /// </summary>
         internal static string CTRLADACCOUNT {
@@ -844,6 +853,15 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Show Custom Authenticator.
+        /// </summary>
+        internal static string CTRLGLSHOWCUSTOM {
+            get {
+                return ResourceManager.GetString("CTRLGLSHOWCUSTOM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Show Google Authenticator.
         /// </summary>
         internal static string CTRLGLSHOWGOOGLE {
@@ -1029,6 +1047,15 @@ namespace Neos.IdentityServer.Console.Resources {
         internal static string CTRLPROVWIZARD {
             get {
                 return ResourceManager.GetString("CTRLPROVWIZARD", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Wizard Disabled at Enrollement.
+        /// </summary>
+        internal static string CTRLPROVWIZARDDISABLED {
+            get {
+                return ResourceManager.GetString("CTRLPROVWIZARDDISABLED", resourceCulture);
             }
         }
         

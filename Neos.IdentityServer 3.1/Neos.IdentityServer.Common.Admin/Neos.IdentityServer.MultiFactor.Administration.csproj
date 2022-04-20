@@ -121,6 +121,7 @@
     <EmbeddedResource Include="Resources\SErrors.ro.resx" />
     <EmbeddedResource Include="Resources\SErrors.ru.resx" />
     <EmbeddedResource Include="Resources\SErrors.sv.resx" />
+    <EmbeddedResource Include="Resources\SErrors.uk.resx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

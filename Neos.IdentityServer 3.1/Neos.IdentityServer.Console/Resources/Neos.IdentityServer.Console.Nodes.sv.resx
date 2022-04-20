@@ -357,4 +357,10 @@
   <data name="SECURITYSCOPECUSTOM" xml:space="preserve">
     <value>Anpassade nycklar</value>
   </data>
+  <data name="ROOTLANGUAGEUK" xml:space="preserve">
+    <value>Ukrainska</value>
+  </data>
+  <data name="ROOTLANGUAGEUKDESC" xml:space="preserve">
+    <value>Ändra kulturen i användargränssnittet på ukrainska (1058)</value>
+  </data>
 </root>

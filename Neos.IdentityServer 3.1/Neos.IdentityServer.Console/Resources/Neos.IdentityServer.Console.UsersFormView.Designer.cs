@@ -115,6 +115,15 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Delete.
+        /// </summary>
+        internal static string USERSFRMDELETE {
+            get {
+                return ResourceManager.GetString("USERSFRMDELETE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Properties.
         /// </summary>
         internal static string USERSFRMPROPERTIES {

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Neos.IdentityServer.MultiFactor.SMS.Resources {
+namespace Neos.IdentityServer.MultiFactor.Samples.Resources {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Neos.IdentityServer.MultiFactor.SMS.Resources {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Neos.IdentityServer.MultiFactor.SMS.Resources.SAzure", typeof(SAzure).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Neos.IdentityServer.MultiFactor.Samples.Resources.SAzure", typeof(SAzure).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,7 +61,7 @@ namespace Neos.IdentityServer.MultiFactor.SMS.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Use &lt;$otp$&gt; as the security code fr the account {0}.
+        ///   Recherche une chaîne localisée semblable à Use &lt;$otp$&gt; as the security code for the account {0}.
         /// </summary>
         internal static string SMSMessage {
             get {

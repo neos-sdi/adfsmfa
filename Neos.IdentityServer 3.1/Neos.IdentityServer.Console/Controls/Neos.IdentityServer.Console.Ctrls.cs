@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2022 @redhook62 (adfsmfa@gmail.com)                                                                                                                                        //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -11,12 +11,13 @@
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,                            //
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                               //
 //                                                                                                                                                                                          //
-//                                                                                                                                                             //
+//                                                                                                                                                                                          //
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
 using Microsoft.ManagementConsole;
 using Microsoft.ManagementConsole.Advanced;
+using Neos.IdentityServer.Console.Forms;
 using Neos.IdentityServer.Console.Resources;
 using Neos.IdentityServer.MultiFactor;
 using Neos.IdentityServer.MultiFactor.Administration;
@@ -410,6 +411,7 @@ namespace Neos.IdentityServer.Console.Controls
         private ErrorProvider errors;
         private CheckBox chkProviderEnabled;
         private CheckBox chkProviderEnroll;
+        private CheckBox chkProviderEnrollDisabled;
         private CheckBox chkProviderRequired;
         private CheckBox chkProviderPin;
         private Label lblProviderDesc;
@@ -522,25 +524,25 @@ namespace Neos.IdentityServer.Console.Controls
 
                 this.Dock = DockStyle.Top;
                 if (_kind == PreferredMethod.Biometrics)
-                    this.Height = 175;
+                    this.Height = 195;
                 else 
-                    this.Height = 95;
+                    this.Height = 115;
                 this.Width = 760;
                 this.Margin = new Padding(30, 5, 30, 5);
 
                 _panel.Width = 20;
                 if (_kind == PreferredMethod.Biometrics)
-                    _panel.Height = 175;
+                    _panel.Height = 195;
                 else
-                    _panel.Height = 95;
+                    _panel.Height = 115;
                 this.Controls.Add(_panel);
 
                 _txtpanel.Left = 20;
                 _txtpanel.Width = this.Width - 100;
                 if (_kind == PreferredMethod.Biometrics)
-                    _txtpanel.Height = 185;
+                    _txtpanel.Height = 195;
                 else
-                    _txtpanel.Height = 105;
+                    _txtpanel.Height = 115;
                 _txtpanel.BackColor = System.Drawing.SystemColors.Control;
                 this.Controls.Add(_txtpanel);
 
@@ -596,13 +598,29 @@ namespace Neos.IdentityServer.Console.Controls
                 chkProviderEnroll.CheckedChanged += ChkProviderEnrollChanged;
                 _txtpanel.Controls.Add(chkProviderEnroll);
 
+                chkProviderEnrollDisabled = new CheckBox
+                {
+                    Text = res.CTRLPROVWIZARDDISABLED,
+                    Enabled = (_provider.Enabled && !_provider.IsRequired),
+                };
+                if ((_provider.AllowEnrollment) && (!_provider.IsRequired))
+                    chkProviderEnrollDisabled.Checked = _provider.WizardDisabled;
+                else
+                    chkProviderEnrollDisabled.Checked = false;
+
+                chkProviderEnrollDisabled.Left = 510;
+                chkProviderEnrollDisabled.Top = 70;
+                chkProviderEnrollDisabled.Width = 300;
+                chkProviderEnrollDisabled.CheckedChanged += ChkProviderEnrollDisabledChanged;
+                _txtpanel.Controls.Add(chkProviderEnrollDisabled);
+
                 chkProviderPin = new CheckBox
                 {
                     Text = res.CTRLPROVPIN,
                     Checked = _provider.PinRequired,
                     Enabled = _provider.Enabled,
                     Left = 510,
-                    Top = 70,
+                    Top = 90,
                     Width = 300
                 };
                 chkProviderPin.CheckedChanged += ChkProviderPinChanged;
@@ -618,7 +636,7 @@ namespace Neos.IdentityServer.Console.Controls
                     {
                         Text = res.CTRLPROVPINREQUIRED,
                         Left = 540,
-                        Top = 94,
+                        Top = 114,
                         Width = 500
                     };                   
                     _txtpanel.Controls.Add(lblRequiredPinDesc);
@@ -630,7 +648,7 @@ namespace Neos.IdentityServer.Console.Controls
                         Checked = webprov.PinRequirements.HasFlag(WebAuthNPinRequirements.None),
                         Enabled = _provider.Enabled,
                         Left = 540,
-                        Top = 118,
+                        Top = 138,
                         Width = 135
                     };
                     chkProviderPinNone.CheckedChanged += ChkProviderPinNoneChanged;
@@ -642,7 +660,7 @@ namespace Neos.IdentityServer.Console.Controls
                         Checked = webprov.PinRequirements.HasFlag(WebAuthNPinRequirements.AndroidKey),
                         Enabled = _provider.Enabled,
                         Left = 680,
-                        Top = 118,
+                        Top = 138,
                         Width = 135
                     };
                     chkProviderPinAndroidKey.CheckedChanged += ChkProviderPinAndroidKeyChanged;
@@ -654,7 +672,7 @@ namespace Neos.IdentityServer.Console.Controls
                         Checked = webprov.PinRequirements.HasFlag(WebAuthNPinRequirements.AndroidSafetyNet),
                         Enabled = _provider.Enabled,
                         Left = 820,
-                        Top = 118,
+                        Top = 138,
                         Width = 135
                     };
                     chkProviderPinAndroidSafetyNet.CheckedChanged += ChkProviderPinAndroidSafetyNetChanged;
@@ -666,7 +684,7 @@ namespace Neos.IdentityServer.Console.Controls
                         Checked = webprov.PinRequirements.HasFlag(WebAuthNPinRequirements.Packed),
                         Enabled = _provider.Enabled,
                         Left = 960,
-                        Top = 118,
+                        Top = 138,
                         Width = 135
                     };
                     chkProviderPinPacked.CheckedChanged += ChkProviderPinPackedChanged;
@@ -678,7 +696,7 @@ namespace Neos.IdentityServer.Console.Controls
                         Checked = webprov.PinRequirements.HasFlag(WebAuthNPinRequirements.Fido2U2f),
                         Enabled = _provider.Enabled,
                         Left = 540,
-                        Top = 142,
+                        Top = 162,
                         Width = 135
                     };
                     chkProviderPinFido2u2f.CheckedChanged += ChkProviderPinFido2u2fChanged;
@@ -690,7 +708,7 @@ namespace Neos.IdentityServer.Console.Controls
                         Checked = webprov.PinRequirements.HasFlag(WebAuthNPinRequirements.TPM),
                         Enabled = _provider.Enabled,
                         Left = 680,
-                        Top = 142,
+                        Top = 162,
                         Width = 135
                     };
                     chkProviderPinTPM.CheckedChanged += ChkProviderPinTPMChanged;
@@ -702,7 +720,7 @@ namespace Neos.IdentityServer.Console.Controls
                         Checked = webprov.PinRequirements.HasFlag(WebAuthNPinRequirements.Apple),
                         Enabled = _provider.Enabled,
                         Left = 820,
-                        Top = 142,
+                        Top = 162,
                         Width = 135
                     };
                     chkProviderPinApple.CheckedChanged += ChkProviderPinAppleChanged;
@@ -715,6 +733,8 @@ namespace Neos.IdentityServer.Console.Controls
                     chkProviderEnabled.Enabled = false;
                     chkProviderEnroll.Checked = false;
                     chkProviderEnroll.Enabled = false;
+                    chkProviderEnrollDisabled.Checked = false;
+                    chkProviderEnrollDisabled.Enabled = false;
                     chkProviderRequired.Checked = false;
                     chkProviderRequired.Enabled = false;
                     chkProviderPin.Checked = false;
@@ -749,6 +769,7 @@ namespace Neos.IdentityServer.Console.Controls
                 chkProviderEnabled.Text = res.CTRLPROVACTIVE;
                 chkProviderRequired.Text = res.CTRLPROVREQUIRED;
                 chkProviderEnroll.Text = res.CTRLPROVWIZARD;
+                chkProviderEnrollDisabled.Text = res.CTRLPROVWIZARDDISABLED;
                 chkProviderPin.Text = res.CTRLPROVPIN;
 
                 lblProviderDesc.Text = _provider.Description;
@@ -761,6 +782,12 @@ namespace Neos.IdentityServer.Console.Controls
                 else
                     chkProviderEnroll.Checked = false;
                 chkProviderEnroll.Enabled = (_provider.Enabled && _provider.AllowEnrollment);
+
+                if ((_provider.AllowEnrollment) && (!_provider.IsRequired))
+                    chkProviderEnrollDisabled.Checked = _provider.WizardDisabled;
+                else
+                    chkProviderEnrollDisabled.Checked = false;
+                chkProviderEnrollDisabled.Enabled = (_provider.Enabled && !_provider.IsRequired);
 
                 if (_kind == PreferredMethod.Biometrics)
                 {
@@ -874,7 +901,7 @@ namespace Neos.IdentityServer.Console.Controls
             this.Cursor = Cursors.WaitCursor;
             try
             {
-                if (chkProviderPinTPM.Checked)
+                if (chkProviderPinApple.Checked)
                     Config.WebAuthNProvider.PinRequirements |= WebAuthNPinRequirements.Apple;
                 else
                     Config.WebAuthNProvider.PinRequirements &= ~WebAuthNPinRequirements.Apple;
@@ -1137,6 +1164,52 @@ namespace Neos.IdentityServer.Console.Controls
         }
 
         /// <summary>
+        /// ChkProviderEnrollDisabledChanged method implementation
+        /// </summary>
+        private void ChkProviderEnrollDisabledChanged(object sender, EventArgs e)
+        {
+            this.Cursor = Cursors.WaitCursor;
+            try
+            {
+                switch (_kind)
+                {
+                    case PreferredMethod.Code:
+                        Config.OTPProvider.EnrollWizardDisabled= chkProviderEnrollDisabled.Checked;
+                        break;
+                    case PreferredMethod.Email:
+                        Config.MailProvider.EnrollWizardDisabled = chkProviderEnrollDisabled.Checked;
+                        break;
+                    case PreferredMethod.External:
+                        Config.ExternalProvider.EnrollWizardDisabled = chkProviderEnrollDisabled.Checked;
+                        break;
+                    case PreferredMethod.Azure:
+                        Config.AzureProvider.EnrollWizardDisabled = chkProviderEnrollDisabled.Checked;
+                        break;
+                    case PreferredMethod.Biometrics:
+                        Config.WebAuthNProvider.EnrollWizardDisabled = chkProviderEnrollDisabled.Checked;
+                        break;
+                }
+                if (_view.AutoValidate != AutoValidate.Disable)
+                    ManagementService.ADFSManager.SetDirty(true);
+            }
+            catch (Exception ex)
+            {
+                errors.SetError(chkProviderEnrollDisabled, ex.Message);
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Default;
+            }
+        }
+
+        /// <summary>
         /// chkProviderChanged method implementation
         /// </summary>
         private void ChkProviderChanged(object sender, EventArgs e)
@@ -1149,29 +1222,36 @@ namespace Neos.IdentityServer.Console.Controls
                     case PreferredMethod.Code:
                         Config.OTPProvider.Enabled = chkProviderEnabled.Checked;
                         chkProviderEnroll.Enabled = Config.OTPProvider.Enabled;
+                        chkProviderEnrollDisabled.Enabled = (Config.OTPProvider.Enabled && !Config.OTPProvider.IsRequired);
                         chkProviderPin.Enabled = Config.OTPProvider.Enabled;
                         break;
                     case PreferredMethod.Email:
                         Config.MailProvider.Enabled = chkProviderEnabled.Checked;
                         chkProviderEnroll.Enabled = Config.MailProvider.Enabled;
+                        chkProviderEnrollDisabled.Enabled = (Config.MailProvider.Enabled && !Config.MailProvider.IsRequired);
                         chkProviderPin.Enabled = Config.MailProvider.Enabled;
                         break;
                     case PreferredMethod.External:
                         Config.ExternalProvider.Enabled = chkProviderEnabled.Checked;
                         chkProviderEnroll.Enabled = Config.ExternalProvider.Enabled;
+                        chkProviderEnrollDisabled.Enabled = (Config.ExternalProvider.Enabled && !Config.ExternalProvider.IsRequired);
                         chkProviderPin.Enabled = Config.ExternalProvider.Enabled;
                         break;
                     case PreferredMethod.Azure:
                         Config.AzureProvider.Enabled = chkProviderEnabled.Checked;
                         chkProviderEnroll.Enabled = Config.AzureProvider.Enabled;
+                        chkProviderEnrollDisabled.Enabled = (Config.AzureProvider.Enabled && !Config.AzureProvider.IsRequired);
                         chkProviderPin.Enabled = Config.AzureProvider.Enabled;
                         break;
                     case PreferredMethod.Biometrics:
                         Config.WebAuthNProvider.Enabled = chkProviderEnabled.Checked;
                         chkProviderEnroll.Enabled = Config.WebAuthNProvider.Enabled;
+                        chkProviderEnrollDisabled.Enabled = (Config.WebAuthNProvider.Enabled && !Config.WebAuthNProvider.IsRequired);
                         chkProviderPin.Enabled = Config.WebAuthNProvider.Enabled;
                         break;
                 }
+                if (!chkProviderEnrollDisabled.Enabled)
+                    chkProviderEnrollDisabled.Checked = false;
                 if (_view.AutoValidate != AutoValidate.Disable)
                     ManagementService.ADFSManager.SetDirty(true);
             }
@@ -1205,31 +1285,36 @@ namespace Neos.IdentityServer.Console.Controls
                     case PreferredMethod.Code:
                         Config.OTPProvider.IsRequired = chkProviderRequired.Checked;
                         chkProviderEnroll.Enabled = Config.OTPProvider.Enabled;
+                        chkProviderEnrollDisabled.Enabled = (Config.OTPProvider.Enabled && !Config.OTPProvider.IsRequired);
                         chkProviderPin.Enabled = Config.OTPProvider.Enabled;
                         break;
                     case PreferredMethod.Email:
                         Config.MailProvider.IsRequired = chkProviderRequired.Checked;
                         chkProviderEnroll.Enabled = Config.MailProvider.Enabled;
+                        chkProviderEnrollDisabled.Enabled = (Config.MailProvider.Enabled && !Config.MailProvider.IsRequired);
                         chkProviderPin.Enabled = Config.MailProvider.Enabled;
-
                         break;
                     case PreferredMethod.External:
                         Config.ExternalProvider.IsRequired = chkProviderRequired.Checked;
                         chkProviderEnroll.Enabled = Config.ExternalProvider.Enabled;
+                        chkProviderEnrollDisabled.Enabled = (Config.ExternalProvider.Enabled && !Config.ExternalProvider.IsRequired);
                         chkProviderPin.Enabled = Config.ExternalProvider.Enabled;
-
                         break;
                     case PreferredMethod.Azure:
                         Config.AzureProvider.IsRequired = chkProviderRequired.Checked;
                         chkProviderEnroll.Enabled = Config.AzureProvider.Enabled;
+                        chkProviderEnrollDisabled.Enabled = (Config.AzureProvider.Enabled && !Config.AzureProvider.IsRequired);
                         chkProviderPin.Enabled = Config.AzureProvider.Enabled;
                         break;
                     case PreferredMethod.Biometrics:
                         Config.WebAuthNProvider.IsRequired = chkProviderRequired.Checked;
                         chkProviderEnroll.Enabled = Config.WebAuthNProvider.Enabled;
+                        chkProviderEnrollDisabled.Enabled = (Config.WebAuthNProvider.Enabled && !Config.WebAuthNProvider.IsRequired);
                         chkProviderPin.Enabled = Config.WebAuthNProvider.Enabled;
                         break;
                 }
+                if (!chkProviderEnrollDisabled.Enabled)
+                    chkProviderEnrollDisabled.Checked = false;
                 if (_view.AutoValidate != AutoValidate.Disable)
                     ManagementService.ADFSManager.SetDirty(true);
             }
@@ -1826,6 +1911,7 @@ namespace Neos.IdentityServer.Console.Controls
         private CheckBox chkAllowNotifications;
         private NumericUpDown txtADVStart;
         private NumericUpDown txtADVEnd;
+        private NumericUpDown txtPauseforDays;
 
         private Panel _paneloptmfa;
         private Panel _panelstmfa;
@@ -1850,6 +1936,7 @@ namespace Neos.IdentityServer.Console.Controls
         private Label lblConfigProvider;
         private bool lockevents;
         private CheckBox chkUseUserLanguages;
+        private Label PauseforDaysLabel;
 
 
 
@@ -2051,7 +2138,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = res.CTRLGLPOLICY + " : ",
                     Left = 10,
-                    Top = 168,
+                    Top = 129,
                     Width = 180
                 };
                 _txtpanel.Controls.Add(lblConfigTemplate);
@@ -2061,7 +2148,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     DropDownStyle = ComboBoxStyle.DropDownList,
                     Left = 210,
-                    Top = 164,
+                    Top = 125,
                     Width = 250
                 };
                 _txtpanel.Controls.Add(cbConfigTemplate);
@@ -2074,8 +2161,8 @@ namespace Neos.IdentityServer.Console.Controls
                 _panelstmfa = new Panel
                 {
                     Left = 0,
-                    Top = 198,
-                    Height = 125,
+                    Top = 158,
+                    Height = 120,
                     Width = 300
                 };
                 _txtpanel.Controls.Add(_panelstmfa);
@@ -2122,9 +2209,9 @@ namespace Neos.IdentityServer.Console.Controls
                 _panelregmfa = new Panel
                 {
                     Left = 0,
-                    Top = 300,
-                    Height = 135,
-                    Width = 320
+                    Top = 252,
+                    Height = 165,
+                    Width = 470
                 };
                 _txtpanel.Controls.Add(_panelregmfa);
 
@@ -2177,10 +2264,34 @@ namespace Neos.IdentityServer.Console.Controls
                 rdioREGREquired.CheckedChanged += REGUAdministrativeCheckedChanged;
                 _panelregmfa.Controls.Add(rdioREGREquired);
 
+                PauseforDaysLabel = new Label
+                {
+                    Text = res.CTRGLPAUSEFORDAYS + " :",
+                    Left = 30,
+                    Top = 142,
+                    Width = 320,
+                    TextAlign = ContentAlignment.MiddleLeft
+                };
+                _panelregmfa.Controls.Add(PauseforDaysLabel);
+
+                txtPauseforDays = new NumericUpDown
+                {
+                    Left = 410,
+                    Top = 142,
+                    Width = 50,
+                    TextAlign = HorizontalAlignment.Center,
+                    Value = Config.AllowPauseForDays,
+                    Minimum = new decimal(new int[] { 0, 0, 0, 0 }),
+                    Maximum = new decimal(new int[] { 7, 0, 0, 0 })
+                };
+                txtPauseforDays.ValueChanged += PauseForDaysValueChanged;
+                _panelregmfa.Controls.Add(txtPauseforDays);
+
+
                 _paneloptmfa = new Panel
                 {
                     Left = 530,
-                    Top = 198,
+                    Top = 158,
                     Height = 190,
                     Width = 400
                 };
@@ -2259,8 +2370,8 @@ namespace Neos.IdentityServer.Console.Controls
                 _paneladvmfa = new Panel
                 {
                     Left = 530,
-                    Top = 385,
-                    Height = 100,
+                    Top = 360,
+                    Height = 800,
                     Width = 325
                 };
                 _txtpanel.Controls.Add(_paneladvmfa);
@@ -2319,7 +2430,6 @@ namespace Neos.IdentityServer.Console.Controls
                 };
                 txtADVEnd.ValueChanged += ADVEndValueChanged;
                 _paneladvmfa.Controls.Add(txtADVEnd);
-
 
                 tblSaveConfig = new LinkLabel
                 {
@@ -2389,7 +2499,8 @@ namespace Neos.IdentityServer.Console.Controls
                 rdioREGAdmin.Text = res.CTRLGLMFAREGISTER1;
                 rdioREGUser.Text = res.CTRLGLMFAREGISTER2;
                 rdioREGUnManaged.Text = res.CTRLGLMFAREGISTER3;
-                rdioREGREquired.Text = res.CTRLGLMFAREGISTER4;  
+                rdioREGREquired.Text = res.CTRLGLMFAREGISTER4;
+                PauseforDaysLabel.Text = res.CTRGLPAUSEFORDAYS;
                 optCFGLabel.Text = res.CTRLGLMANAGEOPTS;
                 chkAllowManageOptions.Text = res.CTRLGLMANAGEOPTIONS;
                 chkAllowEnrollment.Text = res.CTRLGLENROLLWIZ;
@@ -2552,6 +2663,7 @@ namespace Neos.IdentityServer.Console.Controls
 
                         txtADVStart.Enabled = false;
                         txtADVEnd.Enabled = false;
+                        txtPauseforDays.Enabled = true;
 
                         break;
                     case UserTemplateMode.Open:
@@ -2578,6 +2690,7 @@ namespace Neos.IdentityServer.Console.Controls
 
                         txtADVStart.Enabled = true;
                         txtADVEnd.Enabled = true;
+                        txtPauseforDays.Enabled = true;
 
                         break;
                     case UserTemplateMode.Default:
@@ -2604,6 +2717,7 @@ namespace Neos.IdentityServer.Console.Controls
 
                         txtADVStart.Enabled = true;
                         txtADVEnd.Enabled = true;
+                        txtPauseforDays.Enabled = true;
 
                         break;
                     case UserTemplateMode.Mixed:
@@ -2630,6 +2744,8 @@ namespace Neos.IdentityServer.Console.Controls
 
                         txtADVStart.Enabled = false;
                         txtADVEnd.Enabled = false;
+                        txtPauseforDays.Enabled = true;
+
                         break;
                     case UserTemplateMode.Managed:
                         rdioMFAAllowed.Checked = false;
@@ -2655,6 +2771,7 @@ namespace Neos.IdentityServer.Console.Controls
 
                         txtADVStart.Enabled = false;
                         txtADVEnd.Enabled = false;
+                        txtPauseforDays.Enabled = true;
 
                         break;
                     case UserTemplateMode.Strict:
@@ -2681,6 +2798,7 @@ namespace Neos.IdentityServer.Console.Controls
 
                         txtADVStart.Enabled = false;
                         txtADVEnd.Enabled = false;
+                        txtPauseforDays.Enabled = false;
 
                         break;
                     case UserTemplateMode.Administrative:
@@ -2707,6 +2825,7 @@ namespace Neos.IdentityServer.Console.Controls
 
                         txtADVStart.Enabled = false;
                         txtADVEnd.Enabled = false;
+                        txtPauseforDays.Enabled = false;
 
                         break;
                     default:
@@ -2743,6 +2862,7 @@ namespace Neos.IdentityServer.Console.Controls
 
                         txtADVStart.Enabled = true;
                         txtADVEnd.Enabled = true;
+                        txtPauseforDays.Enabled = true;
                         break;
                 }
             }
@@ -3177,6 +3297,30 @@ namespace Neos.IdentityServer.Console.Controls
             catch (Exception ex)
             {
                 errors.SetError(txtADVStart, ex.Message);
+            }
+        }
+        #endregion
+
+        #region PauseForDays
+        /// <summary>
+        /// PauseForDaysValueChanged method implementation
+        /// </summary>
+        private void PauseForDaysValueChanged(object sender, EventArgs e)
+        {
+            if (lockevents)
+                return;
+            try
+            {
+                if (_view.AutoValidate != AutoValidate.Disable)
+                {
+                    ManagementService.ADFSManager.SetDirty(true);
+                    Config.AllowPauseForDays = Convert.ToInt32(txtPauseforDays.Value);
+                    errors.SetError(txtPauseforDays, "");
+                }
+            }
+            catch (Exception ex)
+            {
+                errors.SetError(txtPauseforDays, ex.Message);
             }
         }
         #endregion
@@ -5776,83 +5920,57 @@ namespace Neos.IdentityServer.Console.Controls
         }
 
         /// <summary>
+        /// BeforeCertValidating method implementation
+        /// </summary>
+        private bool BeforeDBValidating()
+        {
+            bool result = true;
+            if ((ManagementService.Config.AdministrationPinEnabled) && (!ManagementService.PinValidated))
+            {
+                AdminPinWizard Wizard = new AdminPinWizard();
+                Wizard.AdminPin = ManagementService.ADFSManager.Config.AdministrationPin;
+                DialogResult dresult = this._snapin.Console.ShowDialog(Wizard);
+                if (dresult == DialogResult.Abort)
+                {
+                    this.Cursor = Cursors.Default;
+                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                    {
+                        Text = Wizard.ErrorMessage,
+                        Buttons = MessageBoxButtons.OK,
+                        Icon = MessageBoxIcon.Error
+                    };
+                    this._snapin.Console.ShowDialog(messageBoxParameters);
+                }
+                result = (dresult == DialogResult.OK);
+                ManagementService.PinValidated = result;
+            }
+            return result;
+        }
+
+        /// <summary>
         /// btnConnectClick method implmentation
         /// </summary>
         private void BtnCreateDBClick(object sender, EventArgs e)
         {
-            DatabaseWizard Wizard = new DatabaseWizard();
-            try
+            if (BeforeDBValidating())
             {
-                bool result = (this._snapin.Console.ShowDialog(Wizard) == DialogResult.OK);
-                Cursor crs = this.Cursor;
+                DatabaseWizard Wizard = new DatabaseWizard();
                 try
-                {
-                    this.Cursor = Cursors.WaitCursor; 
-                    if (result)
-                    {
-                        this.txtConnectionString.Text = ManagementService.ADFSManager.CreateMFADatabase(null, Wizard.txtInstance.Text, Wizard.txtDBName.Text, Wizard.txtAccount.Text, Wizard.txtPwd.Text);
-                        MessageBoxParameters messageBoxParameters = new MessageBoxParameters
-                        {
-                            Text = string.Format(res.CTRLSQLNEWDBCREATED, Wizard.txtDBName.Text),
-                            Buttons = MessageBoxButtons.OK,
-                            Icon = MessageBoxIcon.Information
-                        };
-                        this._snapin.Console.ShowDialog(messageBoxParameters);
-                    }
-                }
-                finally
-                {
-                    this.Cursor = crs;
-                }
-            }
-            catch (Exception ex)
-            {
-                this.Cursor = Cursors.Default;
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
-                {
-                    Text = ex.Message,
-                    Buttons = MessageBoxButtons.OK,
-                    Icon = MessageBoxIcon.Error
-                };
-                this._snapin.Console.ShowDialog(messageBoxParameters);
-            }
-        }
-
-        /// <summary>
-        /// btnCreateCryptedDBClick method implmentation
-        /// </summary>
-        private void BtnCreateCryptedDBClick(object sender, EventArgs e)
-        {
-            DatabaseWizard Wizard = new DatabaseWizard();
-            try
-            {
-                if (Config.Hosts.SQLServerHost.IsAlwaysEncrypted)
                 {
                     bool result = (this._snapin.Console.ShowDialog(Wizard) == DialogResult.OK);
                     Cursor crs = this.Cursor;
                     try
                     {
-                        this.Cursor = Cursors.WaitCursor; 
+                        this.Cursor = Cursors.WaitCursor;
                         if (result)
                         {
-                            bool isnew = false;
-                            string thumb = string.Empty;
-                            if ((Config.Hosts.SQLServerHost.CertReuse) && (ManagementService.ADFSManager.CheckCertificate(Config.Hosts.SQLServerHost.ThumbPrint.ToUpper(), StoreLocation.LocalMachine)))
-                                thumb = Config.Hosts.SQLServerHost.ThumbPrint.ToUpper();
-                            else
-                            { 
-                                thumb = ManagementService.ADFSManager.RegisterNewSQLCertificate(null, Config.Hosts.SQLServerHost.CertificateValidity, Config.Hosts.SQLServerHost.KeyName);
-                                isnew = true;
-                            }
-                            this.txtConnectionString.Text = ManagementService.ADFSManager.CreateMFAEncryptedDatabase(null, Wizard.txtInstance.Text, Wizard.txtDBName.Text, Wizard.txtAccount.Text, Wizard.txtPwd.Text, Config.Hosts.SQLServerHost.KeyName, thumb);
-                            this.Cursor = Cursors.Default; 
-                            MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                            if (isnew)
-                                messageBoxParameters.Text = string.Format(res.CTRLSQLNEWDBCREATED2, Wizard.txtDBName.Text, thumb);
-                            else
-                                messageBoxParameters.Text = string.Format(res.CTRLSQLNEWDBCREATED, Wizard.txtDBName.Text);
-                            messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                            messageBoxParameters.Icon = MessageBoxIcon.Information;
+                            this.txtConnectionString.Text = ManagementService.ADFSManager.CreateMFADatabase(null, Wizard.txtInstance.Text, Wizard.txtDBName.Text, Wizard.txtAccount.Text, Wizard.txtPwd.Text);
+                            MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                            {
+                                Text = string.Format(res.CTRLSQLNEWDBCREATED, Wizard.txtDBName.Text),
+                                Buttons = MessageBoxButtons.OK,
+                                Icon = MessageBoxIcon.Information
+                            };
                             this._snapin.Console.ShowDialog(messageBoxParameters);
                         }
                     }
@@ -5861,17 +5979,77 @@ namespace Neos.IdentityServer.Console.Controls
                         this.Cursor = crs;
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                this.Cursor = Cursors.Default;
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                catch (Exception ex)
                 {
-                    Text = ex.Message,
-                    Buttons = MessageBoxButtons.OK,
-                    Icon = MessageBoxIcon.Error
-                };
-                this._snapin.Console.ShowDialog(messageBoxParameters);
+                    this.Cursor = Cursors.Default;
+                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                    {
+                        Text = ex.Message,
+                        Buttons = MessageBoxButtons.OK,
+                        Icon = MessageBoxIcon.Error
+                    };
+                    this._snapin.Console.ShowDialog(messageBoxParameters);
+                }
+            }
+        }
+
+        /// <summary>
+        /// btnCreateCryptedDBClick method implmentation
+        /// </summary>
+        private void BtnCreateCryptedDBClick(object sender, EventArgs e)
+        {
+            if (BeforeDBValidating())
+            {
+                DatabaseWizard Wizard = new DatabaseWizard();
+                try
+                {
+                    if (Config.Hosts.SQLServerHost.IsAlwaysEncrypted)
+                    {
+                        bool result = (this._snapin.Console.ShowDialog(Wizard) == DialogResult.OK);
+                        Cursor crs = this.Cursor;
+                        try
+                        {
+                            this.Cursor = Cursors.WaitCursor;
+                            if (result)
+                            {
+                                bool isnew = false;
+                                string thumb = string.Empty;
+                                if ((Config.Hosts.SQLServerHost.CertReuse) && (ManagementService.ADFSManager.CheckCertificate(Config.Hosts.SQLServerHost.ThumbPrint.ToUpper(), StoreLocation.LocalMachine)))
+                                    thumb = Config.Hosts.SQLServerHost.ThumbPrint.ToUpper();
+                                else
+                                {
+                                    thumb = ManagementService.ADFSManager.RegisterNewSQLCertificate(null, Config.Hosts.SQLServerHost.CertificateValidity, Config.Hosts.SQLServerHost.KeyName);
+                                    isnew = true;
+                                }
+                                this.txtConnectionString.Text = ManagementService.ADFSManager.CreateMFAEncryptedDatabase(null, Wizard.txtInstance.Text, Wizard.txtDBName.Text, Wizard.txtAccount.Text, Wizard.txtPwd.Text, Config.Hosts.SQLServerHost.KeyName, thumb);
+                                this.Cursor = Cursors.Default;
+                                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                                if (isnew)
+                                    messageBoxParameters.Text = string.Format(res.CTRLSQLNEWDBCREATED2, Wizard.txtDBName.Text, thumb);
+                                else
+                                    messageBoxParameters.Text = string.Format(res.CTRLSQLNEWDBCREATED, Wizard.txtDBName.Text);
+                                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                                messageBoxParameters.Icon = MessageBoxIcon.Information;
+                                this._snapin.Console.ShowDialog(messageBoxParameters);
+                            }
+                        }
+                        finally
+                        {
+                            this.Cursor = crs;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    this.Cursor = Cursors.Default;
+                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                    {
+                        Text = ex.Message,
+                        Buttons = MessageBoxButtons.OK,
+                        Icon = MessageBoxIcon.Error
+                    };
+                    this._snapin.Console.ShowDialog(messageBoxParameters);
+                }
             }
         }
 
@@ -8737,6 +8915,7 @@ namespace Neos.IdentityServer.Console.Controls
         private CheckBox chkAllowMicrosoft;
         private CheckBox chkAllowGoogle;
         private CheckBox chkAllowAuthy;
+        private CheckBox chkAllowCustom;
         private CheckBox chkAllowSearch;
         private LinkLabel tblSaveConfig;
         private LinkLabel tblCancelConfig;
@@ -8852,17 +9031,17 @@ namespace Neos.IdentityServer.Console.Controls
                 _view.RefreshProviderInformation();
 
                 this.Dock = DockStyle.Top;
-                this.Height = 210;
+                this.Height = 241;
                 this.Width = 1050;
                 this.Margin = new Padding(30, 5, 30, 5);
 
                 _panel.Width = 20;
-                _panel.Height = 180;
+                _panel.Height = 211;
                 this.Controls.Add(_panel);
 
                 _txtpanel.Left = 20;
                 _txtpanel.Width = this.Width - 20;
-                _txtpanel.Height = 180;
+                _txtpanel.Height = 211;
                 _txtpanel.BackColor = System.Drawing.SystemColors.Control;
                 this.Controls.Add(_txtpanel);
 
@@ -9018,7 +9197,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = "(*) " + res.CTRLGLTOTPWARN,
                     Left = 10,
-                    Top = 160,
+                    Top = 191,
                     Width = 800
                 };
                 _txtpanel.Controls.Add(lblTOTPWarning);
@@ -9026,7 +9205,7 @@ namespace Neos.IdentityServer.Console.Controls
                 _panelWiz = new Panel();
                 _panelWiz.Left = 520;
                 _panelWiz.Top = 10;
-                _panelWiz.Height = 160;
+                _panelWiz.Height = 191;
                 _panelWiz.Width = 350;               
                 _txtpanel.Controls.Add(_panelWiz);
 
@@ -9039,7 +9218,7 @@ namespace Neos.IdentityServer.Console.Controls
 
                 chkAllowMicrosoft = new CheckBox();
                 chkAllowMicrosoft.Text = res.CTRLGLSHOWMICROSOFT;
-                chkAllowMicrosoft.Checked = !Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.NoMicrosoftAuthenticator);
+                chkAllowMicrosoft.Checked = Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.MicrosoftAuthenticator) || Config.OTPProvider.WizardOptions == OTPWizardOptions.All;
                 chkAllowMicrosoft.Left = 20;
                 chkAllowMicrosoft.Top = 30;
                 chkAllowMicrosoft.Width = 300;
@@ -9048,7 +9227,7 @@ namespace Neos.IdentityServer.Console.Controls
 
                 chkAllowGoogle = new CheckBox();
                 chkAllowGoogle.Text = res.CTRLGLSHOWGOOGLE;
-                chkAllowGoogle.Checked = !Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.NoGoogleAuthenticator);
+                chkAllowGoogle.Checked = Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.GoogleAuthenticator) || Config.OTPProvider.WizardOptions == OTPWizardOptions.All;
                 chkAllowGoogle.Left = 20;
                 chkAllowGoogle.Top = 61;
                 chkAllowGoogle.Width = 300;
@@ -9057,18 +9236,27 @@ namespace Neos.IdentityServer.Console.Controls
 
                 chkAllowAuthy = new CheckBox();
                 chkAllowAuthy.Text = res.CTRLGLSHOWAUTHY;
-                chkAllowAuthy.Checked = !Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.NoAuthyAuthenticator);
+                chkAllowAuthy.Checked = Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.AuthyAuthenticator) || Config.OTPProvider.WizardOptions == OTPWizardOptions.All;
                 chkAllowAuthy.Left = 20;
                 chkAllowAuthy.Top = 92;
                 chkAllowAuthy.Width = 300;
                 chkAllowAuthy.CheckedChanged += AllowAuthyCheckedChanged;
                 _panelWiz.Controls.Add(chkAllowAuthy);
 
+                chkAllowCustom = new CheckBox();
+                chkAllowCustom.Text = res.CTRLGLSHOWCUSTOM;
+                chkAllowCustom.Checked = Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.CustomAuthenticator) || Config.OTPProvider.WizardOptions == OTPWizardOptions.All;
+                chkAllowCustom.Left = 20;
+                chkAllowCustom.Top = 123;
+                chkAllowCustom.Width = 300;
+                chkAllowCustom.CheckedChanged += AllowCustomCheckedChanged;
+                _panelWiz.Controls.Add(chkAllowCustom);
+
                 chkAllowSearch = new CheckBox();
                 chkAllowSearch.Text = res.CTRLGLALLOWGOOGLESEARCH;
-                chkAllowSearch.Checked = !Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.NoGooglSearch);
+                chkAllowSearch.Checked = Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.GoogleSearch) || Config.OTPProvider.WizardOptions == OTPWizardOptions.All;
                 chkAllowSearch.Left = 20;
-                chkAllowSearch.Top = 123;
+                chkAllowSearch.Top = 153;
                 chkAllowSearch.Width = 300;
                 chkAllowSearch.CheckedChanged += AllowSearchGoogleCheckedChanged;
                 _panelWiz.Controls.Add(chkAllowSearch);
@@ -9076,7 +9264,7 @@ namespace Neos.IdentityServer.Console.Controls
                 tblSaveConfig = new LinkLabel();
                 tblSaveConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE;
                 tblSaveConfig.Left = 20;
-                tblSaveConfig.Top = 190;
+                tblSaveConfig.Top = 221;
                 tblSaveConfig.Width = 80;
                 tblSaveConfig.LinkClicked += SaveConfigLinkClicked;
                 tblSaveConfig.TabStop = true;
@@ -9085,7 +9273,7 @@ namespace Neos.IdentityServer.Console.Controls
                 tblCancelConfig = new LinkLabel();
                 tblCancelConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL;
                 tblCancelConfig.Left = 110;
-                tblCancelConfig.Top = 190;
+                tblCancelConfig.Top = 221;
                 tblCancelConfig.Width = 80;
                 tblCancelConfig.LinkClicked += CancelConfigLinkClicked;
                 tblCancelConfig.TabStop = true;
@@ -9120,13 +9308,15 @@ namespace Neos.IdentityServer.Console.Controls
                 txtTOTPShadows.Text = Config.OTPProvider.TOTPShadows.ToString();
                // txtHashAlgo.Text = Config.OTPProvider.Algorithm.ToString();
 
-                chkAllowMicrosoft.Checked = !Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.NoMicrosoftAuthenticator);
+                chkAllowMicrosoft.Checked = Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.MicrosoftAuthenticator) || Config.OTPProvider.WizardOptions == OTPWizardOptions.All;
 
-                chkAllowGoogle.Checked = !Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.NoGoogleAuthenticator);
+                chkAllowGoogle.Checked = Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.GoogleAuthenticator) || Config.OTPProvider.WizardOptions == OTPWizardOptions.All;
 
-                chkAllowAuthy.Checked = !Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.NoAuthyAuthenticator);
+                chkAllowAuthy.Checked = Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.AuthyAuthenticator) || Config.OTPProvider.WizardOptions == OTPWizardOptions.All;
 
-                chkAllowSearch.Checked = !Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.NoGooglSearch);
+                chkAllowCustom.Checked = Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.CustomAuthenticator) || Config.OTPProvider.WizardOptions == OTPWizardOptions.All;
+
+                chkAllowSearch.Checked = Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.GoogleSearch) || Config.OTPProvider.WizardOptions == OTPWizardOptions.All;
 
                 cbFormat.SelectedValue = Config.KeysConfig.KeyFormat;
 
@@ -9139,6 +9329,8 @@ namespace Neos.IdentityServer.Console.Controls
                 chkAllowAuthy.Text = res.CTRLGLSHOWAUTHY;
                 chkAllowGoogle.Text = res.CTRLGLSHOWGOOGLE;
                 chkAllowMicrosoft.Text = res.CTRLGLSHOWMICROSOFT;
+                chkAllowCustom.Text = res.CTRLGLSHOWCUSTOM;
+
                 lblTOTPWizard.Text = res.CTRLSECWIZARD + " : ";
                 lblMaxKeyLen.Text = res.CTRLSECKEYLENGTH + " : ";
                 lblSecMode.Text = res.CTRLSECKEYMODE + " : ";
@@ -9300,7 +9492,6 @@ namespace Neos.IdentityServer.Console.Controls
         }
         #endregion
 
-
         /// <summary>
         /// SelectedTOTPDurationChanged method
         /// </summary>
@@ -9417,10 +9608,10 @@ namespace Neos.IdentityServer.Console.Controls
                 if (_view.AutoValidate != AutoValidate.Disable)
                 {
                     ManagementService.ADFSManager.SetDirty(true);
-                    if (!chkAllowSearch.Checked)
-                        Config.OTPProvider.WizardOptions |= OTPWizardOptions.NoGooglSearch;
+                    if (chkAllowSearch.Checked)
+                        Config.OTPProvider.WizardOptions |= OTPWizardOptions.GoogleSearch;
                     else
-                        Config.OTPProvider.WizardOptions &= ~OTPWizardOptions.NoGooglSearch;
+                        Config.OTPProvider.WizardOptions ^= OTPWizardOptions.GoogleSearch;
                     errors.SetError(chkAllowSearch, "");
                 }
             }
@@ -9445,10 +9636,10 @@ namespace Neos.IdentityServer.Console.Controls
                 if (_view.AutoValidate != AutoValidate.Disable)
                 {
                     ManagementService.ADFSManager.SetDirty(true);
-                    if (!chkAllowAuthy.Checked)
-                        Config.OTPProvider.WizardOptions |= OTPWizardOptions.NoAuthyAuthenticator;
+                    if (chkAllowAuthy.Checked)
+                        Config.OTPProvider.WizardOptions |= OTPWizardOptions.AuthyAuthenticator;
                     else
-                        Config.OTPProvider.WizardOptions &= ~OTPWizardOptions.NoAuthyAuthenticator;
+                        Config.OTPProvider.WizardOptions ^= OTPWizardOptions.AuthyAuthenticator;
                     errors.SetError(chkAllowAuthy, "");
                 }
             }
@@ -9463,6 +9654,33 @@ namespace Neos.IdentityServer.Console.Controls
         }
 
         /// <summary>
+        /// AllowCustomCheckedChanged method implementation
+        /// </summary>
+        private void AllowCustomCheckedChanged(object sender, EventArgs e)
+        {
+            this.Cursor = Cursors.WaitCursor;
+            try
+            {
+                if (_view.AutoValidate != AutoValidate.Disable)
+                {
+                    ManagementService.ADFSManager.SetDirty(true);
+                    if (chkAllowCustom.Checked)
+                        Config.OTPProvider.WizardOptions |= OTPWizardOptions.CustomAuthenticator;
+                    else
+                        Config.OTPProvider.WizardOptions ^= OTPWizardOptions.CustomAuthenticator;
+                    errors.SetError(chkAllowCustom, "");
+                }
+            }
+            catch (Exception ex)
+            {
+                errors.SetError(chkAllowCustom, ex.Message);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Default;
+            }
+        }
+        /// <summary>
         /// AllowGoogleCheckedChanged method implementation
         /// </summary>
         private void AllowGoogleCheckedChanged(object sender, EventArgs e)
@@ -9473,10 +9691,10 @@ namespace Neos.IdentityServer.Console.Controls
                 if (_view.AutoValidate != AutoValidate.Disable)
                 {
                     ManagementService.ADFSManager.SetDirty(true);
-                    if (!chkAllowGoogle.Checked)
-                        Config.OTPProvider.WizardOptions |= OTPWizardOptions.NoGoogleAuthenticator;
+                    if (chkAllowGoogle.Checked)
+                        Config.OTPProvider.WizardOptions |= OTPWizardOptions.GoogleAuthenticator;
                     else
-                        Config.OTPProvider.WizardOptions &= ~OTPWizardOptions.NoGoogleAuthenticator;
+                        Config.OTPProvider.WizardOptions ^= OTPWizardOptions.GoogleAuthenticator;
                     errors.SetError(chkAllowGoogle, "");
                 }
             }
@@ -9501,10 +9719,10 @@ namespace Neos.IdentityServer.Console.Controls
                 if (_view.AutoValidate != AutoValidate.Disable)
                 {
                     ManagementService.ADFSManager.SetDirty(true);
-                    if (!chkAllowMicrosoft.Checked)
-                        Config.OTPProvider.WizardOptions |= OTPWizardOptions.NoMicrosoftAuthenticator;
+                    if (chkAllowMicrosoft.Checked)
+                        Config.OTPProvider.WizardOptions |= OTPWizardOptions.MicrosoftAuthenticator;
                     else
-                        Config.OTPProvider.WizardOptions &= ~OTPWizardOptions.NoMicrosoftAuthenticator;
+                        Config.OTPProvider.WizardOptions ^= OTPWizardOptions.MicrosoftAuthenticator;
                     errors.SetError(chkAllowMicrosoft, "");
                 }
             }
@@ -12135,69 +12353,100 @@ namespace Neos.IdentityServer.Console.Controls
         }
 
         /// <summary>
+        /// BeforeKeyGenValidating method implementation
+        /// </summary>
+        private bool BeforeKeyGenValidating()
+        {
+            bool result = true;
+            if ((ManagementService.Config.AdministrationPinEnabled) && (!ManagementService.PinValidated))
+            {
+                AdminPinWizard Wizard = new AdminPinWizard();
+                Wizard.AdminPin = ManagementService.ADFSManager.Config.AdministrationPin;
+                DialogResult dresult = this._snapin.Console.ShowDialog(Wizard);
+                if (dresult == DialogResult.Abort)
+                {
+                    this.Cursor = Cursors.Default;
+                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                    {
+                        Text = Wizard.ErrorMessage,
+                        Buttons = MessageBoxButtons.OK,
+                        Icon = MessageBoxIcon.Error
+                    };
+                    this._snapin.Console.ShowDialog(messageBoxParameters);
+                }
+                result = (dresult == DialogResult.OK);
+                ManagementService.PinValidated = result;
+            }
+            return result;
+        }
+
+        /// <summary>
         /// BtnGenerateKeysClick method implmentation
         /// </summary>
         private void BtnGenerateKeysClick(object sender, EventArgs e)
         {
-            RSAWizard Wizard = new RSAWizard();
-            try
+            if (BeforeKeyGenValidating())
             {
-                Wizard.KeyExists = ManagementService.ADFSManager.CheckMFASystemMasterKey();
-                if ((this._snapin.Console.ShowDialog(Wizard) == DialogResult.OK))
+                RSAWizard Wizard = new RSAWizard();
+                try
                 {
-                    Cursor crs = this.Cursor;
-                    try
+                    Wizard.KeyExists = ManagementService.ADFSManager.CheckMFASystemMasterKey();
+                    if ((this._snapin.Console.ShowDialog(Wizard) == DialogResult.OK))
                     {
-                        bool ismade = false;
-                        string lbl = string.Empty;
-                        MessageBoxIcon ico = MessageBoxIcon.Information;
-                        this.Cursor = Cursors.WaitCursor;
-                        switch (Wizard.Choice)
+                        Cursor crs = this.Cursor;
+                        try
                         {
-                            default:
-                                ismade = ManagementService.ADFSManager.RegisterMFASystemMasterKey(null, false, false);
-                                lbl = res.CTRLSECAESOK;
-                                ico = MessageBoxIcon.Information;
-                                break;
-                            case 2:
-                                ismade = ManagementService.ADFSManager.RegisterMFASystemMasterKey(null, true, false);
-                                lbl = res.CTRLSECAESDEPLOYED;
-                                ico = MessageBoxIcon.Warning;
-                                break;
-                            case 3:
-                                ismade = ManagementService.ADFSManager.RegisterMFASystemMasterKey(null, false, true);
-                                lbl = res.CTRLSECAESDELETED;
-                                ico = MessageBoxIcon.Hand;
-                                break;
-                        }
-                        this.Cursor = Cursors.Default;
-                        if (ismade)
-                        {
-                            MessageBoxParameters messageBoxParameters2 = new MessageBoxParameters
+                            bool ismade = false;
+                            string lbl = string.Empty;
+                            MessageBoxIcon ico = MessageBoxIcon.Information;
+                            this.Cursor = Cursors.WaitCursor;
+                            switch (Wizard.Choice)
                             {
-                                Text = lbl,
-                                Buttons = MessageBoxButtons.OK,
-                                Icon = ico
-                            };
-                            this._snapin.Console.ShowDialog(messageBoxParameters2);
+                                default:
+                                    ismade = ManagementService.ADFSManager.RegisterMFASystemMasterKey(null, false, false);
+                                    lbl = res.CTRLSECAESOK;
+                                    ico = MessageBoxIcon.Information;
+                                    break;
+                                case 2:
+                                    ismade = ManagementService.ADFSManager.RegisterMFASystemMasterKey(null, true, false);
+                                    lbl = res.CTRLSECAESDEPLOYED;
+                                    ico = MessageBoxIcon.Warning;
+                                    break;
+                                case 3:
+                                    ismade = ManagementService.ADFSManager.RegisterMFASystemMasterKey(null, false, true);
+                                    lbl = res.CTRLSECAESDELETED;
+                                    ico = MessageBoxIcon.Hand;
+                                    break;
+                            }
+                            this.Cursor = Cursors.Default;
+                            if (ismade)
+                            {
+                                MessageBoxParameters messageBoxParameters2 = new MessageBoxParameters
+                                {
+                                    Text = lbl,
+                                    Buttons = MessageBoxButtons.OK,
+                                    Icon = ico
+                                };
+                                this._snapin.Console.ShowDialog(messageBoxParameters2);
+                            }
                         }
-                    }
-                    finally
-                    {
-                        this.Cursor = Cursors.Default;
+                        finally
+                        {
+                            this.Cursor = Cursors.Default;
+                        }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                this.Cursor = Cursors.Default;
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                catch (Exception ex)
                 {
-                    Text = ex.Message,
-                    Buttons = MessageBoxButtons.OK,
-                    Icon = MessageBoxIcon.Error
-                };
-                this._snapin.Console.ShowDialog(messageBoxParameters);
+                    this.Cursor = Cursors.Default;
+                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                    {
+                        Text = ex.Message,
+                        Buttons = MessageBoxButtons.OK,
+                        Icon = MessageBoxIcon.Error
+                    };
+                    this._snapin.Console.ShowDialog(messageBoxParameters);
+                }
             }
         }
         #endregion
@@ -12384,6 +12633,7 @@ namespace Neos.IdentityServer.Console.Controls
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
+
         /// <summary>
         /// SaveConfigLinkClicked event
         /// </summary>
@@ -13173,51 +13423,82 @@ namespace Neos.IdentityServer.Console.Controls
         }
 
         /// <summary>
+        /// BeforeCertValidating method implementation
+        /// </summary>
+        private bool BeforeCertValidating()
+        {
+            bool result = true;
+            if ((ManagementService.Config.AdministrationPinEnabled) && (!ManagementService.PinValidated))
+            {
+                AdminPinWizard Wizard = new AdminPinWizard();
+                Wizard.AdminPin = ManagementService.ADFSManager.Config.AdministrationPin;
+                DialogResult dresult = this._snapin.Console.ShowDialog(Wizard);
+                if (dresult == DialogResult.Abort)
+                {
+                    this.Cursor = Cursors.Default;
+                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                    {
+                        Text = Wizard.ErrorMessage,
+                        Buttons = MessageBoxButtons.OK,
+                        Icon = MessageBoxIcon.Error
+                    };
+                    this._snapin.Console.ShowDialog(messageBoxParameters);
+                }
+                result = (dresult == DialogResult.OK);
+                ManagementService.PinValidated = result;
+            }
+            return result;
+        }
+
+        /// <summary>
         /// btnRSACertClick method implmentation
         /// </summary>
         private void BtnRSACertClick(object sender, EventArgs e)
         {
-            try
+            if (BeforeCertValidating())
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
-                {
-                    Text = res.CTRLSECRSAGENERATE,
-                    Buttons = MessageBoxButtons.OKCancel,
-                    Icon = MessageBoxIcon.Error
-                };
-                bool result = (this._snapin.Console.ShowDialog(messageBoxParameters) == DialogResult.OK);
-                Cursor curs = this.Cursor;
                 try
                 {
-                    this.Cursor = Cursors.WaitCursor;
-                    if (result)
+                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters
                     {
-                        this.txtRSAThumb.Text = ManagementService.ADFSManager.RegisterNewRSACertificate(null, Config.KeysConfig.CertificateValidity);
-
-                        MessageBoxParameters messageBoxParameters2 = new MessageBoxParameters
+                        Text = res.CTRLSECRSAGENERATE,
+                        Buttons = MessageBoxButtons.OKCancel,
+                        Icon = MessageBoxIcon.Error
+                    };
+                    bool result = (this._snapin.Console.ShowDialog(messageBoxParameters) == DialogResult.OK);
+                    Cursor curs = this.Cursor;
+                    try
+                    {
+                        this.Cursor = Cursors.WaitCursor;
+                        if (result)
                         {
-                            Text = string.Format(res.CTRLSECNEWCERTCREATED, this.txtRSAThumb.Text),
-                            Buttons = MessageBoxButtons.OK,
-                            Icon = MessageBoxIcon.Information
-                        };
-                        this._snapin.Console.ShowDialog(messageBoxParameters2);
+                            this.txtRSAThumb.Text = ManagementService.ADFSManager.RegisterNewRSACertificate(null, Config.KeysConfig.CertificateValidity);
 
+                            MessageBoxParameters messageBoxParameters2 = new MessageBoxParameters
+                            {
+                                Text = string.Format(res.CTRLSECNEWCERTCREATED, this.txtRSAThumb.Text),
+                                Buttons = MessageBoxButtons.OK,
+                                Icon = MessageBoxIcon.Information
+                            };
+                            this._snapin.Console.ShowDialog(messageBoxParameters2);
+
+                        }
+                    }
+                    finally
+                    {
+                        this.Cursor = curs;
                     }
                 }
-                finally
+                catch (Exception ex)
                 {
-                    this.Cursor = curs;
+                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                    {
+                        Text = ex.Message,
+                        Buttons = MessageBoxButtons.OK,
+                        Icon = MessageBoxIcon.Error
+                    };
+                    this._snapin.Console.ShowDialog(messageBoxParameters);
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
-                {
-                    Text = ex.Message,
-                    Buttons = MessageBoxButtons.OK,
-                    Icon = MessageBoxIcon.Error
-                };
-                this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
 
@@ -13552,84 +13833,114 @@ namespace Neos.IdentityServer.Console.Controls
         }
 
         /// <summary>
+        /// BeforeKeyGenValidating method implementation
+        /// </summary>
+        private bool BeforeKeyGenValidating()
+        {
+            bool result = true;
+            if ((ManagementService.Config.AdministrationPinEnabled) && (!ManagementService.PinValidated))
+            {
+                AdminPinWizard Wizard = new AdminPinWizard();
+                Wizard.AdminPin = ManagementService.ADFSManager.Config.AdministrationPin;
+                DialogResult dresult = this._snapin.Console.ShowDialog(Wizard);
+                if (dresult == DialogResult.Abort)
+                {
+                    this.Cursor = Cursors.Default;
+                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                    {
+                        Text = Wizard.ErrorMessage,
+                        Buttons = MessageBoxButtons.OK,
+                        Icon = MessageBoxIcon.Error
+                    };
+                    this._snapin.Console.ShowDialog(messageBoxParameters);
+                }
+                result = (dresult == DialogResult.OK);
+                ManagementService.PinValidated = result;
+            }
+            return result;
+        }
+
+        /// <summary>
         /// BtnGenerateKeysClick method implementation
         /// </summary>
         private void BtnGenerateKeysClick(object sender, EventArgs e)
         {
-            ECHDWizard Wizard = new ECHDWizard();
-            try
+            if (BeforeKeyGenValidating())
             {
-                Wizard.KeyExists = ManagementService.ADFSManager.CheckMFASystemAESCngKey();
-                if (Wizard.KeyExists)
+                ECHDWizard Wizard = new ECHDWizard();
+                try
                 {
+                    Wizard.KeyExists = ManagementService.ADFSManager.CheckMFASystemAESCngKey();
+                    if (Wizard.KeyExists)
+                    {
+                        MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                        {
+
+                            Text = res.CTRLSECAESWARNING,
+                            Buttons = MessageBoxButtons.YesNo,
+                            Icon = MessageBoxIcon.Warning
+                        };
+                        if (this._snapin.Console.ShowDialog(messageBoxParameters) != DialogResult.Yes)
+                            return;
+                    }
+                    if ((this._snapin.Console.ShowDialog(Wizard) == DialogResult.OK))
+                    {
+                        Cursor crs = this.Cursor;
+                        try
+                        {
+                            bool ismade = false;
+                            string lbl = string.Empty;
+                            MessageBoxIcon ico = MessageBoxIcon.Information;
+                            this.Cursor = Cursors.WaitCursor;
+                            switch (Wizard.Choice)
+                            {
+                                default:
+                                    ismade = ManagementService.ADFSManager.RegisterMFASystemAESCngKey(null, false, false);
+                                    lbl = res.CTRLSECAESOK;
+                                    ico = MessageBoxIcon.Information;
+                                    break;
+                                case 2:
+                                    ismade = ManagementService.ADFSManager.RegisterMFASystemAESCngKey(null, true, false);
+                                    lbl = res.CTRLSECAESDEPLOYED;
+                                    ico = MessageBoxIcon.Warning;
+                                    break;
+                                case 3:
+                                    ismade = ManagementService.ADFSManager.RegisterMFASystemAESCngKey(null, false, true);
+                                    lbl = res.CTRLSECAESDELETED;
+                                    ico = MessageBoxIcon.Stop;
+                                    break;
+                            }
+                            this.Cursor = Cursors.Default;
+                            if (ismade)
+                            {
+                                MessageBoxParameters messageBoxParameters2 = new MessageBoxParameters
+                                {
+                                    Text = lbl,
+                                    Buttons = MessageBoxButtons.OK,
+                                    Icon = ico
+                                };
+                                this._snapin.Console.ShowDialog(messageBoxParameters2);
+                            }
+                        }
+                        finally
+                        {
+                            this.Cursor = Cursors.Default;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    this.Cursor = Cursors.Default;
                     MessageBoxParameters messageBoxParameters = new MessageBoxParameters
                     {
-
-                        Text = res.CTRLSECAESWARNING,
-                        Buttons = MessageBoxButtons.YesNo,
-                        Icon = MessageBoxIcon.Warning
+                        Text = ex.Message,
+                        Buttons = MessageBoxButtons.OK,
+                        Icon = MessageBoxIcon.Error
                     };
-                    if (this._snapin.Console.ShowDialog(messageBoxParameters) != DialogResult.Yes)
-                        return;
+                    this._snapin.Console.ShowDialog(messageBoxParameters);
                 }
-                if ((this._snapin.Console.ShowDialog(Wizard) == DialogResult.OK))
-                {
-                    Cursor crs = this.Cursor;
-                    try
-                    {
-                        bool ismade = false;
-                        string lbl = string.Empty;
-                        MessageBoxIcon ico = MessageBoxIcon.Information;
-                        this.Cursor = Cursors.WaitCursor;
-                        switch (Wizard.Choice)
-                        {
-                            default:
-                                ismade = ManagementService.ADFSManager.RegisterMFASystemAESCngKey(null, false, false);
-                                lbl = res.CTRLSECAESOK;
-                                ico = MessageBoxIcon.Information;
-                                break;
-                            case 2:
-                                ismade = ManagementService.ADFSManager.RegisterMFASystemAESCngKey(null, true, false);
-                                lbl = res.CTRLSECAESDEPLOYED;
-                                ico = MessageBoxIcon.Warning;
-                                break;
-                            case 3:
-                                ismade = ManagementService.ADFSManager.RegisterMFASystemAESCngKey(null, false, true);
-                                lbl = res.CTRLSECAESDELETED;
-                                ico = MessageBoxIcon.Stop;
-                                break;
-                        }
-                        this.Cursor = Cursors.Default;
-                        if (ismade)
-                        {                            
-                            MessageBoxParameters messageBoxParameters2 = new MessageBoxParameters
-                            {
-                                Text = lbl,
-                                Buttons = MessageBoxButtons.OK,
-                                Icon = ico
-                            };
-                            this._snapin.Console.ShowDialog(messageBoxParameters2);
-                        }
-                    }
-                    finally
-                    {
-                        this.Cursor = Cursors.Default;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                this.Cursor = Cursors.Default;
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
-                {
-                    Text = ex.Message,
-                    Buttons = MessageBoxButtons.OK,
-                    Icon = MessageBoxIcon.Error
-                };
-                this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
-
 
         /// <summary>
         /// SaveConfigLinkClicked event

@@ -357,4 +357,10 @@
   <data name="SECURITYSCOPECUSTOM" xml:space="preserve">
     <value>Klucze niestandardowe</value>
   </data>
+  <data name="ROOTLANGUAGEUK" xml:space="preserve">
+    <value>Ukraiński</value>
+  </data>
+  <data name="ROOTLANGUAGEUKDESC" xml:space="preserve">
+    <value>Zmiana kultury interfejsu użytkownika w języku ukraińskim (1058)</value>
+  </data>
 </root>

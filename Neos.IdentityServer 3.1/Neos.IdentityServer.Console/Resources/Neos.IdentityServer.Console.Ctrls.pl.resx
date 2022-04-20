@@ -732,4 +732,13 @@
   <data name="CTRLWEBAUTHNCONTRAINEDMETADATA" xml:space="preserve">
     <value>Korzystanie z usługi ograniczonych metadanych (dla farmy programu ADFS, która nie ma dostępu do Internetu)</value>
   </data>
+  <data name="CTRLGLSHOWCUSTOM" xml:space="preserve">
+    <value>Pokaż niestandardowy token uwierzytelniający</value>
+  </data>
+  <data name="CTRGLPAUSEFORDAYS" xml:space="preserve">
+    <value>Zezwalanie na wstrzymywanie usługi MFA na (x) dni</value>
+  </data>
+  <data name="CTRLPROVWIZARDDISABLED" xml:space="preserve">
+    <value>Kreator wyłączony podczas rejestracji</value>
+  </data>
 </root>

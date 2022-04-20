@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2022 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -1143,24 +1143,46 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
-        /// Platform
+        /// BrowserDetected
         /// </summary>
-        [DataMember(Name = "Platform")]
-        public string Platform
+        [DataMember(Name = "BrowserDetected")]
+        public string BrowserDetected
         {
             get
             {
-                if (_context.Data.ContainsKey("_authctxplatform") && _context.Data["_authctxplatform"] != null)
-                    return _context.Data["_authctxplatform"].ToString();
+                if (_context.Data.ContainsKey("_authctxbrowser") && _context.Data["_authctxbrowser"] != null)
+                    return _context.Data["_authctxbrowser"].ToString();
                 else
                     return string.Empty;
             }
             set
             {
-                if (_context.Data.ContainsKey("_authctxplatform"))
-                    _context.Data["_authctxplatform"] = value;
+                if (_context.Data.ContainsKey("_authctxbrowser"))
+                    _context.Data["_authctxbrowser"] = value;
                 else
-                    _context.Data.Add("_authctxplatform", value);
+                    _context.Data.Add("_authctxbrowser", value);
+            }
+        }
+
+        /// <summary>
+        /// DelayForget
+        /// </summary>
+        [DataMember(Name = "DelayForget")]
+        public bool DelayForget
+        {
+            get
+            {
+                if (_context.Data.ContainsKey("_authctxdelayforget") && _context.Data["_authctxdelayforget"] != null)
+                    return (bool)_context.Data["_authctxdelayforget"];
+                else
+                    return false;
+            }
+            set
+            {
+                if (_context.Data.ContainsKey("_authctxdelayforget"))
+                    _context.Data["_authctxdelayforget"] = value;
+                else
+                    _context.Data.Add("_authctxdelayforget", value);
             }
         }
     }
@@ -1209,6 +1231,74 @@ namespace Neos.IdentityServer.MultiFactor
         }
     }
 
+    /// <summary>
+    /// MFAUniqueUserList class implementation
+    /// </summary>
+    [Serializable]
+    public class MFAUniqueUserList : MFAUserList
+    {
+        /// <summary>
+        /// MFAUniqueUserList constructor
+        /// </summary>
+        public MFAUniqueUserList():base() { }
+
+
+        /// <summary>
+        /// AddOrUpdate method implementation
+        /// </summary>
+        public bool AddOrUpdate(MFAUser user)
+        {
+            try
+            {
+                var found = this.FindIndex(s => s.UPN.ToLower().Equals(user.UPN.ToLower()));
+                if (found < 0)
+                    Add(user);
+                else
+                    this[found] = user;
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+    }
+
+    /// <summary>
+    /// MFAUniqueUserList class implementation
+    /// </summary>
+    [Serializable]
+    public class MFAUniqueDeletedUserList : List<string>
+    {
+        /// <summary>
+        /// MFAUniqueUserList constructor
+        /// </summary>
+        public MFAUniqueDeletedUserList() : base() { }
+
+
+        /// <summary>
+        /// AddOrUpdate method implementation
+        /// </summary>
+        public bool AddOrUpdate(string user)
+        {
+            try
+            {
+                var found = this.FindIndex(s => s.ToLower().Equals(user.ToLower()));
+                if (found < 0)
+                    Add(user);
+                else
+                    this[found] = user;
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+    }
+  
     /// <summary>
     /// MFAUser Class implementation
     /// </summary>
@@ -1262,7 +1352,7 @@ namespace Neos.IdentityServer.MultiFactor
                     return _mail;
             }
             set
-            {
+            {                
                 _mail = value;
             }
         }
@@ -1447,7 +1537,7 @@ namespace Neos.IdentityServer.MultiFactor
         private DataFilterOperator filteroperator = DataFilterOperator.Contains;
         private PreferredMethod filtermethod = PreferredMethod.None;
         private string filtervalue = string.Empty;
-        private bool enabledonly = true;
+        private bool enabledonly = false;
         private bool filterisactive = true;
 
 
@@ -1819,10 +1909,11 @@ namespace Neos.IdentityServer.MultiFactor
     public enum OTPWizardOptions
     {
         All = 0x0,
-        NoMicrosoftAuthenticator = 0x1,
-        NoGoogleAuthenticator = 0x2,
-        NoAuthyAuthenticator = 0x4,
-        NoGooglSearch = 0x8
+        MicrosoftAuthenticator = 0x1,
+        GoogleAuthenticator = 0x2,
+        AuthyAuthenticator = 0x4,
+        GoogleSearch = 0x8,
+        CustomAuthenticator = 0x10
     }
 
     /// <summary>
@@ -1913,6 +2004,8 @@ namespace Neos.IdentityServer.MultiFactor
         EnrollPhone = 17,
         [EnumMember]
         EnrollPin = 18,
+        [EnumMember]
+        PauseDelay = 19,
         [EnumMember]
         ManageOptions = 63,
         [EnumMember]

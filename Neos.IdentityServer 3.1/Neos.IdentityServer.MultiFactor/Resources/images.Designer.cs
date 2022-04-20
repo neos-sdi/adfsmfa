@@ -63,6 +63,16 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap aegis {
+            get {
+                object obj = ResourceManager.GetObject("aegis", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap authy2 {
             get {
                 object obj = ResourceManager.GetObject("authy2", resourceCulture);

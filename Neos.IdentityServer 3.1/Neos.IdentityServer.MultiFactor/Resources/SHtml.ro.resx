@@ -297,4 +297,22 @@ Veți putea utiliza validarea MFA în viitor.</value>
   <data name="HtmlUIMRegisterDevice" xml:space="preserve">
     <value>Înregistrați dispozitivul</value>
   </data>
+  <data name="HtmlUIMPauseForToday" xml:space="preserve">
+    <value>Nu afișați din nou acest mesaj</value>
+  </data>
+  <data name="HtmlUIMYes" xml:space="preserve">
+    <value>Da</value>
+  </data>
+  <data name="HtmlUIMNo" xml:space="preserve">
+    <value>Nu</value>
+  </data>
+  <data name="HtmlUIMPauseLabel" xml:space="preserve">
+    <value>Rămâi conectat ?</value>
+  </data>
+  <data name="HtmlUIMPauseDescriptionToday" xml:space="preserve">
+    <value>Acest lucru vă permite să nu mai aplicați pentru MAE astăzi.</value>
+  </data>
+  <data name="HtmlUIMPauseDescription" xml:space="preserve">
+    <value>Acest lucru vă permite să nu mai cereți MAE timp de {0} zile.</value>
+  </data>
 </root>

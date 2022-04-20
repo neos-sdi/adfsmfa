@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2022 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -85,6 +85,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// MailslotServer property implementation
         /// </summary>
         internal static MailSlotServer MailslotServer { get; private set; } = null;
+        public static bool PinValidated { get; internal set; } = false;
         #endregion
 
         #region Initialization methods
@@ -281,12 +282,21 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         }
 
         /// <summary>
-        /// GetEncodedUserKey method implmentation
+        /// NewUserKey method implmentation
         /// </summary>
         internal static string NewUserKey(string upn)
         {
             EnsureService();
             return RuntimeRepository.NewUserKey(Config, upn);
+        }
+
+        /// <summary>
+        /// RemoveUserKey method implmentation
+        /// </summary>
+        internal static bool RemoveUserKey(string upn, bool fullclear = true)
+        {
+            EnsureService();
+            return RuntimeRepository.RemoveUserKey(Config, upn, fullclear);
         }
 
         /// <summary>
@@ -583,6 +593,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                             config.Hosts.ActiveDirectoryHost.Password = MSIS.Encrypt(config.Hosts.ActiveDirectoryHost.Password, "ADDS Super Account Password");
                             config.Hosts.SQLServerHost.SQLPassword = MSIS.Encrypt(config.Hosts.SQLServerHost.SQLPassword, "SQL Super Account Password");
                             config.MailProvider.Password = MSIS.Encrypt(config.MailProvider.Password, "Mail Provider Account Password");
+                            config.DefaultPin = MSIS.Encrypt(config.DefaultPin, "Default Users Pin");
+                            config.AdministrationPin = MSIS.Encrypt(config.AdministrationPin, "Administration Pin");
 
                             if (!string.IsNullOrEmpty(value))
                                 host.UI.WriteWarningLine("Block Updates not allowed, values where only encrypted !");
@@ -643,6 +655,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                             if (string.IsNullOrEmpty(value))
                             {
                                 config.KeysConfig.XORSecret = MSIS.Encrypt(config.KeysConfig.XORSecret, "Pass Phrase Encryption");
+                                config.DefaultPin = MSIS.Encrypt(config.DefaultPin, "Default Users Pin");
+                                config.AdministrationPin = MSIS.Encrypt(config.AdministrationPin, "Administration Pin");
                                 host.UI.WriteWarningLine("Empty value not allowed, value was only encrypted !");
                             }
                             else

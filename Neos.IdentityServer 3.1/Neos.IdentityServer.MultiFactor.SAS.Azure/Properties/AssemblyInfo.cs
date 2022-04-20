@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2022 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -29,7 +29,7 @@ using System.Runtime.Versioning;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Neos-Sdi")]
 [assembly: AssemblyProduct("Neos.IdentityServer.MultiFactor.SAS.Azure")]
-[assembly: AssemblyCopyright("Copyright @redhook62 © 2021")]
+[assembly: AssemblyCopyright("Copyright @redhook62 © 2022")]
 [assembly: AssemblyTrademark("Neos-Sdi")]
 [assembly: AssemblyCulture("")]
 
@@ -52,7 +52,7 @@ using System.Runtime.Versioning;
 // Vous pouvez spécifier toutes les valeurs ou indiquer les numéros de build et de révision par défaut 
 // en utilisant '*', comme indiqué ci-dessous :
 [assembly: AssemblyVersion("3.0.0.0")]
-[assembly: AssemblyFileVersion("3.1.2111.1")]
+[assembly: AssemblyFileVersion("3.1.2204.1")]
 [assembly: AssemblyInformationalVersion("3.0.0.0")]
 [assembly: NeutralResourcesLanguageAttribute("en")]
 

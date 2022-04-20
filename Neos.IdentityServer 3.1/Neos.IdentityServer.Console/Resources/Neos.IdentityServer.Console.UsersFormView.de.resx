@@ -144,4 +144,7 @@
   <data name="USERSFRMDEACTIVATEDESC" xml:space="preserve">
     <value>MFA für den ausgewählten Benutzer deaktivieren.</value>
   </data>
+  <data name="USERSFRMDELETE" xml:space="preserve">
+    <value>Löschen</value>
+  </data>
 </root>
