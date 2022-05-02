@@ -232,6 +232,11 @@ namespace MFA
         public bool ChangeNotificationsOn { get; set; }
 
         /// <summary>
+        /// <para type="description">Allow Administrators to reset users paswords.</para>
+        /// </summary>
+        public bool AllowPasswordsReset { get; set; }
+
+        /// <summary>
         /// <para type="description">Use of User's browser laguages instead or standard localization features.</para>
         /// </summary>
         public bool UseOfUserLanguages { get; set; }
@@ -288,6 +293,7 @@ namespace MFA
                     CustomUpdatePassword = config.CustomUpdatePassword,
                     KeepMySelectedOptionOn = config.KeepMySelectedOptionOn,
                     ChangeNotificationsOn = config.ChangeNotificationsOn,
+                    AllowPasswordsReset = config.AllowPasswordsReset,
                     UseOfUserLanguages = config.UseOfUserLanguages,
                     AllowPauseForDays = config.AllowPauseForDays,
                     DefaultProviderMethod = (PSPreferredMethod)config.DefaultProviderMethod,
@@ -321,6 +327,7 @@ namespace MFA
                     Issuer = psconfig.Issuer,
                     KeepMySelectedOptionOn = psconfig.KeepMySelectedOptionOn,
                     ChangeNotificationsOn = psconfig.ChangeNotificationsOn,
+                    AllowPasswordsReset = psconfig.AllowPasswordsReset,
                     UseOfUserLanguages = psconfig.UseOfUserLanguages,
                     AllowPauseForDays = psconfig.AllowPauseForDays,
                     DefaultProviderMethod = (PreferredMethod)psconfig.DefaultProviderMethod,

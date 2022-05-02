@@ -743,6 +743,9 @@ namespace Neos.IdentityServer.MultiFactor
         [XmlAttribute("ChangeNotificationsOn")]
         public bool ChangeNotificationsOn { get; set; } = true;
 
+        [XmlAttribute("AllowPasswordsReset")]
+        public bool AllowPasswordsReset { get; set; } = false;
+
         [XmlAttribute("DefaultProviderMethod")]
         public PreferredMethod DefaultProviderMethod { get; set; } = PreferredMethod.Choose;
 

@@ -147,4 +147,13 @@
   <data name="USERSFRMDELETE" xml:space="preserve">
     <value>Delete</value>
   </data>
+  <data name="USERSFRMPASSWORDS" xml:space="preserve">
+    <value>Reset Password</value>
+  </data>
+  <data name="USERSFRMPASSWORDSDESC" xml:space="preserve">
+    <value>Force user to change his password at next logon</value>
+  </data>
+  <data name="USERSFRMRESETPWD" xml:space="preserve">
+    <value>Do you really want to reset password for these users ?</value>
+  </data>
 </root>

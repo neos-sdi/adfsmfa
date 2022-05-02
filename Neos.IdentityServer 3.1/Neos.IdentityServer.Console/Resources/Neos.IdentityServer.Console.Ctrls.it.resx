@@ -741,4 +741,7 @@
   <data name="CTRLPROVWIZARDDISABLED" xml:space="preserve">
     <value>Procedura guidata disabilitata al momento dell'iscrizione</value>
   </data>
+  <data name="CTRLALLOWPASSORDSRESET" xml:space="preserve">
+    <value>Consenti agli amministratori di reimpostare gli utenti paswwords</value>
+  </data>
 </root>

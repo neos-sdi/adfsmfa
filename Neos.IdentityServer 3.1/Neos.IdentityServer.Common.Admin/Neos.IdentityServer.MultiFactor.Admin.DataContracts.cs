@@ -63,6 +63,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public bool CustomUpdatePassword { get; set; }
         public bool KeepMySelectedOptionOn { get; set; }
         public bool ChangeNotificationsOn { get; set; }
+        public bool AllowPasswordsReset { get; set; }
         public bool UseOfUserLanguages { get; set; }
         public int AllowPauseForDays { get; set; }
         public FlatAdvertising AdvertisingDays { get; set; }
@@ -89,6 +90,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             CustomUpdatePassword = cfg.CustomUpdatePassword;
             KeepMySelectedOptionOn = cfg.KeepMySelectedOptionOn;
             ChangeNotificationsOn = cfg.ChangeNotificationsOn;
+            AllowPasswordsReset = cfg.AllowPasswordsReset;
             UseOfUserLanguages = cfg.UseOfUserLanguages;
             AllowPauseForDays = cfg.AllowPauseForDays;
             AdvertisingDays = (FlatAdvertising)cfg.AdvertisingDays;
@@ -115,6 +117,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             cfg.CustomUpdatePassword = CustomUpdatePassword;
             cfg.KeepMySelectedOptionOn = KeepMySelectedOptionOn;
             cfg.ChangeNotificationsOn = ChangeNotificationsOn;
+            cfg.AllowPasswordsReset = AllowPasswordsReset;
             cfg.UseOfUserLanguages = UseOfUserLanguages;
             cfg.AllowPauseForDays = AllowPauseForDays;
             cfg.AdvertisingDays = (ConfigAdvertising)AdvertisingDays;

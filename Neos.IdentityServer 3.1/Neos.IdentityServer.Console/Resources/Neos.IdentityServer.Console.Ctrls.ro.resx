@@ -741,4 +741,7 @@
   <data name="CTRLPROVWIZARDDISABLED" xml:space="preserve">
     <value>Expert dezactivat la înscriere</value>
   </data>
+  <data name="CTRLALLOWPASSORDSRESET" xml:space="preserve">
+    <value>Permite administratorilor să reseteze paswwords utilizatori</value>
+  </data>
 </root>

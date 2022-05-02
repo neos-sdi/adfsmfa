@@ -741,4 +741,7 @@
   <data name="CTRLPROVWIZARDDISABLED" xml:space="preserve">
     <value>Assistent bei Der Registrierung deaktiviert</value>
   </data>
+  <data name="CTRLALLOWPASSORDSRESET" xml:space="preserve">
+    <value>Administratoren erlauben, Benutzerpaswwords zurückzusetzen</value>
+  </data>
 </root>

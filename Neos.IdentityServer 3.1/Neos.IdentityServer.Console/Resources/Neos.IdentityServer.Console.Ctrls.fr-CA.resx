@@ -741,4 +741,7 @@
   <data name="CTRLPROVWIZARDDISABLED" xml:space="preserve">
     <value>Assistant désactivé lors de l’inscription</value>
   </data>
+  <data name="CTRLALLOWPASSORDSRESET" xml:space="preserve">
+    <value>Autoriser les administrateurs à réinitialiser les mots de passe des utilisateurs</value>
+  </data>
 </root>

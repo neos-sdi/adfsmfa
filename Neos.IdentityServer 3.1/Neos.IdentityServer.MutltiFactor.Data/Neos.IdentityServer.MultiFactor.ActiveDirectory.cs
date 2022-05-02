@@ -823,7 +823,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         {
             Dictionary<int, string> fliedlsvalues = new Dictionary<int, string> 
             {
-                {0, " userprincipalname"} ,
+                {0, " userprincipalname"},
                 {1, ADHost.MailAttribute},
                 {2, ADHost.PhoneAttribute}
             };

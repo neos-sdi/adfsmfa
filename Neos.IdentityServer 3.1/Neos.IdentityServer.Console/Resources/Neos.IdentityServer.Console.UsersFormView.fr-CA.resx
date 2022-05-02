@@ -147,4 +147,13 @@
   <data name="USERSFRMDELETE" xml:space="preserve">
     <value>Supprimer</value>
   </data>
+  <data name="USERSFRMPASSWORDS" xml:space="preserve">
+    <value>Réinitialiser le mot de passe</value>
+  </data>
+  <data name="USERSFRMPASSWORDSDESC" xml:space="preserve">
+    <value>Forcer l’utilisateur à modifier son mot de passe lors de la prochaine ouverture de session</value>
+  </data>
+  <data name="USERSFRMRESETPWD" xml:space="preserve">
+    <value>Voulez-vous vraiment réinitialiser le mot de passe de ces utilisateurs ?</value>
+  </data>
 </root>

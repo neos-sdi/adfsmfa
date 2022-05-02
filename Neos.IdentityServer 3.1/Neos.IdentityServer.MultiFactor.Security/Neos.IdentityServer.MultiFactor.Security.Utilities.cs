@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.DirectoryServices;
 using System.DirectoryServices.ActiveDirectory;
 using System.IO;
 using System.Management.Automation;
@@ -13,6 +14,7 @@ using System.Runtime.Serialization;
 using System.Security;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using System.Security.Principal;
 using System.Threading;
 using System.Xml.Serialization;
 
@@ -344,6 +346,26 @@ namespace Neos.IdentityServer.MultiFactor
                 return Guid.Empty;
             }
         }
+
+        /// <summary>
+        /// GetKeyFromADDS method implementation
+        /// </summary>
+        public static SecurityIdentifier GetADDSDomainSID()
+        {
+            // ICI mettre dans Service MFA et Appel svc
+            try
+            {
+                Domain dom = Domain.GetComputerDomain();
+                DirectoryEntry de = dom.GetDirectoryEntry();
+                byte[] bdomSid = (byte[])de.Properties["objectSid"].Value;
+                return new SecurityIdentifier(bdomSid, 0);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         #endregion
     }
     #endregion

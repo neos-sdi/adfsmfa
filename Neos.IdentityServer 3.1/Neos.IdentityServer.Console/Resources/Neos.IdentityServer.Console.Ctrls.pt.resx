@@ -741,4 +741,7 @@
   <data name="CTRLPROVWIZARDDISABLED" xml:space="preserve">
     <value>Assistente desativado na matrícula</value>
   </data>
+  <data name="CTRLALLOWPASSORDSRESET" xml:space="preserve">
+    <value>Permitir que os administradores reiniciem as paswwords dos usuários</value>
+  </data>
 </root>

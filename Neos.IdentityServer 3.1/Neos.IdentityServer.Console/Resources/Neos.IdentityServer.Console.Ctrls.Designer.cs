@@ -520,6 +520,15 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Allow Administrators to reset users paswwords.
+        /// </summary>
+        internal static string CTRLALLOWPASSORDSRESET {
+            get {
+                return ResourceManager.GetString("CTRLALLOWPASSORDSRESET", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Azure Tenant.
         /// </summary>
         internal static string CTRLAZURETENANTID {

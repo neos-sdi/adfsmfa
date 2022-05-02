@@ -147,4 +147,13 @@
   <data name="USERSFRMDELETE" xml:space="preserve">
     <value>Șterge</value>
   </data>
+  <data name="USERSFRMPASSWORDS" xml:space="preserve">
+    <value>Resetare parolă</value>
+  </data>
+  <data name="USERSFRMPASSWORDSDESC" xml:space="preserve">
+    <value>Forțați utilizatorul să-și schimbe parola la următoarea conectare</value>
+  </data>
+  <data name="USERSFRMRESETPWD" xml:space="preserve">
+    <value>Chiar doriți să resetați parola pentru acești utilizatori ?</value>
+  </data>
 </root>

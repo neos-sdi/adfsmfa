@@ -11131,6 +11131,7 @@ namespace Neos.IdentityServer.Console.Controls
         private NumericUpDown txtMaxPasswordAgeInDays;
         private Label lblWarnPasswordExpirationBeforeInDays;
         private NumericUpDown txtWarnPasswordExpirationBeforeInDays;
+        private CheckBox chkAllowPasswordsReset;
         private Button btnGenerateKeys;
 
         /// <summary>
@@ -11235,12 +11236,12 @@ namespace Neos.IdentityServer.Console.Controls
                 this.Margin = new Padding(30, 5, 30, 5);
 
                 _panel.Width = 20;
-                _panel.Height = 665;
+                _panel.Height = 695;
                 this.Controls.Add(_panel);
 
                 _txtpanel.Left = 20;
                 _txtpanel.Width = this.Width - 20;
-                _txtpanel.Height = 665;
+                _txtpanel.Height = 695;
                 _txtpanel.BackColor = System.Drawing.SystemColors.Control;
                 this.Controls.Add(_txtpanel);
 
@@ -11629,11 +11630,22 @@ namespace Neos.IdentityServer.Console.Controls
                 txtWarnPasswordExpirationBeforeInDays.ValueChanged += txtWarnPasswordExpirationBeforeInDaysChanged;
                 _txtpanel.Controls.Add(txtWarnPasswordExpirationBeforeInDays);
 
+                chkAllowPasswordsReset = new CheckBox
+                {
+                    Text = res.CTRLALLOWPASSORDSRESET,
+                    Checked = Config.AllowPasswordsReset,
+                    Left = 20,
+                    Top = 624,
+                    Width = 550
+                };
+                chkAllowPasswordsReset.CheckedChanged += chkAllowPasswordsResetChanged;
+                _txtpanel.Controls.Add(chkAllowPasswordsReset);
+
                 lblWarning = new Label
                 {
                     Text = "(*) " + res.CTRLSECWARNING,
                     Left = 10,
-                    Top = 640,
+                    Top = 664,
                     Width = 500
                 };
                 _txtpanel.Controls.Add(lblWarning);
@@ -11642,7 +11654,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE,
                     Left = 20,
-                    Top = 675,
+                    Top = 705,
                     Width = 80,
                     TabStop = true
                 };
@@ -11653,7 +11665,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL,
                     Left = 110,
-                    Top = 675,
+                    Top = 705,
                     Width = 80,
                     TabStop = true
                 };
@@ -11727,6 +11739,8 @@ namespace Neos.IdentityServer.Console.Controls
                 chkLockUserIfPasswordExpired.Checked = Config.KeysConfig.LockUserOnPasswordExpiration;
                 txtMaxPasswordAgeInDays.Value = Config.KeysConfig.MaxPasswordAgeInDays;
                 txtWarnPasswordExpirationBeforeInDays.Value = Config.KeysConfig.WarnPasswordExpirationBeforeInDays;
+                chkAllowPasswordsReset.Text = res.CTRLALLOWPASSORDSRESET;
+                chkAllowPasswordsReset.Checked = Config.AllowPasswordsReset;
 
                 txtDeliveryWindow.Text = Config.DeliveryWindow.ToString();
                 txtMaxRetries.Text = Config.MaxRetries.ToString();
@@ -11809,6 +11823,7 @@ namespace Neos.IdentityServer.Console.Controls
             errors.SetError(chkLockUserIfPasswordExpired, "");
             errors.SetError(txtMaxPasswordAgeInDays, "");
             errors.SetError(txtWarnPasswordExpirationBeforeInDays, "");
+            errors.SetError(chkAllowPasswordsReset, "");
         }
 
         /// <summary>
@@ -12550,6 +12565,26 @@ namespace Neos.IdentityServer.Console.Controls
             catch (Exception ex)
             {
                 errors.SetError(txtWarnPasswordExpirationBeforeInDays, ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// chkAllowPasswordsResetChanged method implementation
+        /// </summary>
+        private void chkAllowPasswordsResetChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_view.AutoValidate != AutoValidate.Disable)
+                {
+                    Config.AllowPasswordsReset = chkAllowPasswordsReset.Checked;
+                    ManagementService.ADFSManager.SetDirty(true);
+                    UpdateControlsLayouts();
+                }
+            }
+            catch (Exception ex)
+            {
+                errors.SetError(chkAllowPasswordsReset, ex.Message);
             }
         }
         #endregion

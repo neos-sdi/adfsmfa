@@ -741,4 +741,7 @@
   <data name="CTRLPROVWIZARDDISABLED" xml:space="preserve">
     <value>Guiden Inaktiverad vid registrering</value>
   </data>
+  <data name="CTRLALLOWPASSORDSRESET" xml:space="preserve">
+    <value>Tillåt administratörer att återställa användare paswwords</value>
+  </data>
 </root>

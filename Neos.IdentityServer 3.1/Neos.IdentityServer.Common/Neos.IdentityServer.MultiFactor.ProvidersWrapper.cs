@@ -1364,7 +1364,10 @@ namespace Neos.IdentityServer.MultiFactor.Common
             if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.GetInterface("IExternalOTPProvider") != null)
                 return (IExternalOTPProvider)Activator.CreateInstance(_typetoload, true); // Allow Calling internal Constructors
             else
+            {
+                Log.WriteEntry("Error during loading Legacy Exertnal adapter : Instance is NULL", EventLogEntryType.Error, 65535);
                 return null;
+            }
         }
 
         /// <summary>

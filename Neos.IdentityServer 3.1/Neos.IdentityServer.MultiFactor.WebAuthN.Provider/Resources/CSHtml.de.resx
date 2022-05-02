@@ -165,10 +165,10 @@
   <data name="BIOERRORAUTHREPLAY" xml:space="preserve">
     <value>Fehler während des Authentifizierungsprozesses ! Security Descriptor Data wurde bereits verwendet!</value>
   </data>
-  <data name="BIOUIMessage2" xml:space="preserve">
-    <value>Um sich mit Ihrem biometrischen Gerät anzumelden, klicken Sie auf "Verbindung"</value>
-  </data>
   <data name="BIOUIMessage3" xml:space="preserve">
     <value>Um Ihr biometrisches Gerät zu registrieren, klicken Sie auf "Gerät registrieren"</value>
+  </data>
+  <data name="BIOUIMessage2" xml:space="preserve">
+    <value>Um sich mit Ihrem biometrischen Gerät anzumelden, klicken Sie auf "Anmelden"</value>
   </data>
 </root>

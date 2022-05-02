@@ -741,4 +741,7 @@
   <data name="CTRLPROVWIZARDDISABLED" xml:space="preserve">
     <value>Wizard Uitgeschakeld bij inschrijving</value>
   </data>
+  <data name="CTRLALLOWPASSORDSRESET" xml:space="preserve">
+    <value>Beheerders toestaan om paswwords van gebruikers opnieuw in te stellen</value>
+  </data>
 </root>

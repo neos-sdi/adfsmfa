@@ -741,4 +741,7 @@
   <data name="CTRLPROVWIZARDDISABLED" xml:space="preserve">
     <value>Kreator wyłączony podczas rejestracji</value>
   </data>
+  <data name="CTRLALLOWPASSORDSRESET" xml:space="preserve">
+    <value>Zezwalaj administratorom na resetowanie paswwords użytkowników</value>
+  </data>
 </root>

@@ -93,15 +93,23 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\CSHtml.da.resx" />
+    <EmbeddedResource Include="Resources\CSHtml.da.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\CSHtml.de.resx" />
-    <EmbeddedResource Include="Resources\CSHtml.es.resx" />
+    <EmbeddedResource Include="Resources\CSHtml.es.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\CSHtml.fr-CA.resx" />
     <EmbeddedResource Include="Resources\CSHtml.fr.resx" />
-    <EmbeddedResource Include="Resources\CSHtml.it.resx" />
+    <EmbeddedResource Include="Resources\CSHtml.it.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\CSHtml.ja.resx" />
     <EmbeddedResource Include="Resources\CSHtml.nl.resx" />
-    <EmbeddedResource Include="Resources\CSHtml.pl.resx" />
+    <EmbeddedResource Include="Resources\CSHtml.pl.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\CSHtml.pt.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -113,7 +121,9 @@
     <EmbeddedResource Include="Resources\CSHtml.ro.resx" />
     <EmbeddedResource Include="Resources\CSHtml.ru.resx" />
     <EmbeddedResource Include="Resources\CSHtml.sv.resx" />
-    <EmbeddedResource Include="Resources\CSHtml.uk.resx" />
+    <EmbeddedResource Include="Resources\CSHtml.uk.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

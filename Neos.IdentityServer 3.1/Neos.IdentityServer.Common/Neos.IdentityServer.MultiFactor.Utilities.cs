@@ -65,10 +65,12 @@ namespace Neos.IdentityServer.MultiFactor
                 if (_ancestor.IsClass && _ancestor.IsAbstract && (_ancestor == typeof(DataRepositoryService)))
                     if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.GetInterface("IWebAuthNDataRepositoryService") != null)
                         return (Activator.CreateInstance(_typetoload, BindingFlags.CreateInstance | BindingFlags.Instance | BindingFlags.NonPublic, new object[] { host, deliverywindow }) as DataRepositoryService);
+                Log.WriteEntry("Error during loading ADDS WebAuthN Data Repository Service : Instance is NULL", EventLogEntryType.Error, 65535);
                 return null;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Log.WriteEntry("Error during loading ADDS WebAuthN Data Repository Service : " + ex.Message, EventLogEntryType.Error, 65535);
                 return null;
             }
         }
@@ -91,10 +93,12 @@ namespace Neos.IdentityServer.MultiFactor
                 Type _ancestor = _typetoload.BaseType;
                 if (_ancestor.IsClass && _ancestor.IsAbstract && (_ancestor == typeof(KeysRepositoryService)))
                     return (Activator.CreateInstance(_typetoload, new object[] { host, deliverywindow }) as KeysRepositoryService);
+                Log.WriteEntry("Error during loading ADDS Keys Repository Service : Instance is NULL", EventLogEntryType.Error, 65535);
                 return null;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Log.WriteEntry("Error during loading ADDS Keys Repository Service : " + ex.Message, EventLogEntryType.Error, 65535);
                 return null;
             }
         }
@@ -117,10 +121,12 @@ namespace Neos.IdentityServer.MultiFactor
                 Type _ancestor = _typetoload.BaseType;
                 if (_ancestor.IsClass && _ancestor.IsAbstract && (_ancestor == typeof(KeysRepositoryService)))
                     return (Activator.CreateInstance(_typetoload, new object[] { host, deliverywindow }) as KeysRepositoryService);
+                Log.WriteEntry("Error during loading ADDS Keys2 Repository Service : Instance is NULL", EventLogEntryType.Error, 65535);
                 return null;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Log.WriteEntry("Error during loading ADDS Keys2 Repository Service : " + ex.Message, EventLogEntryType.Error, 65535);
                 return null;
             }
         }
@@ -146,10 +152,12 @@ namespace Neos.IdentityServer.MultiFactor
                 if (_ancestor.IsClass && _ancestor.IsAbstract && (_ancestor == typeof(DataRepositoryService)))
                     if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.GetInterface("IWebAuthNDataRepositoryService") != null)
                         return (Activator.CreateInstance(_typetoload, new object[] { host, deliverywindow }) as DataRepositoryService);
+                Log.WriteEntry("Error during loading SQL WebAuthN Data Repository Service : Instance is NULL", EventLogEntryType.Error, 65535);
                 return null;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Log.WriteEntry("Error during loading SQL WebAuthN Data Repository Service : " + ex.Message, EventLogEntryType.Error, 65535);
                 return null;
             }
         }
@@ -172,10 +180,12 @@ namespace Neos.IdentityServer.MultiFactor
                 Type _ancestor = _typetoload.BaseType;
                 if (_ancestor.IsClass && _ancestor.IsAbstract && (_ancestor == typeof(KeysRepositoryService)))
                     return (Activator.CreateInstance(_typetoload, new object[] { host, deliverywindow }) as KeysRepositoryService);
+                Log.WriteEntry("Error during loading SQL Keys Repository Service : Instance is NULL", EventLogEntryType.Error, 65535);
                 return null;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Log.WriteEntry("Error during loading SQL Keys Repository Service : " + ex.Message, EventLogEntryType.Error, 65535);
                 return null;
             }
         }
@@ -198,10 +208,12 @@ namespace Neos.IdentityServer.MultiFactor
                 Type _ancestor = _typetoload.BaseType;
                 if (_ancestor.IsClass && _ancestor.IsAbstract && (_ancestor == typeof(KeysRepositoryService)))
                     return (Activator.CreateInstance(_typetoload, new object[] { host, deliverywindow }) as KeysRepositoryService);
+                Log.WriteEntry("Error during loading SQL Keys2 Repository Service : Instance is NULL", EventLogEntryType.Error, 65535);
                 return null;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Log.WriteEntry("Error during loading SQL Keys2 Repository Service : " + ex.Message, EventLogEntryType.Error, 65535);
                 return null;
             }
         }
@@ -227,10 +239,12 @@ namespace Neos.IdentityServer.MultiFactor
                 if (_ancestor.IsClass && _ancestor.IsAbstract && (_ancestor == typeof(DataRepositoryService)))
                     if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.GetInterface("IWebAuthNDataRepositoryService") != null)
                         return (Activator.CreateInstance(_typetoload, new object[] { host, deliverywindow }) as DataRepositoryService);
+                Log.WriteEntry("Error during loading Custom WebAuthN Data Repository Service : Instance is NULL", EventLogEntryType.Error, 65535);
                 return null;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Log.WriteEntry("Error during loading Custom WebAuthN Data Repository Service : " + ex.Message, EventLogEntryType.Error, 65535);
                 return null;
             }
         }
@@ -253,10 +267,12 @@ namespace Neos.IdentityServer.MultiFactor
                 Type _ancestor = _typetoload.BaseType;
                 if (_ancestor.IsClass && _ancestor.IsAbstract && (_ancestor == typeof(KeysRepositoryService)))
                     return (Activator.CreateInstance(_typetoload, new object[] { host, deliverywindow }) as KeysRepositoryService);
+                Log.WriteEntry("Error during loading Custom Keys Repository Service : Instance is NULL", EventLogEntryType.Error, 65535);
                 return null;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Log.WriteEntry("Error during loading Custom Keys Repository Service : " + ex.Message, EventLogEntryType.Error, 65535);
                 return null;
             }
         }
@@ -476,7 +492,10 @@ namespace Neos.IdentityServer.MultiFactor
             if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.GetInterface("IExternalProvider") != null)
                 return (IExternalProvider)Activator.CreateInstance(_typetoload, true); // Allow Calling internal Constructors
             else
+            {
+                Log.WriteEntry("Error during loading Azure adapter : Instance is null", EventLogEntryType.Error, 65535);
                 return null;
+            }
         }
 
         /// <summary>
@@ -489,7 +508,10 @@ namespace Neos.IdentityServer.MultiFactor
             if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.GetInterface("IExternalProvider") != null)
                 return (IExternalProvider)Activator.CreateInstance(_typetoload, new object[] { constrained }); // Allow Calling internal Constructors
             else
+            {
+                Log.WriteEntry("Error during loading WebAuthN adapter : Instance is null", EventLogEntryType.Error, 65535);
                 return null;
+            }
         }
 
         /// <summary>
@@ -498,19 +520,30 @@ namespace Neos.IdentityServer.MultiFactor
         private static IExternalProvider LoadWebAuthNProvider(bool constrained, string AssemblyFulldescription)
         {
             if (string.IsNullOrEmpty(AssemblyFulldescription))
+            {
+                Log.WriteEntry("Error during loading WebAuthN adapter : Wrong assembly", EventLogEntryType.Error, 65535);
                 return null;
+            }
             Assembly assembly = Assembly.Load(Utilities.ParseAssembly(AssemblyFulldescription));
             if (assembly == null)
+            {
+                Log.WriteEntry("Error during loading WebAuthN adapter : Wrong assembly", EventLogEntryType.Error, 65535);
                 return null;
-
+            }
             Type _typetoload = assembly.GetType(Utilities.ParseType(AssemblyFulldescription));
             if (_typetoload == null)
+            {
+                Log.WriteEntry("Error during loading WebAuthN adapter : Wrong component Type", EventLogEntryType.Error, 65535);
                 return null;
+            }
 
             if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.GetInterface("IExternalProvider") != null)
                 return (IExternalProvider)Activator.CreateInstance(_typetoload, new object[] { constrained }); // Allow Calling internal Constructors
             else
+            {
+                Log.WriteEntry("Error during loading WebAuthN adapter : Instance is NULL", EventLogEntryType.Error, 65535);
                 return null;
+            }
         }
 
         /// <summary>
@@ -519,19 +552,31 @@ namespace Neos.IdentityServer.MultiFactor
         private static IExternalProvider LoadExternalProvider(string AssemblyFulldescription)
         {
             if (string.IsNullOrEmpty(AssemblyFulldescription))
+            {
+                Log.WriteEntry("Error during loading External adapter : Wrong assembly", EventLogEntryType.Error, 65535);
                 return null;
+            }
             Assembly assembly = Assembly.Load(Utilities.ParseAssembly(AssemblyFulldescription));
             if (assembly == null)
+            {
+                Log.WriteEntry("Error during loading External adapter : Wrong assembly", EventLogEntryType.Error, 65535);
                 return null;
+            }
 
             Type _typetoload = assembly.GetType(Utilities.ParseType(AssemblyFulldescription));
             if (_typetoload == null)
+            {
+                Log.WriteEntry("Error during loading External adapter : Wrong component Type", EventLogEntryType.Error, 65535);
                 return null;
+            }
 
             if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.GetInterface("IExternalProvider") != null)
                 return (IExternalProvider)Activator.CreateInstance(_typetoload, true); // Allow Calling internal Constructors
             else
+            {
+                Log.WriteEntry("Error during loading External adapter : Instance is NULL", EventLogEntryType.Error, 65535);
                 return null;
+            }
         }
 
         /// <summary>
@@ -1640,6 +1685,51 @@ namespace Neos.IdentityServer.MultiFactor
             catch (Exception ex)
             {
                 Log.WriteEntry(string.Format("ChangePassword error : {0} {1}", username, ex.Message), EventLogEntryType.Error, 5000);
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// ResetPassword method implmentation
+        /// </summary>
+        internal static bool ResetPassword(MFAConfig cfg, string username)
+        {
+            try
+            {
+                string samusername = ADDSUtils.GetSAMAccountForUser(cfg.Hosts.ActiveDirectoryHost, username);
+                if (string.IsNullOrEmpty(samusername))
+                    return false;
+                string dns = samusername.Substring(0, samusername.IndexOf('\\'));
+
+                if ((!string.IsNullOrEmpty(cfg.Hosts.ActiveDirectoryHost.Account)) && (!string.IsNullOrEmpty(cfg.Hosts.ActiveDirectoryHost.Password)))
+                {
+                    using (var ctx = new PrincipalContext(ContextType.Domain, dns, cfg.Hosts.ActiveDirectoryHost.Account, cfg.Hosts.ActiveDirectoryHost.Password))
+                    {
+                        using (var user = UserPrincipal.FindByIdentity(ctx, IdentityType.SamAccountName, samusername))
+                        {
+                            if (user == null)
+                                return false;
+                            user.ExpirePasswordNow();
+                        }
+                    }
+                }
+                else
+                {
+                    using (var ctx = new PrincipalContext(ContextType.Domain, dns))
+                    {
+                        using (var user = UserPrincipal.FindByIdentity(ctx, IdentityType.SamAccountName, samusername))
+                        {
+                            if (user == null)
+                                return false;
+                            user.ExpirePasswordNow();
+                        }
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(string.Format("ResetPassword error : {0} {1}", username, ex.Message), EventLogEntryType.Error, 5000);
                 throw ex;
             }
         }
@@ -3689,10 +3779,13 @@ namespace Neos.IdentityServer.MultiFactor
                 Type _typetoload = assembly.GetType(ParseType(fqiassembly));
                 if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.GetInterface("IExternalProvider") != null)
                     return (Activator.CreateInstance(_typetoload, true) as IExternalProvider); // Allow Calling internal Constructors
+
+                Log.WriteEntry("Error during loading External adapter : Instance is NULL", EventLogEntryType.Error, 65535);
                 return null;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Log.WriteEntry("Error during loading External adapter : "+ex.Message, EventLogEntryType.Error, 65535);
                 return null;
             }
         }
@@ -3708,10 +3801,12 @@ namespace Neos.IdentityServer.MultiFactor
                 Type _typetoload = assembly.GetType(ParseType(fqiassembly));
                 if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.GetInterface("IExternalOTPProvider") != null)
                     return (Activator.CreateInstance(_typetoload, true) as IExternalOTPProvider); // Allow Calling internal Constructors
+                Log.WriteEntry("Error during loading Legacy External adapter : Instance is NULL", EventLogEntryType.Error, 65535);
                 return null;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Log.WriteEntry("Error during loading Legacy External adapter : "+ex.Message, EventLogEntryType.Error, 65535);
                 return null;
             }
         }
@@ -3729,10 +3824,12 @@ namespace Neos.IdentityServer.MultiFactor
                 if (_ancestor.IsClass && _ancestor.IsAbstract && (_ancestor == typeof(DataRepositoryService)))
                     if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.GetInterface("IWebAuthNDataRepositoryService") != null)
                         return ((Activator.CreateInstance(_typetoload, new object[] { host, deliverywindow }) as DataRepositoryService) != null);
+                Log.WriteEntry("Error during loading WebAuthN Data Repository service : Instance is NULL", EventLogEntryType.Error, 65535);
                 return false;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Log.WriteEntry("Error during loading WebAuthN Data Repository service : "+ex.Message, EventLogEntryType.Error, 65535);
                 return false;
             }
         }
@@ -3749,10 +3846,12 @@ namespace Neos.IdentityServer.MultiFactor
                 Type _ancestor = _typetoload.BaseType;
                 if (_ancestor.IsClass && _ancestor.IsAbstract && (_ancestor == typeof(KeysRepositoryService)))
                     return ((Activator.CreateInstance(_typetoload, new object[] { host, deliverywindow }) as KeysRepositoryService) != null);
+                Log.WriteEntry("Error during loading Keys Repository service : Instance is NULL", EventLogEntryType.Error, 65535);
                 return false;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Log.WriteEntry("Error during loading Keys Repository service : "+ ex.Message, EventLogEntryType.Error, 65535);
                 return false;
             }
         }
@@ -3765,11 +3864,21 @@ namespace Neos.IdentityServer.MultiFactor
             Assembly assembly = Assembly.Load(Utilities.ParseAssembly(AssemblyFulldescription));
             Type _typetoload = assembly.GetType(Utilities.ParseType(AssemblyFulldescription));
             ISecretKeyManager wrapper = null;
-            if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.GetInterface("ISecretKeyManager") != null)
+            try
             {
-                object o = Activator.CreateInstance(_typetoload, true); // Allow Calling internal Constructors
-                if (o is ISecretKeyManager)
-                    wrapper = o as ISecretKeyManager;
+                if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.GetInterface("ISecretKeyManager") != null)
+                {
+                    object o = Activator.CreateInstance(_typetoload, true); // Allow Calling internal Constructors
+                    if (o is ISecretKeyManager)
+                        wrapper = o as ISecretKeyManager;
+                }
+                else
+                    Log.WriteEntry("Error during loading Secret Keys Service : Instance is NULL", EventLogEntryType.Error, 65535);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry("Error during loading Secret Keys Manager Service : " + ex.Message, EventLogEntryType.Error, 65535);
+                return null;
             }
             return wrapper;
         }
@@ -3790,9 +3899,12 @@ namespace Neos.IdentityServer.MultiFactor
                     if (o is ISecretKeyManagerActivator)
                         wrapper = o as ISecretKeyManagerActivator;
                 }
+                else
+                    Log.WriteEntry("Error during loading Secret Keys Manager Activator : Instance is NULL", EventLogEntryType.Error, 65535);
             }
-            catch
+            catch (Exception ex)
             {
+                Log.WriteEntry("Error during loading Secret Keys Manager Activator : "+ex.Message, EventLogEntryType.Error, 65535);
                 return null;
             }
             return wrapper;

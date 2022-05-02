@@ -252,6 +252,28 @@ namespace Neos.IdentityServer.Console
         }
 
         /// <summary>
+        /// RestUserPasswordData method implementation
+        /// </summary>
+        internal bool ResetUserPasswordData(MFAUserList reg)
+        {
+            try
+            {
+                return MMCService.ResetUserPassword(reg);
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
+                SnapIn.Console.ShowDialog(messageBoxParameters);
+                return false;
+            }
+        }
+
+        /// <summary>
         /// EnableUserData method implementation
         /// </summary>
         internal void EnableUserData(MFAUserList registrations)

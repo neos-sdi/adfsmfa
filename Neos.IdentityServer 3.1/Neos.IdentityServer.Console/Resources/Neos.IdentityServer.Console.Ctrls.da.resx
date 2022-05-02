@@ -741,4 +741,7 @@
   <data name="CTRLPROVWIZARDDISABLED" xml:space="preserve">
     <value>Guide deaktiveret ved tilmelding</value>
   </data>
+  <data name="CTRLALLOWPASSORDSRESET" xml:space="preserve">
+    <value>Tillad administratorer at nulstille brugernes paswwords</value>
+  </data>
 </root>

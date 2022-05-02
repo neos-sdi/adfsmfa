@@ -212,12 +212,16 @@
     <EmbeddedResource Include="Resources\SHtml.fr.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\SHtml.it.resx" />
+    <EmbeddedResource Include="Resources\SHtml.it.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\SHtml.ja.resx" />
     <EmbeddedResource Include="Resources\SHtml.nl.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\SHtml.pl.resx" />
+    <EmbeddedResource Include="Resources\SHtml.pl.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\SHtml.pt.resx" />
     <EmbeddedResource Include="Resources\SHtml.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

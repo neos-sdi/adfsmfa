@@ -223,7 +223,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// SetUser method implementation
         /// </summary>
-        public static void SetUser(MFAUserList registrations)
+        internal static void SetUser(MFAUserList registrations)
         {
             EnsureService();
             foreach (MFAUser reg in registrations)
@@ -235,7 +235,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// AddUser method implmentation
         /// </summary>
-        public static MFAUserList AddUser(MFAUserList registrations)
+        internal static MFAUserList AddUser(MFAUserList registrations)
         {
             EnsureService();
             MFAUserList lst = new MFAUserList();
@@ -249,7 +249,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// DeleteUser method implmentation
         /// </summary>
-        public static bool DeleteUser(MFAUserList registrations)
+        internal static bool DeleteUser(MFAUserList registrations)
         {
             EnsureService();
             bool _ret = true;
@@ -266,7 +266,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// EnableUser method implmentation
         /// </summary>
-        public static MFAUserList EnableUser(MFAUserList registrations)
+        internal static MFAUserList EnableUser(MFAUserList registrations)
         {
             EnsureService();
             MFAUserList lst = new MFAUserList();
@@ -280,7 +280,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// DisableUser method implmentation 
         /// </summary>
-        public static MFAUserList DisableUser(MFAUserList registrations)
+        internal static MFAUserList DisableUser(MFAUserList registrations)
         {
             EnsureService();
             MFAUserList lst = new MFAUserList();
@@ -294,7 +294,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// GetUsers method implementation
         /// </summary>
-        public static MFAUserList GetUsers()
+        internal static MFAUserList GetUsers()
         {
             EnsureService();
             return ManagementService.GetUserRegistrations(Filter, Order, Paging);
@@ -303,7 +303,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// GetAllUsers method implementation
         /// </summary>
-        public static MFAUserList GetAllUsers(bool enabledonly = false)
+        internal static MFAUserList GetAllUsers(bool enabledonly = false)
         {
             EnsureService();
             return ManagementService.GetAllUserRegistrations(Order, enabledonly);
@@ -312,11 +312,21 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// GetUsers method implementation
         /// </summary>
-        public static int GetUsersCount(int maxrows = 20000)
+        internal static int GetUsersCount(int maxrows = 20000)
         {
             EnsureService();
             return ManagementService.GetUserRegistrationsCount(Filter);
         }
+
+        /// <summary>
+        /// ResetUserPassword method implmentation
+        /// </summary>
+        internal static bool ResetUserPassword(MFAUserList reg)
+        {
+            EnsureService();
+            return ManagementService.ResetUserPassword(reg);
+        }
+
         #endregion
     }
     #endregion

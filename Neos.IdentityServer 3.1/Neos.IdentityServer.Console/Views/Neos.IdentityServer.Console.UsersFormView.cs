@@ -15,20 +15,15 @@
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.ManagementConsole;
+using Microsoft.ManagementConsole.Advanced;
 using Neos.IdentityServer.MultiFactor;
 using Neos.IdentityServer.MultiFactor.Administration;
-using System.Diagnostics;
-using Microsoft.ManagementConsole.Advanced;
-using System.Windows.Forms;
-using System.Threading;
-using res = Neos.IdentityServer.Console.Resources.Neos_IdentityServer_Console_UsersFormView;
+using System;
 using System.Drawing;
+using System.Security.Principal;
+using System.Windows.Forms;
+using res = Neos.IdentityServer.Console.Resources.Neos_IdentityServer_Console_UsersFormView;
 
 namespace Neos.IdentityServer.Console
 {
@@ -42,6 +37,8 @@ namespace Neos.IdentityServer.Console
         private static ToolStripMenuItem _deactivate = new ToolStripMenuItem(res.USERSFRMDEACTIVATE);
         private static ToolStripMenuItem _properties = new ToolStripMenuItem(res.USERSFRMPROPERTIES);
         private static ToolStripMenuItem _delete = new ToolStripMenuItem(res.USERSFRMDELETE, _deletemmc);
+        private static ToolStripMenuItem _passwords = new ToolStripMenuItem(res.USERSFRMPASSWORDS);
+
 
         private UsersListView usersControl = null;
         private UsersScopeNode usersScopeNode = null;
@@ -73,6 +70,8 @@ namespace Neos.IdentityServer.Console
             usersScopeNode = (UsersScopeNode)this.ScopeNode;
             usersScopeNode.usersFormView = this;
             base.OnInitialize(status);
+            if (ManagementService.Config == null)
+                MMCService.EnsureService(); 
         }
 
         /// <summary>
@@ -86,8 +85,18 @@ namespace Neos.IdentityServer.Console
             SelectionData.ActionsPaneHelpItems.Clear();
             SelectionData.EnabledStandardVerbs = (StandardVerbs.Delete);
             SelectionData.ActionsPaneItems.Add(new Microsoft.ManagementConsole.Action(res.USERSFRMPROPERTIES, res.USERSFRMPROPERTIESDESC, -1, "PropertyUser"));
+            if ((ManagementService.Config.AllowPasswordsReset) && (ADFSManagementRights.IsDomainAdministrator(true) || ADFSManagementRights.AllowedGroup(WindowsBuiltInRole.AccountOperator)))
+            {
+                SelectionData.ActionsPaneItems.Add(new Microsoft.ManagementConsole.ActionSeparator());
+                SelectionData.ActionsPaneItems.Add(new Microsoft.ManagementConsole.Action(res.USERSFRMPASSWORDS, res.USERSFRMPASSWORDS, -1, "PasswordUser"));
+            }
             UsersListControl.contextMenuStripGrid.Items.Clear();
             UsersListControl.contextMenuStripGrid.Items.Add(res.USERSFRMPROPERTIES);
+            if ((ManagementService.Config.AllowPasswordsReset) && (ADFSManagementRights.IsDomainAdministrator(true) || ADFSManagementRights.AllowedGroup(WindowsBuiltInRole.AccountOperator)))
+            {
+                UsersListControl.contextMenuStripGrid.Items.Add(new ToolStripSeparator());
+                UsersListControl.contextMenuStripGrid.Items.Add(_passwords);
+            }
             ModeActionsPaneItems.Clear();
             UsersListControl.DataSelectionChanged += OnDataSelectionChanged;
             UsersListControl.DataEditionActivated += OnDataEditionActivated;
@@ -103,6 +112,9 @@ namespace Neos.IdentityServer.Console
             _delete.Text = res.USERSFRMDELETE;
             _delete.ToolTipText = res.USERSFRMDELETE;
             _delete.Click += _delete_Click;
+            _passwords.Text = res.USERSFRMPASSWORDS;
+            _passwords.ToolTipText = res.USERSFRMPASSWORDSDESC;
+            _passwords.Click += _passwords_Click;
         }
 
         /// <summary>
@@ -159,7 +171,6 @@ namespace Neos.IdentityServer.Console
             this.SelectionData.ShowPropertySheet(res.USERSFRMPROPERTIES+" : "+SelectionData.DisplayName);
         }
 
-
         /// <summary>
         /// UpdateActionPanelItems method implmentation
         /// </summary>
@@ -188,8 +199,15 @@ namespace Neos.IdentityServer.Console
                     UsersListControl.contextMenuStripGrid.Items.Add(_deactivate);
                 }
             }
-            SelectionData.ActionsPaneItems.Add(new Microsoft.ManagementConsole.Action(res.USERSFRMPROPERTIES, res.USERSFRMPROPERTIESDESC, -1, "PropertyUser"));
+            SelectionData.ActionsPaneItems.Add(new Microsoft.ManagementConsole.Action(res.USERSFRMPROPERTIES, res.USERSFRMPROPERTIESDESC, -1, "PropertyUser"));           
             UsersListControl.contextMenuStripGrid.Items.Add(_properties);
+            if ((ManagementService.Config.AllowPasswordsReset) && (ADFSManagementRights.IsDomainAdministrator(true) || ADFSManagementRights.AllowedGroup(WindowsBuiltInRole.AccountOperator)))
+            {
+                SelectionData.ActionsPaneItems.Add(new Microsoft.ManagementConsole.ActionSeparator());
+                SelectionData.ActionsPaneItems.Add(new Microsoft.ManagementConsole.Action(res.USERSFRMPASSWORDS, res.USERSFRMPASSWORDSDESC, -1, "PasswordUser"));
+                UsersListControl.contextMenuStripGrid.Items.Add(new ToolStripSeparator());
+                UsersListControl.contextMenuStripGrid.Items.Add(_passwords);
+            }
             UsersListControl.contextMenuStripGrid.Items.Add(new ToolStripSeparator());
             UsersListControl.contextMenuStripGrid.Items.Add(_delete);
         }
@@ -213,6 +231,13 @@ namespace Neos.IdentityServer.Console
             }
             SelectionData.ActionsPaneItems.Add(new Microsoft.ManagementConsole.Action(res.USERSFRMPROPERTIES, res.USERSFRMPROPERTIESDESC, -1, "PropertyUser"));
             UsersListControl.contextMenuStripGrid.Items.Add(_properties);
+            if ((ManagementService.Config.AllowPasswordsReset) && (ADFSManagementRights.IsDomainAdministrator(true) || ADFSManagementRights.AllowedGroup(WindowsBuiltInRole.AccountOperator)))
+            {
+                SelectionData.ActionsPaneItems.Add(new Microsoft.ManagementConsole.ActionSeparator());
+                SelectionData.ActionsPaneItems.Add(new Microsoft.ManagementConsole.Action(res.USERSFRMPASSWORDS, res.USERSFRMPASSWORDSDESC, -1, "PasswordUser"));
+                UsersListControl.contextMenuStripGrid.Items.Add(new ToolStripSeparator());
+                UsersListControl.contextMenuStripGrid.Items.Add(_passwords);
+            }
             UsersListControl.contextMenuStripGrid.Items.Add(new ToolStripSeparator());
             UsersListControl.contextMenuStripGrid.Items.Add(_delete);
         }
@@ -248,6 +273,11 @@ namespace Neos.IdentityServer.Console
                                 ((Microsoft.ManagementConsole.Action)itm).DisplayName = res.USERSFRMPROPERTIES;
                                 ((Microsoft.ManagementConsole.Action)itm).Description = res.USERSFRMPROPERTIESDESC;
                             }
+                            else if ((string)((Microsoft.ManagementConsole.Action)itm).Tag == "PasswordUser")
+                            {
+                                ((Microsoft.ManagementConsole.Action)itm).DisplayName = res.USERSFRMPASSWORDS;
+                                ((Microsoft.ManagementConsole.Action)itm).Description = res.USERSFRMPASSWORDSDESC;
+                            }
                         }
                     }
                     _activate.Text = res.USERSFRMACTIVATE;
@@ -258,6 +288,8 @@ namespace Neos.IdentityServer.Console
                     _properties.ToolTipText = res.USERSFRMPROPERTIESDESC;
                     _delete.Text = res.USERSFRMDELETE;
                     _delete.ToolTipText = res.USERSFRMDELETE;
+                    _passwords.Text = res.USERSFRMPASSWORDS;
+                    _passwords.ToolTipText = res.USERSFRMPASSWORDSDESC;
                 }
                 finally
                 {
@@ -341,6 +373,32 @@ namespace Neos.IdentityServer.Console
         }
 
         /// <summary>
+        /// ResetUserPasswordData method implementation
+        /// </summary>
+        internal bool ResetUserPasswordData(object obj)
+        {
+            bool ret = false;
+            MFAUserList reg = null;
+            if (obj is MFAUserList)
+            {
+                reg = (MFAUserList)obj;
+                if (UsersListControl != null)
+                {
+                    this.SelectionData.BeginUpdates();
+                    try
+                    {
+                        ret = UsersListControl.ResetUserPasswordData(reg);
+                    }
+                    finally
+                    {
+                        this.SelectionData.EndUpdates();
+                    }
+                }
+            }
+            return ret;
+        }
+
+        /// <summary>
         /// EnableUserStoreData method implementation
         /// </summary>
         private void EnableUserStoreData(object obj, bool enabled)
@@ -392,6 +450,12 @@ namespace Neos.IdentityServer.Console
                     case "PropertyUser":
                         {
                             this.SelectionData.ShowPropertySheet(res.USERSFRMPROPERTIES + " : " + SelectionData.DisplayName);
+                            break;
+                        }
+                    case "PasswordUser":
+                        {
+                            MFAUserList reg = (MFAUserList)SelectionData.SelectionObject;
+                            ResetUserPasswordData(reg);
                             break;
                         }
                 }
@@ -457,6 +521,27 @@ namespace Neos.IdentityServer.Console
                 MFAUserList reg = (MFAUserList)SelectionData.SelectionObject;
                 bool xres = DeleteUserStoreData(reg);
 
+            }
+        }
+
+        /// <summary>
+        /// _passwords_Click
+        /// </summary>
+        private void _passwords_Click(object sender, EventArgs e)
+        {
+            MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+            {
+                Caption = "Multi-Factor Authentication",
+                Buttons = MessageBoxButtons.YesNo,
+                DefaultButton = MessageBoxDefaultButton.Button1,
+                Icon = MessageBoxIcon.Question,
+                Text = res.USERSFRMRESETPWD
+            };
+
+            if (this.SnapIn.Console.ShowDialog(messageBoxParameters) == DialogResult.Yes)
+            {
+                MFAUserList reg = (MFAUserList)SelectionData.SelectionObject;
+                bool xres = ResetUserPasswordData(reg);
             }
         }
 
