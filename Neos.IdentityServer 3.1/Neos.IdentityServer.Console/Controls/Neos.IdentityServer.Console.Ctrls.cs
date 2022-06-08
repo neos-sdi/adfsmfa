@@ -7788,7 +7788,7 @@ namespace Neos.IdentityServer.Console.Controls
                     BodyEncoding = UTF8Encoding.UTF8,
                     Subject = "MFA SMTP¨Test",
                     IsBodyHtml = false,
-                    Body = string.Format("Send mail test"),
+                    Body = "Send Email Test",
                     DeliveryNotificationOptions = DeliveryNotificationOptions.Never
                 };
 

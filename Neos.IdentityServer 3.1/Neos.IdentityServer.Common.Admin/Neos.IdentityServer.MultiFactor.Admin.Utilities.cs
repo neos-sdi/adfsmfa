@@ -78,7 +78,19 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         internal static MFAConfig Config
         {
-            get { return ADFSManager.Config; }
+            get
+            {
+                try
+                {
+                    if ((ADFSManager == null) || (ADFSManager.Config == null))
+                        Initialize(true);
+                    return ADFSManager.Config;
+                }
+                catch (NullReferenceException)
+                {
+                    return null;
+                }
+            }
         }
 
         /// <summary>
