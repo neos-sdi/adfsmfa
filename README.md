@@ -1,4 +1,4 @@
-﻿# Multi-Factor Authentication for Microsoft ADFS 2022/2019/2016/2012r2 (with biometric authentication)
+﻿﻿# Multi-Factor Authentication for Microsoft ADFS 2022/2019/2016/2012r2 (with biometric authentication)
 ___
 
 This project can help you to implement multi-factor authentication without requiring any additional provider.
@@ -20,7 +20,7 @@ This extension works with Active Directory or an SQL Server Database for storing
 ## Downloads
 - <https://github.com/neos-sdi/adfsmfa/releases>
 
-- <https://github.com/neos-sdi/adfsmfa/releases/download/3.1/adfsmfa.3.1.2205.0.msi>
+- <https://github.com/neos-sdi/adfsmfa/releases/download/3.1/adfsmfa.3.1.2206.0.msi>
 
 ## Building Solution
 
