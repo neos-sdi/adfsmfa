@@ -130,6 +130,7 @@
     <Content Include="Installer\aegis.png" />
     <Content Include="Installer\Banner.bmp" />
     <Content Include="Installer\Dialog.bmp" />
+    <Content Include="Installer\logo.png" />
     <Content Include="Resources\crouge.jpg" />
     <Content Include="Resources\cvert.jpg" />
     <None Include="Resources\google.png" />
@@ -167,7 +168,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\images.uk-UA.resx" />
     <EmbeddedResource Include="Resources\images.uk.resx" />
     <EmbeddedResource Include="Resources\SCheck.da.resx" />
     <EmbeddedResource Include="Resources\SCheck.de.resx" />

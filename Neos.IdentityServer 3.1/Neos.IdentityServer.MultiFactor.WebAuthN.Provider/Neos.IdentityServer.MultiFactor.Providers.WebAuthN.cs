@@ -129,6 +129,11 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         }
 
         /// <summary>
+        /// LockUserOnDefaultProvider property implementation
+        /// </summary>
+        public override bool LockUserOnDefaultProvider { get; set; } = false;
+
+        /// <summary>
         /// AllowEnrollment property implementation
         /// </summary>
         public override bool AllowEnrollment
@@ -341,6 +346,11 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         /// </summary>
         public override bool IsAvailable(AuthenticationContext ctx)
         {
+            if (LockUserOnDefaultProvider)
+            {
+                if (ctx.PreferredMethod != this.Kind)
+                    return false;
+            }
             return true;
         }
 
@@ -351,6 +361,11 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         {
             try
             {
+                if (LockUserOnDefaultProvider)
+                {
+                    if (ctx.PreferredMethod != this.Kind)
+                        return false;
+                }
                 List<WebAuthNCredentialInformation> wcreds = GetUserStoredCredentials(ctx);
                 return (wcreds.Count > 0);
             }
@@ -401,6 +416,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                         IsRequired = param.IsRequired;
                         WizardEnabled = param.EnrollWizard;
                         WizardDisabled = param.EnrollWizardDisabled;
+                        LockUserOnDefaultProvider = param.LockUserOnDefaultProvider;
                         ForceEnrollment = param.ForceWizard;
                         PinRequired = param.PinRequired;
                         PinRequirements = param.PinRequirements;

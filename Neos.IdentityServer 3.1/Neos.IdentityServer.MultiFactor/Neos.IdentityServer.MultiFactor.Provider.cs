@@ -2783,7 +2783,8 @@ namespace Neos.IdentityServer.MultiFactor
                             {
                                 usercontext.UIMode = ProviderPageMode.EnrollPin;
                                 MFAUser reg = RuntimeRepository.GetMFAUser(Config, usercontext.UPN); // Rollback
-                                usercontext.PinCode = reg.PIN;
+                                if (reg != null)
+                                    usercontext.PinCode = reg.PIN;
                                 return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlLabelVERIFYOTPError"), false);
                             }
                         }
@@ -2792,7 +2793,8 @@ namespace Neos.IdentityServer.MultiFactor
                             usercontext.WizPageID = 4;
                             usercontext.UIMode = ProviderPageMode.EnrollPin;
                             MFAUser reg = RuntimeRepository.GetMFAUser(Config, usercontext.UPN); // Rollback
-                            usercontext.PinCode = reg.PIN;
+                            if (reg!=null)
+                                usercontext.PinCode = reg.PIN;
                             return new  AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlLabelVERIFYOTPError"), false);
                         }
                 }

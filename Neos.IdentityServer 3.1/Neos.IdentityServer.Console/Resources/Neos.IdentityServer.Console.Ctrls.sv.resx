@@ -744,4 +744,10 @@
   <data name="CTRLALLOWPASSORDSRESET" xml:space="preserve">
     <value>Tillåt administratörer att återställa användare paswwords</value>
   </data>
+  <data name="CTRLPROVLOCKEDTOUSER" xml:space="preserve">
+    <value>Lås användare på den här leverantören</value>
+  </data>
+  <data name="CTRLGLSINGLEWIZARD" xml:space="preserve">
+    <value>Snabb registrering</value>
+  </data>
 </root>

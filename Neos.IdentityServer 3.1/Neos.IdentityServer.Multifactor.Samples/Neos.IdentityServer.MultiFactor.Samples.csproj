@@ -39,8 +39,8 @@
     <AssemblyOriginatorKeyFile>Neos.IdentityServer.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="libphonenumber_csharp_portable, Version=4.10.0.62, Culture=neutral, PublicKeyToken=d2954bddc36a0fe1, processorArchitecture=MSIL">
-      <HintPath>..\packages\libphonenumber-csharp.unofficial.1.0.3\lib\libphonenumber_csharp_portable.dll</HintPath>
+    <Reference Include="libphonenumber_csharp_portable, Version=1.0.19.0, Culture=neutral, PublicKeyToken=d2954bddc36a0fe1, processorArchitecture=MSIL">
+      <HintPath>..\packages\libphonenumber-csharp.unofficial.1.0.19\lib\libphonenumber_csharp_portable.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

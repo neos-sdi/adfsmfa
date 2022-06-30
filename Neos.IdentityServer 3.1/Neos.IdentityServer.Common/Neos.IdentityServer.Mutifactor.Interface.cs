@@ -56,6 +56,7 @@ namespace Neos.IdentityServer.MultiFactor
         bool WizardEnabled { get; set; }
         bool WizardDisabled { get; set; }
         bool IsInitialized { get; }
+        bool LockUserOnDefaultProvider { get; set; }
         ForceWizardMode ForceEnrollment { get; set; }
         bool IsTwoWayByDefault  { get; }
         string Name { get; }

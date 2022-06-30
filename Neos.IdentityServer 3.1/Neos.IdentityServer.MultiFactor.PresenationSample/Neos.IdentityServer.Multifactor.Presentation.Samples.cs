@@ -166,20 +166,21 @@ namespace Neos.IdentityServer.MultiFactor.Samples
             bool soon = RuntimePresentation.MustChangePasswordSoon(Provider.Config, usercontext, out DateTime max);
             if (soon)
                 result += "<div class=\"error smallText\">" + string.Format(Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlMustChangePassword"), max.ToLocalTime().ToLongDateString()) + "</div><br/>";
+            result += "<br/>";
 
+            result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";
+            result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>";
+            result += "<input id=\"##SELECTED##\" type=\"hidden\" name=\"##SELECTED##\" value=\"0\"/>";
+            result += "<input id=\"continueButton\" type=\"submit\" class=\"submit\" name=\"continueButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMConnexion") + "\" /><br/><br/>";
             if (Provider.HasAccessToOptions(prov))
             {
                 if ((soon) && (Provider.Config.UserFeatures.CanManagePassword()))
                     result += "<input id=\"##OPTIONS##\" type=\"checkbox\" name=\"##OPTIONS##\" checked=\"checked\" /> " + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMAccessOptions");
                 else
                     result += "<input id=\"##OPTIONS##\" type=\"checkbox\" name=\"##OPTIONS##\" /> " + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMAccessOptions");
-                result += "<br/><br/>";
+                result += "<br/>";
             }
-            result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";
-            result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>";
-            result += "<input id=\"##SELECTED##\" type=\"hidden\" name=\"##SELECTED##\" value=\"0\"/>";
-            result += "<input id=\"continueButton\" type=\"submit\" class=\"submit\" name=\"continueButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMConnexion") + "\" /><br/><br/>";
-            if (RuntimePresentation.GetActiveProvidersCount() > 1)
+            if ((RuntimePresentation.GetActiveProvidersCount() > 1) && (!prov.LockUserOnDefaultProvider))
                 result += "<a class=\"actionLink\" href=\"#\" id=\"nocode\" name=\"nocode\" onclick=\"return SetLinkData(IdentificationForm, '3')\" style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMNoCode") + "</a>";
             result += GetFormHtmlMessageZone(usercontext);
             result += "</form>";
@@ -224,31 +225,38 @@ namespace Neos.IdentityServer.MultiFactor.Samples
             IExternalProvider prov1 = RuntimePresentation.GetProvider(PreferredMethod.Code);
             if ((prov1 != null) && (prov1.Enabled) && prov1.IsUIElementRequired(usercontext, RequiredMethodElements.OTPLinkRequired))
             {
-                result += "<a class=\"actionLink\" href=\"#\" id=\"enrollopt\" name=\"enrollopt\" onclick=\"fnlinkclicked(OptionsForm, 3)\" style=\"cursor: pointer;\">" + prov1.GetWizardLinkLabel(usercontext) + "</a>";
+                if (!prov1.LockUserOnDefaultProvider || ((prov1.LockUserOnDefaultProvider) && (usercontext.PreferredMethod == PreferredMethod.Code)))
+                    result += "<a class=\"actionLink\" href=\"#\" id=\"enrollopt\" name=\"enrollopt\" onclick=\"fnlinkclicked(OptionsForm, 3)\" style=\"cursor: pointer;\">" + prov1.GetWizardLinkLabel(usercontext) + "</a>";
             }
             IExternalProvider prov4 = RuntimePresentation.GetProvider(PreferredMethod.Biometrics);
             if ((prov4 != null) && (prov4.Enabled) && prov4.IsUIElementRequired(usercontext, RequiredMethodElements.BiometricParameterRequired))
             {
-                if (!usercontext.BioNotSupported)
-                    result += "<a class=\"actionLink\" href=\"#\" id=\"enrollbio\" name=\"enrollbio\" onclick=\"fnlinkclicked(OptionsForm, 6)\" style=\"cursor: pointer;\">" + prov4.GetWizardLinkLabel(usercontext) + "</a>";
+                if (!prov4.LockUserOnDefaultProvider || ((prov4.LockUserOnDefaultProvider) && (usercontext.PreferredMethod == PreferredMethod.Biometrics)))
+                {
+                    if (!usercontext.BioNotSupported)
+                        result += "<a class=\"actionLink\" href=\"#\" id=\"enrollbio\" name=\"enrollbio\" onclick=\"fnlinkclicked(OptionsForm, 6)\" style=\"cursor: pointer;\">" + prov4.GetWizardLinkLabel(usercontext) + "</a>";
+                }
             }
             if ((!Provider.Config.IsPrimaryAuhentication) || (Provider.Config.PrimaryAuhenticationOptions.HasFlag(PrimaryAuthOptions.Externals)))
             {
                 IExternalProvider prov2 = RuntimePresentation.GetProvider(PreferredMethod.Email);
                 if ((prov2 != null) && (prov2.Enabled) && prov2.IsUIElementRequired(usercontext, RequiredMethodElements.EmailLinkRequired))
                 {
-                    result += "<a class=\"actionLink\" href=\"#\" id=\"enrollemail\" name=\"enrollemail\" onclick=\"fnlinkclicked(OptionsForm, 4)\" style=\"cursor: pointer;\">" + prov2.GetWizardLinkLabel(usercontext) + "</a>";
+                    if (!prov2.LockUserOnDefaultProvider || ((prov2.LockUserOnDefaultProvider) && (usercontext.PreferredMethod == PreferredMethod.Email)))
+                        result += "<a class=\"actionLink\" href=\"#\" id=\"enrollemail\" name=\"enrollemail\" onclick=\"fnlinkclicked(OptionsForm, 4)\" style=\"cursor: pointer;\">" + prov2.GetWizardLinkLabel(usercontext) + "</a>";
                 }
                 IExternalProvider prov3 = RuntimePresentation.GetProvider(PreferredMethod.External);
                 if ((prov3 != null) && (prov3.Enabled) && (prov3.IsUIElementRequired(usercontext, RequiredMethodElements.PhoneLinkRequired) || prov3.IsUIElementRequired(usercontext, RequiredMethodElements.ExternalLinkRaquired)))
                 {
-                    result += "<a class=\"actionLink\" href=\"#\" id=\"enrollphone\" name=\"enrollphone\" onclick=\"fnlinkclicked(OptionsForm, 5)\" style=\"cursor: pointer;\">" + prov3.GetWizardLinkLabel(usercontext) + "</a>";
+                    if (!prov3.LockUserOnDefaultProvider || ((prov3.LockUserOnDefaultProvider) && (usercontext.PreferredMethod == PreferredMethod.External)))
+                        result += "<a class=\"actionLink\" href=\"#\" id=\"enrollphone\" name=\"enrollphone\" onclick=\"fnlinkclicked(OptionsForm, 5)\" style=\"cursor: pointer;\">" + prov3.GetWizardLinkLabel(usercontext) + "</a>";
                 }
                 IExternalProvider prov5 = RuntimePresentation.GetProvider(PreferredMethod.Azure);
                 if (prov5 != null)
                 {
                     if (!string.IsNullOrEmpty(prov5.GetAccountManagementUrl(usercontext)))
-                        result += "<a class=\"actionLink\" href=\"" + prov5.GetAccountManagementUrl(usercontext) + "\" id=\"enrollazure\" name=\"enrollazure\" target=\"_blank\" style=\"cursor: pointer;\">" + prov5.GetUIAccountManagementLabel(usercontext) + "</a>";
+                        if (!prov5.LockUserOnDefaultProvider || ((prov5.LockUserOnDefaultProvider) && (usercontext.PreferredMethod == PreferredMethod.Azure)))
+                            result += "<a class=\"actionLink\" href=\"" + prov5.GetAccountManagementUrl(usercontext) + "\" id=\"enrollazure\" name=\"enrollazure\" target=\"_blank\" style=\"cursor: pointer;\">" + prov5.GetUIAccountManagementLabel(usercontext) + "</a>";
                 }
             }
             if (RuntimePresentation.IsPinCodeRequired(usercontext))
@@ -328,7 +336,10 @@ namespace Neos.IdentityServer.MultiFactor.Samples
             PreferredMethod m = PreferredMethod.Choose;
             if (usercontext.EnrollPageStatus == EnrollPageStatus.Run)
             {
-                m = Utilities.FindNextWizardToPlay(usercontext, ref IsRequired);
+                if ((Provider.Config.LimitEnrollmentToDefaultProvider) && (Provider.Config.DefaultProviderMethod != PreferredMethod.Choose))
+                    m = Utilities.FindDefaultWizardToPlay(usercontext, Provider.Config, ref IsRequired);
+                else
+                    m = Utilities.FindNextWizardToPlay(usercontext, Provider.Config, ref IsRequired);
                 if (m != PreferredMethod.None)
                     usercontext.EnrollPageStatus = EnrollPageStatus.NewStep;
                 else
@@ -358,13 +369,15 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                         result += "<div id=\"xMessage\" class=\"groupMargin\">" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMustPrepareLabel") + "</div>";
                         foreach (IExternalProvider itm in lst)
                         {
+                            if ((Provider.Config.LimitEnrollmentToDefaultProvider) && (itm.Kind != Provider.Config.DefaultProviderMethod))
+                               continue;
                             if ((itm.WizardDisabled) && (!itm.IsRequired))
                                 continue;
                             if ((itm.Kind == PreferredMethod.Biometrics) && usercontext.BioNotSupported)
                                 continue;
                             if (itm.Kind != PreferredMethod.Azure)
                             {
-                                if (itm.IsRequired)
+                                if ((itm.IsRequired) || (Provider.Config.LimitEnrollmentToDefaultProvider))
                                     result += "<div id=\"reqvalue\" class=\"groupMargin\">- " + itm.GetUIEnrollmentTaskLabel(usercontext) + "</div>";
                                 else
                                     result += "<div id=\"reqvalue\" class=\"groupMargin\">- " + itm.GetUIEnrollmentTaskLabel(usercontext) + " (*)" + "</div>";
@@ -399,7 +412,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                         result += "<input id=\"continueButton\" type=\"submit\" class=\"submit\" name=\"continueButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlLabelWVERIFYOTP") + "\" onclick=\"fnbtnclicked(2)\" />";
                         result += "</td>";
                         result += "<td style=\"width: 15px\" />";
-                        if ((prov.Enabled) && (!prov.IsRequired))
+                        if (Utilities.CanCancelWizard(usercontext, Provider.Config, prov, ProviderPageMode.Registration))
                         {
                             result += "<td>";
                             result += "<input id=\"skipoption\" type=\"submit\" class=\"submit\" name=\"skipoption\" value=\"" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUINext") + "\" onclick=\"fnbtnclicked(6)\"/>";
@@ -428,6 +441,8 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                         result += "<div id=\"xMessage\" class=\"groupMargin\">" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIResultLabel") + "</div>";
                         foreach (IExternalProvider itm in lst2)
                         {
+                            if ((Provider.Config.LimitEnrollmentToDefaultProvider) && (itm.Kind != Provider.Config.DefaultProviderMethod))
+                                continue;
                             if ((itm.WizardDisabled) && (!itm.IsRequired))
                                 continue;
                             if ((itm.Kind == PreferredMethod.Biometrics) && usercontext.BioNotSupported)
@@ -440,7 +455,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                                     if (usercontext.KeyStatus == SecretKeyStatus.Success)
                                         value = "OK";
                                     else
-                                        value = "<empty>";
+                                        value = "None";
                                     break;
                                 case PreferredMethod.Email:
                                     value = Utilities.StripEmailAddress(usercontext.MailAddress);
@@ -452,12 +467,12 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                                     if (usercontext.KeyStatus == SecretKeyStatus.Success)
                                         value = "OK";
                                     else
-                                        value = "<empty>";
+                                        value = "None";
                                     break;
                             }
                             if (itm.Kind != PreferredMethod.Azure)
                             {
-                                if (itm.IsRequired)
+                                if ((itm.IsRequired) || (Provider.Config.LimitEnrollmentToDefaultProvider))
                                     result += "<div id=\"reqvalue\" class=\"groupMargin\">- " + itm.GetUIListOptionLabel(usercontext) + " : " + value + "</div>";
                                 else
                                     result += "<div id=\"reqvalue\" class=\"groupMargin\">- " + itm.GetUIListOptionLabel(usercontext) + " (*) : " + value + "</div>";
@@ -515,7 +530,10 @@ namespace Neos.IdentityServer.MultiFactor.Samples
             PreferredMethod m = PreferredMethod.Choose;
             if (usercontext.EnrollPageStatus == EnrollPageStatus.Run)
             {
-                m = Utilities.FindNextWizardToPlay(usercontext, ref IsRequired);
+                if ((Provider.Config.LimitEnrollmentToDefaultProvider) && (Provider.Config.DefaultProviderMethod != PreferredMethod.Choose))
+                    m = Utilities.FindDefaultWizardToPlay(usercontext, Provider.Config, ref IsRequired);
+                else
+                    m = Utilities.FindNextWizardToPlay(usercontext, Provider.Config, ref IsRequired);
                 if (m != PreferredMethod.None)
                     usercontext.EnrollPageStatus = EnrollPageStatus.NewStep;
                 else
@@ -545,13 +563,15 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                         result += "<div id=\"xMessage\" class=\"groupMargin\">" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMustPrepareLabel") + "</div>";
                         foreach (IExternalProvider itm in lst)
                         {
+                            if ((Provider.Config.LimitEnrollmentToDefaultProvider) && (itm.Kind != Provider.Config.DefaultProviderMethod))
+                                continue;
                             if ((itm.WizardDisabled) && (!itm.IsRequired))
                                 continue;
                             if ((itm.Kind == PreferredMethod.Biometrics) && usercontext.BioNotSupported)
                                 continue;
                             if (itm.Kind != PreferredMethod.Azure)
                             {
-                                if (itm.IsRequired)
+                                if ((itm.IsRequired) || (Provider.Config.LimitEnrollmentToDefaultProvider))
                                     result += "<div id=\"reqvalue\" class=\"groupMargin\">- " + itm.GetUIEnrollmentTaskLabel(usercontext) + "</div>";
                                 else
                                     result += "<div id=\"reqvalue\" class=\"groupMargin\">- " + itm.GetUIEnrollmentTaskLabel(usercontext) + " (*)" + "</div>";
@@ -591,7 +611,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                         result += "<input id=\"continueButton\" type=\"submit\" class=\"submit\" name=\"continueButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlLabelWVERIFYOTP") + "\" onclick=\"fnbtnclicked(2)\" />";
                         result += "</td>";
                         result += "<td style=\"width: 15px\" />";
-                        if ((prov.Enabled) && (!prov.IsRequired))
+                        if (Utilities.CanCancelWizard(usercontext, Provider.Config, prov, ProviderPageMode.Invitation))
                         {
                             result += "<td>";
                             result += "<input id=\"skipoption\" type=\"submit\" class=\"submit\" name=\"skipoption\" value=\"" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUINext") + "\" onclick=\"fnbtnclicked(6)\"/>";
@@ -620,6 +640,8 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                         result += "<div id=\"xMessage\" class=\"groupMargin\">" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIResultLabel") + "</div>";
                         foreach (IExternalProvider itm in lst2)
                         {
+                            if ((Provider.Config.LimitEnrollmentToDefaultProvider) && (itm.Kind != Provider.Config.DefaultProviderMethod))
+                                continue;
                             if ((itm.WizardDisabled) && (!itm.IsRequired))
                                 continue;
                             if ((itm.Kind == PreferredMethod.Biometrics) && usercontext.BioNotSupported)
@@ -632,7 +654,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                                     if (usercontext.KeyStatus == SecretKeyStatus.Success)
                                         value = "OK";
                                     else
-                                        value = "<empty>";
+                                        value = "None";
                                     break;
                                 case PreferredMethod.Email:
                                     value = Utilities.StripEmailAddress(usercontext.MailAddress);
@@ -644,12 +666,12 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                                     if (usercontext.KeyStatus == SecretKeyStatus.Success)
                                         value = "OK";
                                     else
-                                        value = "<empty>";
+                                        value = "None";
                                     break;
                             }
                             if (itm.Kind != PreferredMethod.Azure)
                             {
-                                if (itm.IsRequired)
+                                if ((itm.IsRequired) || (Provider.Config.LimitEnrollmentToDefaultProvider))
                                     result += "<div id=\"reqvalue\" class=\"groupMargin\">- " + itm.GetUIListOptionLabel(usercontext) + " : " + value + "</div>";
                                 else
                                     result += "<div id=\"reqvalue\" class=\"groupMargin\">- " + itm.GetUIListOptionLabel(usercontext) + " (*) : " + value + "</div>";
@@ -794,7 +816,8 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                     if (prov.PinRequired)
                         WantPin = true;
                     if (Provider.HasStrictAccessToOptions(prov))
-                        result += "<a class=\"actionLink\" href=\"#\" id=\"enrollopt\" name=\"enrollopt\" onclick=\"return SetLinkTitle(selectoptionsForm, '3')\" style=\"cursor: pointer;\">" + prov.GetWizardLinkLabel(usercontext) + "</a>";
+                        if (!prov.LockUserOnDefaultProvider || ((prov.LockUserOnDefaultProvider) && (usercontext.PreferredMethod == PreferredMethod.Code)))
+                            result += "<a class=\"actionLink\" href=\"#\" id=\"enrollopt\" name=\"enrollopt\" onclick=\"return SetLinkTitle(selectoptionsForm, '3')\" style=\"cursor: pointer;\">" + prov.GetWizardLinkLabel(usercontext) + "</a>";
                 }
                 if (RuntimePresentation.IsUIElementRequired(usercontext, RequiredMethodElements.BiometricLinkRequired))
                 {
@@ -806,7 +829,8 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                         if (((IWebAuthNProvider)prov).PinRequirements != WebAuthNPinRequirements.Null)
                             SuperPin = true;
                         if (Provider.HasStrictAccessToOptions(prov))
-                            result += "<a class=\"actionLink\" href=\"#\" id=\"enrollbio\" name=\"enrollbio\" onclick=\"return SetLinkTitle(selectoptionsForm, '4')\" style=\"cursor: pointer;\">" + prov.GetWizardLinkLabel(usercontext) + "</a>";
+                            if (!prov.LockUserOnDefaultProvider || ((prov.LockUserOnDefaultProvider) && (usercontext.PreferredMethod == PreferredMethod.Biometrics)))
+                                result += "<a class=\"actionLink\" href=\"#\" id=\"enrollbio\" name=\"enrollbio\" onclick=\"return SetLinkTitle(selectoptionsForm, '4')\" style=\"cursor: pointer;\">" + prov.GetWizardLinkLabel(usercontext) + "</a>";
                     }
                 }
                 if ((!Provider.Config.IsPrimaryAuhentication) || (Provider.Config.PrimaryAuhenticationOptions.HasFlag(PrimaryAuthOptions.Externals)))
@@ -817,7 +841,8 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                         if (prov.PinRequired)
                             WantPin = true;
                         if (Provider.HasStrictAccessToOptions(prov))
-                            result += "<a class=\"actionLink\" href=\"#\" id=\"enrollemail\" name=\"enrollemail\" onclick=\"return SetLinkTitle(selectoptionsForm, '5')\" style=\"cursor: pointer;\">" + prov.GetWizardLinkLabel(usercontext) + "</a>";
+                            if (!prov.LockUserOnDefaultProvider || ((prov.LockUserOnDefaultProvider) && (usercontext.PreferredMethod == PreferredMethod.Email)))
+                                result += "<a class=\"actionLink\" href=\"#\" id=\"enrollemail\" name=\"enrollemail\" onclick=\"return SetLinkTitle(selectoptionsForm, '5')\" style=\"cursor: pointer;\">" + prov.GetWizardLinkLabel(usercontext) + "</a>";
                     }
                     if (RuntimePresentation.IsUIElementRequired(usercontext, RequiredMethodElements.PhoneLinkRequired) || RuntimePresentation.IsUIElementRequired(usercontext, RequiredMethodElements.ExternalLinkRaquired))
                     {
@@ -825,7 +850,8 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                         if (prov.PinRequired)
                             WantPin = true;
                         if (Provider.HasStrictAccessToOptions(prov))
-                            result += "<a class=\"actionLink\" href=\"#\" id=\"enrollphone\" name=\"enrollphone\" onclick=\"return SetLinkTitle(selectoptionsForm, '6')\" style=\"cursor: pointer;\">" + prov.GetWizardLinkLabel(usercontext) + "</a>";
+                            if (!prov.LockUserOnDefaultProvider || ((prov.LockUserOnDefaultProvider) && (usercontext.PreferredMethod == PreferredMethod.External)))
+                                result += "<a class=\"actionLink\" href=\"#\" id=\"enrollphone\" name=\"enrollphone\" onclick=\"return SetLinkTitle(selectoptionsForm, '6')\" style=\"cursor: pointer;\">" + prov.GetWizardLinkLabel(usercontext) + "</a>";
                     }
                     if (RuntimePresentation.IsUIElementRequired(usercontext, RequiredMethodElements.AzureInputRequired))
                     {
@@ -837,7 +863,8 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                             if (Provider.HasStrictAccessToOptions(prov))
                             {
                                 if (!string.IsNullOrEmpty(prov.GetAccountManagementUrl(usercontext)))
-                                    result += "<a class=\"actionLink\" href=\"" + prov.GetAccountManagementUrl(usercontext) + "\" id=\"enrollazure\" name=\"enrollazure\" target=\"_blank\" style=\"cursor: pointer;\">" + prov.GetUIAccountManagementLabel(usercontext) + "</a>";
+                                    if (!prov.LockUserOnDefaultProvider || ((prov.LockUserOnDefaultProvider) && (usercontext.PreferredMethod == PreferredMethod.Azure)))
+                                        result += "<a class=\"actionLink\" href=\"" + prov.GetAccountManagementUrl(usercontext) + "\" id=\"enrollazure\" name=\"enrollazure\" target=\"_blank\" style=\"cursor: pointer;\">" + prov.GetUIAccountManagementLabel(usercontext) + "</a>";
                             }
                         }
                     }
@@ -1373,8 +1400,8 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                         result += "<input id=\"##OPTIONS##\" type=\"checkbox\" name=\"##OPTIONS##\" /> " + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMAccessOptions");
                     result += "<br/><br/>";
                 }
-
-                result += "<a class=\"actionLink\" href=\"#\" id=\"nocode\" name=\"nocode\" onclick=\"return SetLinkTitle(refreshForm, '3')\" style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMNoCode") + "</a>";
+                if (!prov.LockUserOnDefaultProvider)
+                    result += "<a class=\"actionLink\" href=\"#\" id=\"nocode\" name=\"nocode\" onclick=\"return SetLinkTitle(refreshForm, '3')\" style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMNoCode") + "</a>";
                 result += "<input id=\"##SELECTEDLINK##\" type=\"hidden\" name=\"##SELECTEDLINK##\" value=\"0\"/>";
             }
             result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";
@@ -1509,7 +1536,8 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                         result += "<input id=\"##OPTIONS##\" type=\"checkbox\" name=\"##OPTIONS##\" /> " + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMAccessOptions");
                     result += "<br/>";
                 }
-                result += "<a class=\"actionLink\" href=\"#\" id=\"nocode\" name=\"nocode\" onclick=\"return SetLinkTitle(refreshbiometricForm, '3')\"; style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMNoCode") + "</a>";
+                if (!prov.LockUserOnDefaultProvider)
+                    result += "<a class=\"actionLink\" href=\"#\" id=\"nocode\" name=\"nocode\" onclick=\"return SetLinkTitle(refreshbiometricForm, '3')\"; style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMNoCode") + "</a>";
                 result += "<input id=\"##SELECTEDLINK##\" type=\"hidden\" name=\"##SELECTEDLINK##\" value=\"0\"/>";
             }
 
@@ -1884,7 +1912,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                     result += "</td>";
                     result += "<td style=\"width: 15px\" />";
                     result += "<td>";
-                    if (Utilities.CanCancelWizard(usercontext, prov, ProviderPageMode.EnrollOTP))
+                    if (Utilities.CanCancelWizard(usercontext, Provider.Config, prov, ProviderPageMode.EnrollOTP))
                         result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
                     result += "</td>";
                     result += "</tr></table>";
@@ -1908,7 +1936,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                     result += "</td>";
                     result += "<td style=\"width: 15px\" />";
                     result += "<td>";
-                    if (Utilities.CanCancelWizard(usercontext, prov, ProviderPageMode.EnrollOTP))
+                    if (Utilities.CanCancelWizard(usercontext, Provider.Config, prov, ProviderPageMode.EnrollOTP))
                         result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
                     result += "</td>";
                     result += "</tr></table>";
@@ -1930,7 +1958,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                     result += "</td>";
                     result += "<td style=\"width: 15px\" />";
                     result += "<td>";
-                    if (Utilities.CanCancelWizard(usercontext, prov, ProviderPageMode.EnrollOTP))
+                    if (Utilities.CanCancelWizard(usercontext, Provider.Config, prov, ProviderPageMode.EnrollOTP))
                         result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
                     result += "</td>";
                     result += "</tr></table>";
@@ -2094,7 +2122,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                     result += "</td>";
                     result += "<td style=\"width: 15px\" />";
                     result += "<td>";
-                    if (Utilities.CanCancelWizard(usercontext, prov, ProviderPageMode.EnrollEmail))
+                    if (Utilities.CanCancelWizard(usercontext, Provider.Config, prov, ProviderPageMode.EnrollEmail))
                         result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
                     result += "</td>";
                     result += "</tr></table>";
@@ -2119,7 +2147,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                     result += "</td>";
                     result += "<td style=\"width: 15px\" />";
                     result += "<td>";
-                    if (Utilities.CanCancelWizard(usercontext, prov, ProviderPageMode.EnrollEmail))
+                    if (Utilities.CanCancelWizard(usercontext, Provider.Config, prov, ProviderPageMode.EnrollEmail))
                         result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
                     result += "</td>";
                     result += "</tr></table>";
@@ -2141,7 +2169,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                     result += "</td>";
                     result += "<td style=\"width: 15px\" />";
                     result += "<td>";
-                    if (Utilities.CanCancelWizard(usercontext, prov, ProviderPageMode.EnrollEmail))
+                    if (Utilities.CanCancelWizard(usercontext, Provider.Config, prov, ProviderPageMode.EnrollEmail))
                         result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
                     result += "</td>";
                     result += "</tr></table>";
@@ -2310,7 +2338,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                     result += "</td>";
                     result += "<td style=\"width: 15px\" />";
                     result += "<td>";
-                    if (Utilities.CanCancelWizard(usercontext, prov, ProviderPageMode.EnrollPhone))
+                    if (Utilities.CanCancelWizard(usercontext, Provider.Config, prov, ProviderPageMode.EnrollPhone))
                         result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
                     result += "</td>";
                     result += "</tr></table>";
@@ -2335,7 +2363,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                     result += "</td>";
                     result += "<td style=\"width: 15px\" />";
                     result += "<td>";
-                    if (Utilities.CanCancelWizard(usercontext, prov, ProviderPageMode.EnrollPhone))
+                    if (Utilities.CanCancelWizard(usercontext, Provider.Config, prov, ProviderPageMode.EnrollPhone))
                         result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
                     result += "</td>";
                     result += "</tr></table>";
@@ -2357,7 +2385,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                     result += "</td>";
                     result += "<td style=\"width: 15px\" />";
                     result += "<td>";
-                    if (Utilities.CanCancelWizard(usercontext, prov, ProviderPageMode.EnrollPhone))
+                    if (Utilities.CanCancelWizard(usercontext, Provider.Config, prov, ProviderPageMode.EnrollPhone))
                         result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
                     result += "</td>";
                     result += "</tr></table>";
@@ -2574,8 +2602,8 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                     result += "</td>";
                     result += "<td style=\"width: 15px\" />";
                     result += "<td>";
-                    if (Utilities.CanCancelWizard(usercontext, prov, ProviderPageMode.EnrollBiometrics))
-                        result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
+                    if (Utilities.CanCancelWizard(usercontext, Provider.Config, prov, ProviderPageMode.EnrollBiometrics))
+                       result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
                     result += "</td>";
                     result += "</tr></table>";
                     break;
@@ -2618,7 +2646,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                     result += "</td>";
                     result += "<td style=\"width: 15px\" />";
                     result += "<td>";
-                    if (Utilities.CanCancelWizard(usercontext, prov, ProviderPageMode.EnrollBiometrics))
+                    if (Utilities.CanCancelWizard(usercontext, Provider.Config, prov, ProviderPageMode.EnrollBiometrics))
                         result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
                     result += "</td>";
                     result += "</tr></table>";
@@ -2657,7 +2685,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                         result += "</td>";
                         result += "<td style=\"width: 15px\" />";
                         result += "<td>";
-                        if (Utilities.CanCancelWizard(usercontext, prov, ProviderPageMode.EnrollBiometrics))
+                        if (Utilities.CanCancelWizard(usercontext, Provider.Config, prov, ProviderPageMode.EnrollBiometrics))
                             result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
                         result += "</td>";
                         result += "</tr></table>";
@@ -2769,7 +2797,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                     result += "</td>";
                     result += "<td style=\"width: 15px\" />";
                     result += "<td>";
-                    if (Utilities.CanCancelWizard(usercontext, null, ProviderPageMode.EnrollPin))
+                    if (Utilities.CanCancelWizard(usercontext, Provider.Config, null, ProviderPageMode.EnrollPin))
                         result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
                     result += "</td>";
                     result += "</tr></table>";
@@ -2785,7 +2813,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                     result += "</td>";
                     result += "<td style=\"width: 15px\" />";
                     result += "<td>";
-                    if (Utilities.CanCancelWizard(usercontext, null, ProviderPageMode.EnrollPin))
+                    if (Utilities.CanCancelWizard(usercontext, Provider.Config, null, ProviderPageMode.EnrollPin))
                         result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
                     result += "</td>";
                     result += "</tr></table>";
@@ -2807,7 +2835,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                     result += "</td>";
                     result += "<td style=\"width: 15px\" />";
                     result += "<td>";
-                    if (Utilities.CanCancelWizard(usercontext, null, ProviderPageMode.EnrollPin))
+                    if (Utilities.CanCancelWizard(usercontext, Provider.Config, null, ProviderPageMode.EnrollPin))
                         result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
                     result += "</td>";
                     result += "</tr></table>";

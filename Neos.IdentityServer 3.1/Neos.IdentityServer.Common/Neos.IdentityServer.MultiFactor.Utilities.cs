@@ -4140,7 +4140,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// CanCancelWizard method implementation
         /// </summary>
-        public static bool CanCancelWizard(AuthenticationContext usercontext, IExternalProvider prov, ProviderPageMode mode)
+        public static bool CanCancelWizard(AuthenticationContext usercontext, MFAConfig config, IExternalProvider prov, ProviderPageMode mode)
         {
             switch (usercontext.WizContext)
             {
@@ -4150,12 +4150,16 @@ namespace Neos.IdentityServer.MultiFactor
                         return false;
                     if (prov.IsRequired)
                         return false;
+                    if (config.LimitEnrollmentToDefaultProvider)
+                        return false;
                     else
                         return true;
                 case WizardContextMode.ForceWizard:
                     if (prov == null)
                         return false;
                     if ((usercontext.UIMode == mode) && (prov.ForceEnrollment == ForceWizardMode.Strict))
+                        return false;
+                    if (config.LimitEnrollmentToDefaultProvider)
                         return false;
                     else
                         return true;
@@ -4167,7 +4171,94 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// FindNextWizardToPlay method implementation
         /// </summary>
-        public static PreferredMethod FindNextWizardToPlay(AuthenticationContext usercontext, ref bool isrequired)
+        public static PreferredMethod FindDefaultWizardToPlay(AuthenticationContext usercontext, MFAConfig config, ref bool isrequired)
+        {
+            PreferredMethod current = usercontext.EnrollPageID;
+            int v = (int)current;
+            v++;
+            current = (PreferredMethod)v;
+            switch (current)
+            {
+                case PreferredMethod.Choose:
+                    goto case PreferredMethod.Code;
+                case PreferredMethod.Code:
+                    if (config.DefaultProviderMethod != PreferredMethod.Code)
+                        goto case PreferredMethod.Email;
+                    IExternalProvider prov1 = RuntimeAuthProvider.GetProvider(PreferredMethod.Code);
+                    if (prov1 == null)
+                        goto case PreferredMethod.Email;
+                    if (!prov1.Enabled)
+                        goto case PreferredMethod.Email;
+                    if ((!prov1.IsRequired) && (prov1.WizardDisabled))
+                        goto case PreferredMethod.Email;
+                    isrequired = prov1.IsRequired;
+                    usercontext.EnrollPageID = PreferredMethod.Code;
+                    return PreferredMethod.Code;
+                case PreferredMethod.Email:
+                    if (config.DefaultProviderMethod != PreferredMethod.Email)
+                        goto case PreferredMethod.External;
+                    IExternalProvider prov2 = RuntimeAuthProvider.GetProvider(PreferredMethod.Email);
+                    if (prov2 == null)
+                        goto case PreferredMethod.External;
+                    if (!prov2.Enabled)
+                        goto case PreferredMethod.External;
+                    if ((!prov2.IsRequired) && (prov2.WizardDisabled))
+                        goto case PreferredMethod.External;
+                    isrequired = prov2.IsRequired;
+                    usercontext.EnrollPageID = PreferredMethod.Email;
+                    return PreferredMethod.Email;
+                case PreferredMethod.External:
+                    if (config.DefaultProviderMethod != PreferredMethod.External)
+                        goto case PreferredMethod.Azure;
+                    IExternalProvider prov3 = RuntimeAuthProvider.GetProvider(PreferredMethod.External);
+                    if (prov3 == null)
+                        goto case PreferredMethod.Azure;
+                    if (!prov3.Enabled)
+                        goto case PreferredMethod.Azure;
+                    if ((!prov3.IsRequired) && (prov3.WizardDisabled))
+                        goto case PreferredMethod.Azure;
+                    if (prov3 is NeosPlugProvider)
+                        goto case PreferredMethod.Azure;
+                    isrequired = prov3.IsRequired;
+                    usercontext.EnrollPageID = PreferredMethod.External;
+                    return PreferredMethod.External;
+                case PreferredMethod.Azure:
+                    goto case PreferredMethod.Biometrics;
+                case PreferredMethod.Biometrics:
+                    if (config.DefaultProviderMethod != PreferredMethod.Biometrics)
+                        goto case PreferredMethod.Pin;
+                    IExternalProvider prov4 = RuntimeAuthProvider.GetProvider(PreferredMethod.Biometrics);
+                    if (usercontext.BioNotSupported)
+                        goto case PreferredMethod.Pin;
+                    if (prov4 == null)
+                        goto case PreferredMethod.Pin;
+                    if (!prov4.Enabled)
+                        goto case PreferredMethod.Pin;
+                    if ((!prov4.IsRequired) && (prov4.WizardDisabled))
+                        goto case PreferredMethod.Pin;
+                    isrequired = prov4.IsRequired;
+                    usercontext.EnrollPageID = PreferredMethod.Biometrics;
+                    return PreferredMethod.Biometrics;
+                case PreferredMethod.Pin:
+                    if (RuntimeAuthProvider.IsPinCodeRequired(usercontext))
+                    {
+                        isrequired = true;
+                        usercontext.EnrollPageID = PreferredMethod.Pin;
+                        return PreferredMethod.Pin;
+                    }
+                    else
+                        goto case PreferredMethod.None;
+                case PreferredMethod.None:
+                default:
+                    usercontext.EnrollPageID = PreferredMethod.Choose;
+                    return PreferredMethod.None;
+            }
+        }
+
+        /// <summary>
+        /// FindNextWizardToPlay method implementation
+        /// </summary>
+        public static PreferredMethod FindNextWizardToPlay(AuthenticationContext usercontext, MFAConfig config, ref bool isrequired)
         {
             PreferredMethod current = usercontext.EnrollPageID;
             int v = (int)current;

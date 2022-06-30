@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension">
-  <Product Id="a23dd485-5365-4d82-8309-103494000001" Name="MFA Provider for ADFS 2022/2019/2016/2012 R2" Language="1033" Version="3.1.2206.0" Manufacturer="Neos-sdi" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" >
+  <Product Id="a23dd485-5365-4d82-8309-103494000001" Name="MFA Provider for ADFS 2022/2019/2016/2012 R2" Language="1033" Version="3.1.2207.0" Manufacturer="Neos-sdi" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" >
 
     <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" InstallPrivileges="elevated" Platform="x64" Description="Multi-Factor Authentication for ADFS 2022/2019/2016/2012R2" />
 
@@ -463,6 +463,9 @@
       </Component>
       <Component Id="GACDeployment128" Guid="E7173CAB-E43F-4A07-1962-01800000801C" Win64="yes"  Directory="CONFIGFOLDER" DiskId="1" NeverOverwrite="yes" Permanent="yes">
         <File KeyPath="yes" Id="aegis.png"  Name="aegis.png" Source="$(var.Neos.IdentityServer.MultiFactor.ProjectDir)Installer\aegis.png" Vital="yes" />
+      </Component>
+      <Component Id="GACDeployment129" Guid="E7173CAB-E43F-4A07-1962-01800000801D" Win64="yes"  Directory="CONFIGFOLDER" DiskId="1" NeverOverwrite="yes" Permanent="yes">
+        <File KeyPath="yes" Id="logo.png"  Name="logo.png" Source="$(var.Neos.IdentityServer.MultiFactor.ProjectDir)Installer\logo.png" Vital="yes" />
       </Component>
     </ComponentGroup>
   </Fragment>

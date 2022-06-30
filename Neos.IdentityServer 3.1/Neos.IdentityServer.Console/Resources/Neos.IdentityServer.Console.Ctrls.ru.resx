@@ -744,4 +744,10 @@
   <data name="CTRLALLOWPASSORDSRESET" xml:space="preserve">
     <value>Разрешить администраторам сбрасывать пользовательские paswwords</value>
   </data>
+  <data name="CTRLPROVLOCKEDTOUSER" xml:space="preserve">
+    <value>Блокировка пользователей на этом поставщике</value>
+  </data>
+  <data name="CTRLGLSINGLEWIZARD" xml:space="preserve">
+    <value>Быстрая регистрация</value>
+  </data>
 </root>

@@ -744,4 +744,10 @@
   <data name="CTRLALLOWPASSORDSRESET" xml:space="preserve">
     <value>Administratoren erlauben, Benutzerpaswwords zurückzusetzen</value>
   </data>
+  <data name="CTRLPROVLOCKEDTOUSER" xml:space="preserve">
+    <value>Benutzer bei diesem Anbieter sperren</value>
+  </data>
+  <data name="CTRLGLSINGLEWIZARD" xml:space="preserve">
+    <value>Schnelle Einschreibung</value>
+  </data>
 </root>

@@ -212,6 +212,11 @@ namespace MFA
         public PSPreferredMethod DefaultProviderMethod { get; set; }
 
         /// <summary>
+        /// <para type="description">Limit Enrollement Wizards to the default Default provider method.</para>
+        /// </summary>
+        public bool LimitEnrollmentToDefaultProvider { get; set; }
+
+        /// <summary>
         /// <para type="description">Policy attributes for users management and registration.</para>
         /// </summary>
         public PSUserFeaturesOptions UserFeatures { get; set; }
@@ -297,6 +302,7 @@ namespace MFA
                     UseOfUserLanguages = config.UseOfUserLanguages,
                     AllowPauseForDays = config.AllowPauseForDays,
                     DefaultProviderMethod = (PSPreferredMethod)config.DefaultProviderMethod,
+                    LimitEnrollmentToDefaultProvider = config.LimitEnrollmentToDefaultProvider,
                     UserFeatures = (PSUserFeaturesOptions)config.UserFeatures,
                     AdvertisingDays = (PSAdvertisingDays)config.AdvertisingDays,
                     UseUIPaginated = config.UseUIPaginated,
@@ -331,6 +337,7 @@ namespace MFA
                     UseOfUserLanguages = psconfig.UseOfUserLanguages,
                     AllowPauseForDays = psconfig.AllowPauseForDays,
                     DefaultProviderMethod = (PreferredMethod)psconfig.DefaultProviderMethod,
+                    LimitEnrollmentToDefaultProvider = psconfig.LimitEnrollmentToDefaultProvider,
                     UserFeatures = (UserFeaturesOptions)psconfig.UserFeatures,
                     AdvertisingDays = (FlatAdvertising)psconfig.AdvertisingDays,
                     UseUIPaginated = psconfig.UseUIPaginated,
@@ -1342,6 +1349,11 @@ namespace MFA
         public bool EnrollWizardDisabled { get; set; }
 
         /// <summary>
+        /// <para type="description">Lock user on his preferred method only property.</para>
+        /// </summary>
+        public bool LockUserOnDefaultProvider { get; set; }
+
+        /// <summary>
         /// <para type="description">Provider Force Wizard if user dosen't complete during signing.</para>
         /// </summary>
         public PSForceWizardMode ForceWizard { get; set; }
@@ -1453,6 +1465,7 @@ namespace MFA
                     IsRequired = otp.IsRequired,
                     EnrollWizard = otp.EnrollWizard,
                     EnrollWizardDisabled = otp.EnrollWizardDisabled,
+                    LockUserOnDefaultProvider = otp.LockUserOnDefaultProvider,
                     ForceWizard = (PSForceWizardMode)otp.ForceWizard,
                     TOTPShadows = otp.TOTPShadows,
                     Algorithm = (MFA.PSHashMode)otp.Algorithm,
@@ -1489,6 +1502,7 @@ namespace MFA
                     IsRequired = otp.IsRequired,
                     EnrollWizard = otp.EnrollWizard,
                     EnrollWizardDisabled = otp.EnrollWizardDisabled,
+                    LockUserOnDefaultProvider = otp.LockUserOnDefaultProvider,
                     ForceWizard = (ForceWizardMode)otp.ForceWizard,
                     TOTPShadows = otp.TOTPShadows,
                     Algorithm = (HashMode)otp.Algorithm,
@@ -1626,6 +1640,7 @@ namespace MFA
                     IsRequired = mails.IsRequired,
                     EnrollWizard = mails.EnrollWizard,
                     EnrollWizardDisabled = mails.EnrollWizardDisabled,
+                    LockUserOnDefaultProvider = mails.LockUserOnDefaultProvider,
                     ForceWizard = (PSForceWizardMode)mails.ForceWizard,
                     From = mails.From,
                     UserName = mails.UserName,
@@ -1693,6 +1708,7 @@ namespace MFA
                     IsRequired = mails.IsRequired,
                     EnrollWizard = mails.EnrollWizard,
                     EnrollWizardDisabled = mails.EnrollWizardDisabled,
+                    LockUserOnDefaultProvider = mails.LockUserOnDefaultProvider,
                     ForceWizard = (ForceWizardMode)mails.ForceWizard,
                     From = mails.From,
                     UserName = mails.UserName,
@@ -2081,6 +2097,7 @@ namespace MFA
                     IsRequired = otp.IsRequired,
                     EnrollWizard = otp.EnrollWizard,
                     EnrollWizardDisabled = otp.EnrollWizardDisabled,
+                    LockUserOnDefaultProvider = otp.LockUserOnDefaultProvider,
                     ForceWizard = (MFA.PSForceWizardMode)otp.ForceWizard,
                     Company = otp.Company,
                     FullQualifiedImplementation = otp.FullyQualifiedImplementation,
@@ -2110,6 +2127,7 @@ namespace MFA
                     IsRequired = otp.IsRequired,
                     EnrollWizard = otp.EnrollWizard,
                     EnrollWizardDisabled = otp.EnrollWizardDisabled,
+                    LockUserOnDefaultProvider = otp.LockUserOnDefaultProvider,
                     ForceWizard = (ForceWizardMode)otp.ForceWizard,
                     Company = otp.Company,
                     FullyQualifiedImplementation = otp.FullQualifiedImplementation,
@@ -2162,6 +2180,7 @@ namespace MFA
                     IsRequired = otp.IsRequired,
                     EnrollWizard = false,
                     EnrollWizardDisabled = false,
+                    LockUserOnDefaultProvider = otp.LockUserOnDefaultProvider,
                     ForceWizard = MFA.PSForceWizardMode.Disabled,
                     PinRequired = otp.PinRequired,
                     FullQualifiedImplementation = otp.FullyQualifiedImplementation,
@@ -2189,6 +2208,7 @@ namespace MFA
                     IsRequired = otp.IsRequired,
                     EnrollWizard = false,
                     EnrollWizardDisabled = false,
+                    LockUserOnDefaultProvider = otp.LockUserOnDefaultProvider,
                     ForceWizard = ForceWizardMode.Disabled,
                     PinRequired = otp.PinRequired,
                     FullyQualifiedImplementation = otp.FullQualifiedImplementation,
@@ -2289,6 +2309,7 @@ namespace MFA
                     IsRequired = otp.IsRequired,
                     EnrollWizard = otp.EnrollWizard,
                     EnrollWizardDisabled = otp.EnrollWizardDisabled,
+                    LockUserOnDefaultProvider = otp.LockUserOnDefaultProvider,
                     ForceWizard = (PSForceWizardMode)otp.ForceWizard,
                     PinRequired = otp.PinRequired,
                     PinRequirements = otp.PinRequirements,
@@ -2328,6 +2349,7 @@ namespace MFA
                     IsRequired = otp.IsRequired,
                     EnrollWizard = otp.EnrollWizard,
                     EnrollWizardDisabled = otp.EnrollWizardDisabled,
+                    LockUserOnDefaultProvider = otp.LockUserOnDefaultProvider,
                     ForceWizard = (ForceWizardMode)otp.ForceWizard,
                     PinRequired = otp.PinRequired,
                     DirectLogin = otp.DirectLogin,

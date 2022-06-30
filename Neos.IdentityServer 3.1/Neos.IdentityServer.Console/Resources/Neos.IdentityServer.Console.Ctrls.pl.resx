@@ -744,4 +744,10 @@
   <data name="CTRLALLOWPASSORDSRESET" xml:space="preserve">
     <value>Zezwalaj administratorom na resetowanie paswwords użytkowników</value>
   </data>
+  <data name="CTRLPROVLOCKEDTOUSER" xml:space="preserve">
+    <value>Blokowanie użytkowników tego dostawcy</value>
+  </data>
+  <data name="CTRLGLSINGLEWIZARD" xml:space="preserve">
+    <value>Szybka rejestracja</value>
+  </data>
 </root>
