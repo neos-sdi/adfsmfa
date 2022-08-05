@@ -520,6 +520,15 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Allow Administrators to reset users paswwords.
+        /// </summary>
+        internal static string CTRLALLOWPASSORDSRESET {
+            get {
+                return ResourceManager.GetString("CTRLALLOWPASSORDSRESET", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Azure Tenant.
         /// </summary>
         internal static string CTRLAZURETENANTID {
@@ -880,6 +889,15 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Fast enrollment.
+        /// </summary>
+        internal static string CTRLGLSINGLEWIZARD {
+            get {
+                return ResourceManager.GetString("CTRLGLSINGLEWIZARD", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à rfc6238 support - Your authenticator app must support it (Yubico, Authy) .
         /// </summary>
         internal static string CTRLGLTOTPWARN {
@@ -1011,6 +1029,15 @@ namespace Neos.IdentityServer.Console.Resources {
         internal static string CTRLPROVACTIVE {
             get {
                 return ResourceManager.GetString("CTRLPROVACTIVE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Lock users on this provider.
+        /// </summary>
+        internal static string CTRLPROVLOCKEDTOUSER {
+            get {
+                return ResourceManager.GetString("CTRLPROVLOCKEDTOUSER", resourceCulture);
             }
         }
         

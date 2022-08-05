@@ -124,6 +124,24 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Reset Password.
+        /// </summary>
+        internal static string USERSFRMPASSWORDS {
+            get {
+                return ResourceManager.GetString("USERSFRMPASSWORDS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Force user to change his password at next logon.
+        /// </summary>
+        internal static string USERSFRMPASSWORDSDESC {
+            get {
+                return ResourceManager.GetString("USERSFRMPASSWORDSDESC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Properties.
         /// </summary>
         internal static string USERSFRMPROPERTIES {
@@ -138,6 +156,15 @@ namespace Neos.IdentityServer.Console.Resources {
         internal static string USERSFRMPROPERTIESDESC {
             get {
                 return ResourceManager.GetString("USERSFRMPROPERTIESDESC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Do you really want to reset password for these users ?.
+        /// </summary>
+        internal static string USERSFRMRESETPWD {
+            get {
+                return ResourceManager.GetString("USERSFRMRESETPWD", resourceCulture);
             }
         }
         

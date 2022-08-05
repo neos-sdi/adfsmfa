@@ -78,7 +78,19 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         internal static MFAConfig Config
         {
-            get { return ADFSManager.Config; }
+            get
+            {
+                try
+                {
+                    if ((ADFSManager == null) || (ADFSManager.Config == null))
+                        Initialize(true);
+                    return ADFSManager.Config;
+                }
+                catch (NullReferenceException)
+                {
+                    return null;
+                }
+            }
         }
 
         /// <summary>
@@ -270,6 +282,20 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         {
             EnsureService();
             return RuntimeRepository.GetMFAUsersCount(Config, filter);
+        }
+
+        /// <summary>
+        /// ResetUserPassword method implmentation
+        /// </summary>
+        internal static bool ResetUserPassword(MFAUserList reg)
+        {
+            bool result = true;
+            foreach (MFAUser usr in reg)
+            {
+                if (!RuntimeRepository.ResetPassword(Config, usr.UPN))
+                    result = false;
+            }
+            return result;
         }
 
         /// <summary>
@@ -941,8 +967,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             WindowsIdentity identity = WindowsIdentity.GetCurrent();
             try
             {
+                SecurityIdentifier id = new SecurityIdentifier(WellKnownSidType.AccountDomainAdminsSid, SystemUtilities.GetADDSDomainSID());
                 WindowsPrincipal principal = new WindowsPrincipal(identity);
-                return principal.IsInRole("Domain Admins");
+                return principal.IsInRole(id);
             }
             catch
             {
@@ -973,6 +1000,40 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         {
             if (string.IsNullOrEmpty(group))
                 return false;
+            try
+            {
+                WindowsIdentity identity = WindowsIdentity.GetCurrent();
+                WindowsPrincipal principal = new WindowsPrincipal(identity);
+                return principal.IsInRole(group);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// AllowedGroup method implementation
+        /// </summary>
+        public static bool AllowedGroup(SecurityIdentifier group)
+        {
+            try
+            {
+                WindowsIdentity identity = WindowsIdentity.GetCurrent();
+                WindowsPrincipal principal = new WindowsPrincipal(identity);
+                return principal.IsInRole(group);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// AllowedGroup method implementation
+        /// </summary>
+        public static bool AllowedGroup(WindowsBuiltInRole group)
+        {
             try
             {
                 WindowsIdentity identity = WindowsIdentity.GetCurrent();

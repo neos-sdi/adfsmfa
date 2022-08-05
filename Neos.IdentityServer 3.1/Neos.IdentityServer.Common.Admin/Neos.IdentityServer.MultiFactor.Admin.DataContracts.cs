@@ -59,10 +59,12 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public string AdminContact { get; set; }
         public string DefaultCountryCode { get; set; }
         public PreferredMethod DefaultProviderMethod { get; set; }
+        public bool LimitEnrollmentToDefaultProvider { get; set; }
         public UserFeaturesOptions UserFeatures { get; set; }
         public bool CustomUpdatePassword { get; set; }
         public bool KeepMySelectedOptionOn { get; set; }
         public bool ChangeNotificationsOn { get; set; }
+        public bool AllowPasswordsReset { get; set; }
         public bool UseOfUserLanguages { get; set; }
         public int AllowPauseForDays { get; set; }
         public FlatAdvertising AdvertisingDays { get; set; }
@@ -85,10 +87,12 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             Issuer = cfg.Issuer;
             DefaultCountryCode = cfg.DefaultCountryCode;
             DefaultProviderMethod = cfg.DefaultProviderMethod;
+            LimitEnrollmentToDefaultProvider = cfg.LimitEnrollmentToDefaultProvider;
             UserFeatures = cfg.UserFeatures;
             CustomUpdatePassword = cfg.CustomUpdatePassword;
             KeepMySelectedOptionOn = cfg.KeepMySelectedOptionOn;
             ChangeNotificationsOn = cfg.ChangeNotificationsOn;
+            AllowPasswordsReset = cfg.AllowPasswordsReset;
             UseOfUserLanguages = cfg.UseOfUserLanguages;
             AllowPauseForDays = cfg.AllowPauseForDays;
             AdvertisingDays = (FlatAdvertising)cfg.AdvertisingDays;
@@ -111,10 +115,12 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             cfg.Issuer = Issuer;
             cfg.DefaultCountryCode = DefaultCountryCode;
             cfg.DefaultProviderMethod = DefaultProviderMethod;
+            cfg.LimitEnrollmentToDefaultProvider = LimitEnrollmentToDefaultProvider;
             cfg.UserFeatures = UserFeatures;
             cfg.CustomUpdatePassword = CustomUpdatePassword;
             cfg.KeepMySelectedOptionOn = KeepMySelectedOptionOn;
             cfg.ChangeNotificationsOn = ChangeNotificationsOn;
+            cfg.AllowPasswordsReset = AllowPasswordsReset;
             cfg.UseOfUserLanguages = UseOfUserLanguages;
             cfg.AllowPauseForDays = AllowPauseForDays;
             cfg.AdvertisingDays = (ConfigAdvertising)AdvertisingDays;
@@ -728,6 +734,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public bool EnrollWizard { get; set; }
         public bool EnrollWizardDisabled { get; set; }
         public bool PinRequired { get; set; }
+        public bool LockUserOnDefaultProvider { get; set; }
         public ForceWizardMode ForceWizard { get; set; }
         public string FullyQualifiedImplementation { get; set; }
         public string Parameters { get; set; }
@@ -799,6 +806,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             this.IsRequired = otp.IsRequired;
             this.EnrollWizard = otp.EnrollWizard;
             this.EnrollWizardDisabled = otp.EnrollWizardDisabled;
+            this.LockUserOnDefaultProvider = otp.LockUserOnDefaultProvider;
             this.ForceWizard = otp.ForceWizard;
             this.Algorithm = otp.Algorithm;
             this.Digits = otp.TOTPDigits;
@@ -829,6 +837,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             otp.Enabled = this.Enabled;
             otp.IsRequired = this.IsRequired;
             otp.EnrollWizard = this.EnrollWizard;
+            otp.LockUserOnDefaultProvider = this.LockUserOnDefaultProvider;
             otp.EnrollWizardDisabled = this.EnrollWizardDisabled;
             otp.ForceWizard = this.ForceWizard;
             otp.Algorithm = this.Algorithm;
@@ -906,6 +915,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             Enabled = mail.Enabled;
             EnrollWizard = mail.EnrollWizard;
             EnrollWizardDisabled = mail.EnrollWizardDisabled;
+            LockUserOnDefaultProvider = mail.LockUserOnDefaultProvider;
             ForceWizard = mail.ForceWizard;
             From = mail.From;
             UserName = mail.UserName;
@@ -970,6 +980,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             mail.Enabled = Enabled;
             mail.EnrollWizard = EnrollWizard;
             mail.EnrollWizardDisabled = EnrollWizardDisabled;
+            mail.LockUserOnDefaultProvider = LockUserOnDefaultProvider;
             mail.ForceWizard = ForceWizard;
             mail.From = From;
             mail.UserName = UserName;
@@ -1061,6 +1072,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             this.IsRequired = otp.IsRequired;
             this.EnrollWizard = otp.EnrollWizard;
             this.EnrollWizardDisabled = otp.EnrollWizardDisabled;
+            this.LockUserOnDefaultProvider = otp.LockUserOnDefaultProvider;
             this.ForceWizard = otp.ForceWizard;
             this.Company = otp.Company;
             this.FullyQualifiedImplementation = otp.FullQualifiedImplementation;
@@ -1085,6 +1097,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             otp.IsRequired = this.IsRequired;
             otp.EnrollWizard = this.EnrollWizard;
             otp.EnrollWizardDisabled = EnrollWizardDisabled;
+            otp.LockUserOnDefaultProvider = LockUserOnDefaultProvider;
             otp.ForceWizard = this.ForceWizard;
             otp.Company = this.Company;
             otp.FullQualifiedImplementation = this.FullyQualifiedImplementation;
@@ -1128,9 +1141,10 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             AzureProvider otp = cfg.AzureProvider;
             this.IsDirty = cfg.IsDirty;
             this.Enabled = otp.Enabled;
-            IsRequired = otp.IsRequired;
+            this.IsRequired = otp.IsRequired;
             this.EnrollWizard = false;
             this.EnrollWizardDisabled = true;
+            this.LockUserOnDefaultProvider = otp.LockUserOnDefaultProvider;
             this.ForceWizard = ForceWizardMode.Disabled;
             this.TenantId = otp.TenantId;
             this.ThumbPrint = otp.ThumbPrint;
@@ -1151,6 +1165,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             otp.EnrollWizard = false;
             otp.EnrollWizardDisabled = true;
             otp.IsRequired = IsRequired;
+            otp.LockUserOnDefaultProvider = LockUserOnDefaultProvider;
             otp.ForceWizard = ForceWizardMode.Disabled;
             otp.TenantId = this.TenantId;
             otp.ThumbPrint = this.ThumbPrint;
@@ -1204,6 +1219,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             this.Enabled = otp.Enabled;
             this.IsRequired = otp.IsRequired;
             this.EnrollWizard = otp.EnrollWizard;
+            this.LockUserOnDefaultProvider = otp.LockUserOnDefaultProvider;
             this.EnrollWizardDisabled = otp.EnrollWizardDisabled;
             this.ForceWizard = otp.ForceWizard;
             this.DirectLogin = otp.DirectLogin;
@@ -1236,8 +1252,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             cfg.IsDirty = true;
             CheckUpdates(host);
             otp.Enabled = this.Enabled;
-            otp.EnrollWizard = this.EnrollWizard;
+            otp.EnrollWizard = this.EnrollWizard;            
             otp.EnrollWizardDisabled = this.EnrollWizardDisabled;
+            otp.LockUserOnDefaultProvider = this.LockUserOnDefaultProvider;
             otp.ForceWizard = this.ForceWizard;
             otp.IsRequired = this.IsRequired;
             otp.PinRequirements = this.PinRequirements;

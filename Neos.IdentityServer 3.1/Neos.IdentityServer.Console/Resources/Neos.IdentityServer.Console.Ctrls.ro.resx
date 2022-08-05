@@ -741,4 +741,13 @@
   <data name="CTRLPROVWIZARDDISABLED" xml:space="preserve">
     <value>Expert dezactivat la înscriere</value>
   </data>
+  <data name="CTRLALLOWPASSORDSRESET" xml:space="preserve">
+    <value>Permite administratorilor să reseteze paswwords utilizatori</value>
+  </data>
+  <data name="CTRLPROVLOCKEDTOUSER" xml:space="preserve">
+    <value>Blocarea utilizatorilor pe acest furnizor</value>
+  </data>
+  <data name="CTRLGLSINGLEWIZARD" xml:space="preserve">
+    <value>Înscriere rapidă</value>
+  </data>
 </root>

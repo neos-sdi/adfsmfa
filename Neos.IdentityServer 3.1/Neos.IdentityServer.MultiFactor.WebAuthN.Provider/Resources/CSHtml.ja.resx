@@ -165,10 +165,10 @@
   <data name="BIOERRORAUTHREPLAY" xml:space="preserve">
     <value>認証処理中にエラーが発生しました !セキュリティ記述子データは以前に使用されています。</value>
   </data>
-  <data name="BIOUIMessage2" xml:space="preserve">
-    <value>生体認証デバイスでログインするには、「接続」をクリックします。</value>
-  </data>
   <data name="BIOUIMessage3" xml:space="preserve">
     <value>生体認証デバイスを登録するには、「デバイスの登録」をクリックします。</value>
+  </data>
+  <data name="BIOUIMessage2" xml:space="preserve">
+    <value>生体認証デバイスでログインするには、[サインイン]をクリックします。</value>
   </data>
 </root>

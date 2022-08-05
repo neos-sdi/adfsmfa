@@ -741,4 +741,13 @@
   <data name="CTRLPROVWIZARDDISABLED" xml:space="preserve">
     <value>Procedura guidata disabilitata al momento dell'iscrizione</value>
   </data>
+  <data name="CTRLALLOWPASSORDSRESET" xml:space="preserve">
+    <value>Consenti agli amministratori di reimpostare gli utenti paswwords</value>
+  </data>
+  <data name="CTRLPROVLOCKEDTOUSER" xml:space="preserve">
+    <value>Bloccare gli utenti su questo provider</value>
+  </data>
+  <data name="CTRLGLSINGLEWIZARD" xml:space="preserve">
+    <value>Iscrizione rapida</value>
+  </data>
 </root>

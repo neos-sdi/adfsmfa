@@ -166,7 +166,7 @@
     <value>Błąd podczas procesu uwierzytelniania! Dane deskryptora bezpieczeństwa zostały już wcześniej wykorzystane!</value>
   </data>
   <data name="BIOUIMessage2" xml:space="preserve">
-    <value>Aby zalogować się za pomocą urządzenia biometrycznego, kliknij "Połączenie"</value>
+    <value>Aby zalogować się za pomocą swojego urządzenia biometrycznego, kliknij "Zaloguj się"</value>
   </data>
   <data name="BIOUIMessage3" xml:space="preserve">
     <value>Aby zarejestrować urządzenie biometryczne, kliknij "Zarejestruj urządzenie"</value>

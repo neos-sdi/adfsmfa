@@ -741,4 +741,13 @@
   <data name="CTRLPROVWIZARDDISABLED" xml:space="preserve">
     <value>登録時に無効になっているウィザード</value>
   </data>
+  <data name="CTRLALLOWPASSORDSRESET" xml:space="preserve">
+    <value>管理者がユーザーのパスワードをリセットできるようにする</value>
+  </data>
+  <data name="CTRLPROVLOCKEDTOUSER" xml:space="preserve">
+    <value>このプロバイダーでユーザーをロックする</value>
+  </data>
+  <data name="CTRLGLSINGLEWIZARD" xml:space="preserve">
+    <value>迅速な登録</value>
+  </data>
 </root>

@@ -99,6 +99,11 @@ namespace Neos.IdentityServer.MultiFactor.Samples
         }
 
         /// <summary>
+        /// LockUserOnDefaultProvider property implementation
+        /// </summary>
+        public override bool LockUserOnDefaultProvider { get; set; } = false;
+
+        /// <summary>
         /// ForceEnrollment property implementation
         /// </summary>
         public override ForceWizardMode ForceEnrollment
@@ -481,6 +486,11 @@ namespace Neos.IdentityServer.MultiFactor.Samples
         /// </summary>
         public override bool IsAvailable(AuthenticationContext ctx)
         {
+            if (LockUserOnDefaultProvider)
+            {
+                if (ctx.PreferredMethod != this.Kind)
+                    return false;
+            }
             return true;
         }
 
@@ -489,6 +499,11 @@ namespace Neos.IdentityServer.MultiFactor.Samples
         /// </summary>
         public override bool IsAvailableForUser(AuthenticationContext ctx)
         {
+            if (LockUserOnDefaultProvider)
+            {
+                if (ctx.PreferredMethod != this.Kind)
+                    return false;
+            }
             return true;
         }
 

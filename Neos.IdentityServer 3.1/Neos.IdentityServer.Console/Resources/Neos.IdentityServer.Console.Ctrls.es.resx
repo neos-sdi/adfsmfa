@@ -741,4 +741,13 @@
   <data name="CTRLPROVWIZARDDISABLED" xml:space="preserve">
     <value>Asistente deshabilitado en la inscripción</value>
   </data>
+  <data name="CTRLALLOWPASSORDSRESET" xml:space="preserve">
+    <value>Permitir que los administradores restablezcan el paswwords de los usuarios</value>
+  </data>
+  <data name="CTRLPROVLOCKEDTOUSER" xml:space="preserve">
+    <value>Bloquear usuarios en este proveedor</value>
+  </data>
+  <data name="CTRLGLSINGLEWIZARD" xml:space="preserve">
+    <value>Inscripción rápida</value>
+  </data>
 </root>

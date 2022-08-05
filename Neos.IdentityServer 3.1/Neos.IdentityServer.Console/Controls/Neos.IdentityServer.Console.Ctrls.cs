@@ -423,6 +423,7 @@ namespace Neos.IdentityServer.Console.Controls
         private CheckBox chkProviderPinTPM;
         private CheckBox chkProviderPinApple;
         private Label lblRequiredPinDesc;
+        private CheckBox chkLockUserToProvider;
 
         /// <summary>
         /// ADFSServerControl Constructor
@@ -524,25 +525,25 @@ namespace Neos.IdentityServer.Console.Controls
 
                 this.Dock = DockStyle.Top;
                 if (_kind == PreferredMethod.Biometrics)
-                    this.Height = 195;
+                    this.Height = 215;
                 else 
-                    this.Height = 115;
+                    this.Height = 135;
                 this.Width = 760;
                 this.Margin = new Padding(30, 5, 30, 5);
 
                 _panel.Width = 20;
                 if (_kind == PreferredMethod.Biometrics)
-                    _panel.Height = 195;
+                    _panel.Height = 215;
                 else
-                    _panel.Height = 115;
+                    _panel.Height = 135;
                 this.Controls.Add(_panel);
 
                 _txtpanel.Left = 20;
                 _txtpanel.Width = this.Width - 100;
                 if (_kind == PreferredMethod.Biometrics)
-                    _txtpanel.Height = 195;
+                    _txtpanel.Height = 215;
                 else
-                    _txtpanel.Height = 115;
+                    _txtpanel.Height = 135;
                 _txtpanel.BackColor = System.Drawing.SystemColors.Control;
                 this.Controls.Add(_txtpanel);
 
@@ -614,13 +615,25 @@ namespace Neos.IdentityServer.Console.Controls
                 chkProviderEnrollDisabled.CheckedChanged += ChkProviderEnrollDisabledChanged;
                 _txtpanel.Controls.Add(chkProviderEnrollDisabled);
 
+                chkLockUserToProvider = new CheckBox
+                {
+                    Text = res.CTRLPROVLOCKEDTOUSER,
+                    Checked = _provider.LockUserOnDefaultProvider,
+                    Enabled = _provider.Enabled,
+                    Left = 510,
+                    Top = 90,
+                    Width = 300
+                };
+                chkLockUserToProvider.CheckedChanged += ChkLockUserToProviderChanged;
+                _txtpanel.Controls.Add(chkLockUserToProvider);
+
                 chkProviderPin = new CheckBox
                 {
                     Text = res.CTRLPROVPIN,
                     Checked = _provider.PinRequired,
                     Enabled = _provider.Enabled,
                     Left = 510,
-                    Top = 90,
+                    Top = 110,
                     Width = 300
                 };
                 chkProviderPin.CheckedChanged += ChkProviderPinChanged;
@@ -636,7 +649,7 @@ namespace Neos.IdentityServer.Console.Controls
                     {
                         Text = res.CTRLPROVPINREQUIRED,
                         Left = 540,
-                        Top = 114,
+                        Top = 134,
                         Width = 500
                     };                   
                     _txtpanel.Controls.Add(lblRequiredPinDesc);
@@ -648,7 +661,7 @@ namespace Neos.IdentityServer.Console.Controls
                         Checked = webprov.PinRequirements.HasFlag(WebAuthNPinRequirements.None),
                         Enabled = _provider.Enabled,
                         Left = 540,
-                        Top = 138,
+                        Top = 158,
                         Width = 135
                     };
                     chkProviderPinNone.CheckedChanged += ChkProviderPinNoneChanged;
@@ -660,7 +673,7 @@ namespace Neos.IdentityServer.Console.Controls
                         Checked = webprov.PinRequirements.HasFlag(WebAuthNPinRequirements.AndroidKey),
                         Enabled = _provider.Enabled,
                         Left = 680,
-                        Top = 138,
+                        Top = 158,
                         Width = 135
                     };
                     chkProviderPinAndroidKey.CheckedChanged += ChkProviderPinAndroidKeyChanged;
@@ -672,7 +685,7 @@ namespace Neos.IdentityServer.Console.Controls
                         Checked = webprov.PinRequirements.HasFlag(WebAuthNPinRequirements.AndroidSafetyNet),
                         Enabled = _provider.Enabled,
                         Left = 820,
-                        Top = 138,
+                        Top = 158,
                         Width = 135
                     };
                     chkProviderPinAndroidSafetyNet.CheckedChanged += ChkProviderPinAndroidSafetyNetChanged;
@@ -684,7 +697,7 @@ namespace Neos.IdentityServer.Console.Controls
                         Checked = webprov.PinRequirements.HasFlag(WebAuthNPinRequirements.Packed),
                         Enabled = _provider.Enabled,
                         Left = 960,
-                        Top = 138,
+                        Top = 158,
                         Width = 135
                     };
                     chkProviderPinPacked.CheckedChanged += ChkProviderPinPackedChanged;
@@ -696,7 +709,7 @@ namespace Neos.IdentityServer.Console.Controls
                         Checked = webprov.PinRequirements.HasFlag(WebAuthNPinRequirements.Fido2U2f),
                         Enabled = _provider.Enabled,
                         Left = 540,
-                        Top = 162,
+                        Top = 182,
                         Width = 135
                     };
                     chkProviderPinFido2u2f.CheckedChanged += ChkProviderPinFido2u2fChanged;
@@ -708,7 +721,7 @@ namespace Neos.IdentityServer.Console.Controls
                         Checked = webprov.PinRequirements.HasFlag(WebAuthNPinRequirements.TPM),
                         Enabled = _provider.Enabled,
                         Left = 680,
-                        Top = 162,
+                        Top = 182,
                         Width = 135
                     };
                     chkProviderPinTPM.CheckedChanged += ChkProviderPinTPMChanged;
@@ -720,7 +733,7 @@ namespace Neos.IdentityServer.Console.Controls
                         Checked = webprov.PinRequirements.HasFlag(WebAuthNPinRequirements.Apple),
                         Enabled = _provider.Enabled,
                         Left = 820,
-                        Top = 162,
+                        Top = 182,
                         Width = 135
                     };
                     chkProviderPinApple.CheckedChanged += ChkProviderPinAppleChanged;
@@ -739,6 +752,8 @@ namespace Neos.IdentityServer.Console.Controls
                     chkProviderRequired.Enabled = false;
                     chkProviderPin.Checked = false;
                     chkProviderPin.Enabled = false;
+                    chkLockUserToProvider.Checked = false;
+                    chkLockUserToProvider.Enabled = false;
                 }
 
                 errors = new ErrorProvider(_view)
@@ -771,6 +786,7 @@ namespace Neos.IdentityServer.Console.Controls
                 chkProviderEnroll.Text = res.CTRLPROVWIZARD;
                 chkProviderEnrollDisabled.Text = res.CTRLPROVWIZARDDISABLED;
                 chkProviderPin.Text = res.CTRLPROVPIN;
+                chkLockUserToProvider.Text = res.CTRLPROVLOCKEDTOUSER;
 
                 lblProviderDesc.Text = _provider.Description;
                 chkProviderEnabled.Checked = _provider.Enabled;
@@ -788,6 +804,8 @@ namespace Neos.IdentityServer.Console.Controls
                 else
                     chkProviderEnrollDisabled.Checked = false;
                 chkProviderEnrollDisabled.Enabled = (_provider.Enabled && !_provider.IsRequired);
+
+                chkLockUserToProvider.Checked = _provider.LockUserOnDefaultProvider;
 
                 if (_kind == PreferredMethod.Biometrics)
                 {
@@ -822,6 +840,8 @@ namespace Neos.IdentityServer.Console.Controls
                     chkProviderRequired.Enabled = false;
                     chkProviderPin.Checked = false;
                     chkProviderPin.Enabled = false;
+                    chkLockUserToProvider.Checked = false;
+                    chkLockUserToProvider.Enabled = false;
                 }
                 else
                 {
@@ -1321,6 +1341,52 @@ namespace Neos.IdentityServer.Console.Controls
             catch (Exception ex)
             {
                 errors.SetError(chkProviderEnabled, ex.Message);
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Default;
+            }
+        }
+
+        /// <summary>
+        /// chkProviderRequiredChanged method implementation
+        /// </summary>
+        private void ChkLockUserToProviderChanged(object sender, EventArgs e)
+        {
+            this.Cursor = Cursors.WaitCursor;
+            try
+            {
+                switch (_kind)
+                {
+                    case PreferredMethod.Code:
+                        Config.OTPProvider.LockUserOnDefaultProvider = chkLockUserToProvider.Checked;
+                        break;
+                    case PreferredMethod.Email:
+                        Config.MailProvider.LockUserOnDefaultProvider = chkLockUserToProvider.Checked;
+                        break;
+                    case PreferredMethod.External:
+                        Config.ExternalProvider.LockUserOnDefaultProvider = chkLockUserToProvider.Checked;
+                        break;
+                    case PreferredMethod.Azure:
+                        Config.AzureProvider.LockUserOnDefaultProvider = chkLockUserToProvider.Checked;
+                        break;
+                    case PreferredMethod.Biometrics:
+                        Config.WebAuthNProvider.LockUserOnDefaultProvider = chkLockUserToProvider.Checked;
+                        break;
+                }
+                if (_view.AutoValidate != AutoValidate.Disable)
+                    ManagementService.ADFSManager.SetDirty(true);
+            }
+            catch (Exception ex)
+            {
+                errors.SetError(chkLockUserToProvider, ex.Message);
                 MessageBoxParameters messageBoxParameters = new MessageBoxParameters
                 {
                     Text = ex.Message,
@@ -1937,6 +2003,7 @@ namespace Neos.IdentityServer.Console.Controls
         private bool lockevents;
         private CheckBox chkUseUserLanguages;
         private Label PauseforDaysLabel;
+        private CheckBox chkSingleWizard;
 
 
 
@@ -2114,7 +2181,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = res.CTRLGLPROVIDER + " : ",
                     Left = 530,
-                    Top = 83,
+                    Top = 63,
                     Width = 150
                 };
                 _txtpanel.Controls.Add(lblConfigProvider);
@@ -2124,7 +2191,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     DropDownStyle = ComboBoxStyle.DropDownList,
                     Left = 690,
-                    Top = 79,
+                    Top = 59,
                     Width = 80
                 };
                 _txtpanel.Controls.Add(cbConfigProvider);
@@ -2133,6 +2200,17 @@ namespace Neos.IdentityServer.Console.Controls
                 cbConfigProvider.ValueMember = "ID";
                 cbConfigProvider.DisplayMember = "Label";
                 cbConfigProvider.SelectedIndexChanged += SelectedProviderChanged;
+
+                chkSingleWizard = new CheckBox
+                {
+                    Text = res.CTRLGLSINGLEWIZARD,
+                    Enabled = ((PreferredMethod)cbConfigProvider.SelectedValue != PreferredMethod.Choose),
+                    Left = 540,
+                    Top = 84,
+                    Width = 300
+                };
+                chkSingleWizard.CheckedChanged += SingleWizardCheckedChanged;
+                _txtpanel.Controls.Add(chkSingleWizard);
 
                 lblConfigTemplate = new Label
                 {
@@ -2485,12 +2563,23 @@ namespace Neos.IdentityServer.Console.Controls
                 txtADVStart.Value = Config.AdvertisingDays.FirstDay;
                 txtADVEnd.Value = Config.AdvertisingDays.LastDay;
                 chkUseUserLanguages.Checked = Config.UseOfUserLanguages;
+                if ((PreferredMethod)cbConfigProvider.SelectedValue != PreferredMethod.Choose)
+                {
+                    chkSingleWizard.Checked = Config.LimitEnrollmentToDefaultProvider;
+                    chkSingleWizard.Enabled = true;
+                }
+                else
+                {
+                    chkSingleWizard.Checked = false;
+                    chkSingleWizard.Enabled = false;
+                }
 
                 lblIssuer.Text = res.CTRLGLCOMANYNAME + " : ";
                 lblAdminContact.Text = res.CTRLGLCONTACT + " : ";
                 lblContryCode.Text = res.CTRLGLCONTRYCODE + " : ";
                 lblConfigProvider.Text = res.CTRLGLPROVIDER + " : ";
                 lblConfigTemplate.Text = res.CTRLGLPOLICY + " : ";
+                chkSingleWizard.Text = res.CTRLGLSINGLEWIZARD;
                 rdioMFALabel.Text = res.CTRLGLMFASTATUS;
                 rdioMFARequired.Text = res.CTRLGLMFASTATUS1;
                 rdioMFAAllowed.Text = res.CTRLGLMFASTATUS2;
@@ -2575,6 +2664,11 @@ namespace Neos.IdentityServer.Console.Controls
         {
             MMCProviderItem itm = (MMCProviderItem)cbConfigProvider.SelectedItem;
             Config.DefaultProviderMethod = itm.ID;
+            if (Config.DefaultProviderMethod==PreferredMethod.Choose)
+            {
+                Config.LimitEnrollmentToDefaultProvider = false;
+            }
+            chkSingleWizard.Enabled = ((PreferredMethod)cbConfigProvider.SelectedValue != PreferredMethod.Choose);
             if (_view.AutoValidate != AutoValidate.Disable)
                 ManagementService.ADFSManager.SetDirty(true);
         }
@@ -3467,6 +3561,30 @@ namespace Neos.IdentityServer.Console.Controls
                     Icon = MessageBoxIcon.Error
                 };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+        #endregion
+
+        #region singlewizard
+        /// <summary>
+        /// SingleWizardCheckedChanged method implementation
+        /// </summary>
+        private void SingleWizardCheckedChanged(object sender, EventArgs e)
+        {
+            if (lockevents)
+                return;
+            try
+            {
+                if (_view.AutoValidate != AutoValidate.Disable)
+                {
+                    ManagementService.ADFSManager.SetDirty(true);
+                    Config.LimitEnrollmentToDefaultProvider = chkSingleWizard.Checked;
+                    errors.SetError(chkSingleWizard, "");
+                }
+            }
+            catch (Exception ex)
+            {
+                errors.SetError(chkSingleWizard, ex.Message);
             }
         }
         #endregion
@@ -7788,7 +7906,7 @@ namespace Neos.IdentityServer.Console.Controls
                     BodyEncoding = UTF8Encoding.UTF8,
                     Subject = "MFA SMTP¨Test",
                     IsBodyHtml = false,
-                    Body = string.Format("Send mail test"),
+                    Body = "Send Email Test",
                     DeliveryNotificationOptions = DeliveryNotificationOptions.Never
                 };
 
@@ -11131,6 +11249,7 @@ namespace Neos.IdentityServer.Console.Controls
         private NumericUpDown txtMaxPasswordAgeInDays;
         private Label lblWarnPasswordExpirationBeforeInDays;
         private NumericUpDown txtWarnPasswordExpirationBeforeInDays;
+        private CheckBox chkAllowPasswordsReset;
         private Button btnGenerateKeys;
 
         /// <summary>
@@ -11235,12 +11354,12 @@ namespace Neos.IdentityServer.Console.Controls
                 this.Margin = new Padding(30, 5, 30, 5);
 
                 _panel.Width = 20;
-                _panel.Height = 665;
+                _panel.Height = 695;
                 this.Controls.Add(_panel);
 
                 _txtpanel.Left = 20;
                 _txtpanel.Width = this.Width - 20;
-                _txtpanel.Height = 665;
+                _txtpanel.Height = 695;
                 _txtpanel.BackColor = System.Drawing.SystemColors.Control;
                 this.Controls.Add(_txtpanel);
 
@@ -11629,11 +11748,22 @@ namespace Neos.IdentityServer.Console.Controls
                 txtWarnPasswordExpirationBeforeInDays.ValueChanged += txtWarnPasswordExpirationBeforeInDaysChanged;
                 _txtpanel.Controls.Add(txtWarnPasswordExpirationBeforeInDays);
 
+                chkAllowPasswordsReset = new CheckBox
+                {
+                    Text = res.CTRLALLOWPASSORDSRESET,
+                    Checked = Config.AllowPasswordsReset,
+                    Left = 20,
+                    Top = 624,
+                    Width = 550
+                };
+                chkAllowPasswordsReset.CheckedChanged += chkAllowPasswordsResetChanged;
+                _txtpanel.Controls.Add(chkAllowPasswordsReset);
+
                 lblWarning = new Label
                 {
                     Text = "(*) " + res.CTRLSECWARNING,
                     Left = 10,
-                    Top = 640,
+                    Top = 664,
                     Width = 500
                 };
                 _txtpanel.Controls.Add(lblWarning);
@@ -11642,7 +11772,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE,
                     Left = 20,
-                    Top = 675,
+                    Top = 705,
                     Width = 80,
                     TabStop = true
                 };
@@ -11653,7 +11783,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL,
                     Left = 110,
-                    Top = 675,
+                    Top = 705,
                     Width = 80,
                     TabStop = true
                 };
@@ -11727,6 +11857,8 @@ namespace Neos.IdentityServer.Console.Controls
                 chkLockUserIfPasswordExpired.Checked = Config.KeysConfig.LockUserOnPasswordExpiration;
                 txtMaxPasswordAgeInDays.Value = Config.KeysConfig.MaxPasswordAgeInDays;
                 txtWarnPasswordExpirationBeforeInDays.Value = Config.KeysConfig.WarnPasswordExpirationBeforeInDays;
+                chkAllowPasswordsReset.Text = res.CTRLALLOWPASSORDSRESET;
+                chkAllowPasswordsReset.Checked = Config.AllowPasswordsReset;
 
                 txtDeliveryWindow.Text = Config.DeliveryWindow.ToString();
                 txtMaxRetries.Text = Config.MaxRetries.ToString();
@@ -11809,6 +11941,7 @@ namespace Neos.IdentityServer.Console.Controls
             errors.SetError(chkLockUserIfPasswordExpired, "");
             errors.SetError(txtMaxPasswordAgeInDays, "");
             errors.SetError(txtWarnPasswordExpirationBeforeInDays, "");
+            errors.SetError(chkAllowPasswordsReset, "");
         }
 
         /// <summary>
@@ -12550,6 +12683,26 @@ namespace Neos.IdentityServer.Console.Controls
             catch (Exception ex)
             {
                 errors.SetError(txtWarnPasswordExpirationBeforeInDays, ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// chkAllowPasswordsResetChanged method implementation
+        /// </summary>
+        private void chkAllowPasswordsResetChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_view.AutoValidate != AutoValidate.Disable)
+                {
+                    Config.AllowPasswordsReset = chkAllowPasswordsReset.Checked;
+                    ManagementService.ADFSManager.SetDirty(true);
+                    UpdateControlsLayouts();
+                }
+            }
+            catch (Exception ex)
+            {
+                errors.SetError(chkAllowPasswordsReset, ex.Message);
             }
         }
         #endregion

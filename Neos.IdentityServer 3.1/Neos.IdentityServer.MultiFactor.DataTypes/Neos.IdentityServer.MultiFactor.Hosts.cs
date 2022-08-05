@@ -483,6 +483,7 @@ namespace Neos.IdentityServer.MultiFactor
         private string _issuer;
         private int _pinlength = 4;
         private int _allowpause = 0;
+        private bool _limitenrollment = false;
 
         /// <summary>
         /// Constructor
@@ -743,8 +744,27 @@ namespace Neos.IdentityServer.MultiFactor
         [XmlAttribute("ChangeNotificationsOn")]
         public bool ChangeNotificationsOn { get; set; } = true;
 
+        [XmlAttribute("AllowPasswordsReset")]
+        public bool AllowPasswordsReset { get; set; } = false;
+
         [XmlAttribute("DefaultProviderMethod")]
         public PreferredMethod DefaultProviderMethod { get; set; } = PreferredMethod.Choose;
+
+        [XmlAttribute("LimitEnrollmentToDefaultProvider")]
+        public bool LimitEnrollmentToDefaultProvider
+        {
+            get
+            {
+                return (_limitenrollment &&
+                        (this.DefaultProviderMethod != PreferredMethod.Choose &&
+                        this.DefaultProviderMethod != PreferredMethod.None &&
+                        this.DefaultProviderMethod != PreferredMethod.Pin));
+            }
+            set
+            {
+                _limitenrollment = value;
+            }
+        }
 
         [XmlAttribute("UseOfUserLanguages")]
         public bool UseOfUserLanguages { get; set; } = true;
@@ -999,6 +1019,7 @@ namespace Neos.IdentityServer.MultiFactor
         public abstract bool EnrollWizard { get; set; }
         public abstract bool EnrollWizardDisabled { get; set; }
         public abstract bool IsRequired { get; set; }
+        public abstract bool LockUserOnDefaultProvider { get; set; }
         public abstract ForceWizardMode ForceWizard { get; set; }
     }
 
@@ -1027,6 +1048,7 @@ namespace Neos.IdentityServer.MultiFactor
             PinRequired = prov.PinRequired;
             EnrollWizard = prov.EnrollWizard;
             EnrollWizardDisabled = prov.EnrollWizardDisabled;
+            LockUserOnDefaultProvider = prov.LockUserOnDefaultProvider;
             ForceWizard = prov.ForceWizard;
         }
 
@@ -1041,6 +1063,7 @@ namespace Neos.IdentityServer.MultiFactor
         public override bool PinRequired { get; set; }
         public override bool EnrollWizard { get; set; }
         public override bool EnrollWizardDisabled { get; set; }
+        public override bool LockUserOnDefaultProvider { get; set; } = false;
         public override ForceWizardMode ForceWizard { get; set; }
     }
 
@@ -1065,6 +1088,7 @@ namespace Neos.IdentityServer.MultiFactor
             PinRequired = prov.PinRequired;
             EnrollWizard = prov.EnrollWizard;
             EnrollWizardDisabled = prov.EnrollWizardDisabled;
+            LockUserOnDefaultProvider = prov.LockUserOnDefaultProvider;
             ForceWizard = prov.ForceWizard;
             SendDeliveryNotifications = prov.DeliveryNotifications;
         }
@@ -1075,6 +1099,7 @@ namespace Neos.IdentityServer.MultiFactor
         public override bool PinRequired { get; set; }
         public override bool EnrollWizard { get; set; }
         public override bool EnrollWizardDisabled { get; set; }
+        public override bool LockUserOnDefaultProvider { get; set; } = false;
         public override ForceWizardMode ForceWizard { get; set; }
         public bool SendDeliveryNotifications { get; set; }
     }
@@ -1100,6 +1125,7 @@ namespace Neos.IdentityServer.MultiFactor
             PinRequired = prov.PinRequired;
             EnrollWizard = prov.EnrollWizard;
             EnrollWizardDisabled = prov.EnrollWizardDisabled;
+            LockUserOnDefaultProvider = prov.LockUserOnDefaultProvider;
             ForceWizard = prov.ForceWizard;
         }
 
@@ -1109,6 +1135,7 @@ namespace Neos.IdentityServer.MultiFactor
         public override bool PinRequired { get; set; }
         public override bool EnrollWizard { get; set; }
         public override bool EnrollWizardDisabled { get; set; }
+        public override bool LockUserOnDefaultProvider { get; set; } = false;
         public override ForceWizardMode ForceWizard { get; set; }
     }
 
@@ -1135,6 +1162,7 @@ namespace Neos.IdentityServer.MultiFactor
             PinRequired = prov.PinRequired;
             EnrollWizard = prov.EnrollWizard;
             EnrollWizardDisabled = prov.EnrollWizardDisabled;
+            LockUserOnDefaultProvider = prov.LockUserOnDefaultProvider;
             ForceWizard = ForceWizardMode.Disabled;
         }
 
@@ -1146,6 +1174,7 @@ namespace Neos.IdentityServer.MultiFactor
         public override bool PinRequired { get; set; }
         public override bool EnrollWizard { get; set; }
         public override bool EnrollWizardDisabled { get; set; }
+        public override bool LockUserOnDefaultProvider { get; set; } = false;
         public override ForceWizardMode ForceWizard { get; set; }
     }
 
@@ -1172,6 +1201,7 @@ namespace Neos.IdentityServer.MultiFactor
             PinRequirements = prov.PinRequirements;
             EnrollWizard = prov.EnrollWizard;
             EnrollWizardDisabled = prov.EnrollWizardDisabled;
+            LockUserOnDefaultProvider = prov.LockUserOnDefaultProvider;
             ForceWizard = prov.ForceWizard;
             Configuration = prov.Configuration;
             Options = prov.Options;
@@ -1187,6 +1217,7 @@ namespace Neos.IdentityServer.MultiFactor
         public override bool EnrollWizard { get; set; }
         public override bool EnrollWizardDisabled { get; set; }
         public bool DirectLogin { get; set; }
+        public override bool LockUserOnDefaultProvider { get; set; } = false;
         public override ForceWizardMode ForceWizard { get; set; }
         public WebAuthNProviderConfig Configuration { get; set; } = new WebAuthNProviderConfig();
         public WebAuthNProviderOptions Options { get; set; } = new WebAuthNProviderOptions();
@@ -1398,7 +1429,6 @@ namespace Neos.IdentityServer.MultiFactor
     public class ExternalOTPProvider
     {
         private XmlCDataSection _cdata;
-        private bool _wizenabled = true;
         private bool _wizdisabled = false;
 
         [XmlAttribute("Enabled")]
@@ -1472,6 +1502,8 @@ namespace Neos.IdentityServer.MultiFactor
 
         [XmlAttribute("Timeout")]
         public int Timeout { get; set; } = 300;
+        [XmlAttribute("LockUserOnDefaultProvider")]
+        public bool LockUserOnDefaultProvider { get; set; } = false;
     }
     #endregion
 
@@ -1549,6 +1581,9 @@ namespace Neos.IdentityServer.MultiFactor
                 _cdata.Data = value.Data;
             }
         }
+
+        [XmlAttribute("LockUserOnDefaultProvider")]
+        public bool LockUserOnDefaultProvider { get; set; } = false;
     }
     #endregion
 
@@ -1559,8 +1594,7 @@ namespace Neos.IdentityServer.MultiFactor
     public class MailProvider
     {
         private XmlCDataSection _cdata;
-        private readonly List<string> _blocked = new List<string>();
-        private bool _wizenabled = true;
+        private readonly List<string> _blocked = new List<string>();       
         private bool _wizdisabled = false;
 
         [XmlAttribute("Enabled")]
@@ -1673,6 +1707,9 @@ namespace Neos.IdentityServer.MultiFactor
                 _cdata.Data = value.Data;
             }
         }
+
+        [XmlAttribute("LockUserOnDefaultProvider")]
+        public bool LockUserOnDefaultProvider { get; set; } = false;
     }
     #endregion
 
@@ -1685,7 +1722,6 @@ namespace Neos.IdentityServer.MultiFactor
         private XmlCDataSection _cdata;
         private int _digits = 6;
         private int _duration = 30;
-        private bool _wizenabled = true;
         private bool _wizdisabled = false;
 
         [XmlAttribute("Enabled")]
@@ -1795,6 +1831,9 @@ namespace Neos.IdentityServer.MultiFactor
                 _cdata.Data = value.Data;
             }
         }
+
+        [XmlAttribute("LockUserOnDefaultProvider")]
+        public bool LockUserOnDefaultProvider { get; set; } = false;
     }
     #endregion
 
@@ -1911,6 +1950,9 @@ namespace Neos.IdentityServer.MultiFactor
                 _cdata.Data = value.Data;
             }
         }
+
+        [XmlAttribute("LockUserOnDefaultProvider")]
+        public bool LockUserOnDefaultProvider { get; set; } = false;
     }
 
     /// <summary>

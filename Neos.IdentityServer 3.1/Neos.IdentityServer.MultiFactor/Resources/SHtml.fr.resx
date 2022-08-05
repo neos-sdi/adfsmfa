@@ -231,9 +231,6 @@
   <data name="HtmlUIMCheck" xml:space="preserve">
     <value>Vérifier</value>
   </data>
-  <data name="HtmlUIMConnexion" xml:space="preserve">
-    <value>Connexion</value>
-  </data>
   <data name="HtmlUIMDisableMFA" xml:space="preserve">
     <value>Désactiver l'authetification Multi-Facteur</value>
   </data>
@@ -313,5 +310,8 @@ Vous pourrez utiliser la validation MFA à l'avenir.</value>
   </data>
   <data name="HtmlUIMPauseDescription" xml:space="preserve">
     <value>Cela vous permets de ne plus demander le MFA durant {0} jours.</value>
+  </data>
+  <data name="HtmlUIMConnexion" xml:space="preserve">
+    <value>Se connecter</value>
   </data>
 </root>

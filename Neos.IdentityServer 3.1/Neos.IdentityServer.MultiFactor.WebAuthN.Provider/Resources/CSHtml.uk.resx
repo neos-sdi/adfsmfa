@@ -165,10 +165,10 @@
   <data name="PROVIDERBIODESCRIPTION" xml:space="preserve">
     <value>Мультифакторний постачальник біометрії</value>
   </data>
-  <data name="BIOUIMessage2" xml:space="preserve">
-    <value>Для входу за допомогою біометричного пристрою натисніть «Підключення»</value>
-  </data>
   <data name="BIOUIMessage3" xml:space="preserve">
     <value>Щоб зареєструвати свій біометричний пристрій, натисніть «Зареєструвати пристрій»</value>
+  </data>
+  <data name="BIOUIMessage2" xml:space="preserve">
+    <value>Щоб увійти за допомогою біометричного пристрою, натисніть «Увійти»</value>
   </data>
 </root>

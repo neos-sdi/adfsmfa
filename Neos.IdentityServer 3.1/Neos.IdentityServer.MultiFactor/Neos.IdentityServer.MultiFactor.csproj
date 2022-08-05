@@ -130,6 +130,7 @@
     <Content Include="Installer\aegis.png" />
     <Content Include="Installer\Banner.bmp" />
     <Content Include="Installer\Dialog.bmp" />
+    <Content Include="Installer\logo.png" />
     <Content Include="Resources\crouge.jpg" />
     <Content Include="Resources\cvert.jpg" />
     <None Include="Resources\google.png" />
@@ -167,7 +168,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\images.uk-UA.resx" />
     <EmbeddedResource Include="Resources\images.uk.resx" />
     <EmbeddedResource Include="Resources\SCheck.da.resx" />
     <EmbeddedResource Include="Resources\SCheck.de.resx" />
@@ -212,12 +212,16 @@
     <EmbeddedResource Include="Resources\SHtml.fr.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\SHtml.it.resx" />
+    <EmbeddedResource Include="Resources\SHtml.it.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\SHtml.ja.resx" />
     <EmbeddedResource Include="Resources\SHtml.nl.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\SHtml.pl.resx" />
+    <EmbeddedResource Include="Resources\SHtml.pl.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\SHtml.pt.resx" />
     <EmbeddedResource Include="Resources\SHtml.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

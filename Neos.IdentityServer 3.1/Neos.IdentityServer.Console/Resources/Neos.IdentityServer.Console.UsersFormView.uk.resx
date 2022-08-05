@@ -147,4 +147,13 @@
   <data name="USERSFRMDELETE" xml:space="preserve">
     <value>Видалити</value>
   </data>
+  <data name="USERSFRMPASSWORDS" xml:space="preserve">
+    <value>Скинути пароль</value>
+  </data>
+  <data name="USERSFRMPASSWORDSDESC" xml:space="preserve">
+    <value>Змусити користувача змінити свій пароль під час наступного входу до системи</value>
+  </data>
+  <data name="USERSFRMRESETPWD" xml:space="preserve">
+    <value>Ви дійсно хочете скинути пароль для цих користувачів?</value>
+  </data>
 </root>

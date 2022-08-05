@@ -741,4 +741,13 @@
   <data name="CTRLPROVWIZARDDISABLED" xml:space="preserve">
     <value>Assistant désactivé lors de l’inscription</value>
   </data>
+  <data name="CTRLALLOWPASSORDSRESET" xml:space="preserve">
+    <value>Autoriser les administrateurs à réinitialiser les mots de passe des utilisateurs</value>
+  </data>
+  <data name="CTRLPROVLOCKEDTOUSER" xml:space="preserve">
+    <value>Verrouiller les utilisateurs sur ce fournisseur</value>
+  </data>
+  <data name="CTRLGLSINGLEWIZARD" xml:space="preserve">
+    <value>Inscription rapide</value>
+  </data>
 </root>

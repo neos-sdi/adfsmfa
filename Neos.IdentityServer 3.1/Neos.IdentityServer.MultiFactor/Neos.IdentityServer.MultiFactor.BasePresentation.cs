@@ -66,7 +66,7 @@ namespace Neos.IdentityServer.MultiFactor
                     }
                     catch (Exception ex)
                     {
-                        Log.WriteEntry("Error during loading custom adapter presentation: " + ex.ToString(), EventLogEntryType.Error, 80002);
+                        Log.WriteEntry("Error during loading custom adapter presentation: " + ex.ToString(), EventLogEntryType.Error, 65535);
                         throw new Exception("Error during loading custom adapter presentation: " + ex.Message);
                     }
                     break;
@@ -113,7 +113,7 @@ namespace Neos.IdentityServer.MultiFactor
                     }
                     catch (Exception ex)
                     {
-                        Log.WriteEntry("Error during loading custom adapter presentation: " + ex.ToString(), EventLogEntryType.Error, 80002);
+                        Log.WriteEntry("Error during loading custom adapter presentation: " + ex.ToString(), EventLogEntryType.Error, 65535);
                         throw new Exception("Error during loading custom adapter presentation: " + ex.Message);
                     }
                     break;
@@ -160,7 +160,7 @@ namespace Neos.IdentityServer.MultiFactor
                     }
                     catch (Exception ex)
                     {
-                        Log.WriteEntry("Error during loading custom adapter presentation: " + ex.ToString(), EventLogEntryType.Error, 80002);
+                        Log.WriteEntry("Error during loading custom adapter presentation: " + ex.ToString(), EventLogEntryType.Error, 65535);
                         throw new Exception("Error during loading custom adapter presentation: " + ex.Message);
                     }
                     break;
@@ -207,7 +207,7 @@ namespace Neos.IdentityServer.MultiFactor
                     }
                     catch (Exception ex)
                     {
-                        Log.WriteEntry("Error during loading custom adapter presentation: " + ex.ToString(), EventLogEntryType.Error, 80002);
+                        Log.WriteEntry("Error during loading custom adapter presentation: " + ex.ToString(), EventLogEntryType.Error, 65535);
                         throw new Exception("Error during loading custom adapter presentation: " + ex.Message);
                     }
                     break;
@@ -255,7 +255,7 @@ namespace Neos.IdentityServer.MultiFactor
                     }
                     catch (Exception ex)
                     {
-                        Log.WriteEntry("Error during loading custom adapter presentation: " + ex.ToString(), EventLogEntryType.Error, 80002);
+                        Log.WriteEntry("Error during loading custom adapter presentation: " + ex.ToString(), EventLogEntryType.Error, 65535);
                         throw new Exception("Error during loading custom adapter presentation: " + ex.Message);
                     }
                     break;
@@ -744,18 +744,30 @@ namespace Neos.IdentityServer.MultiFactor
         {
             string AssemblyFulldescription = provider.Config.CustomAdapterPresentation;
             if (string.IsNullOrEmpty(AssemblyFulldescription))
+            {
+                Log.WriteEntry("Error during loading Custom Adpater Presentation : Wrong assembly description", EventLogEntryType.Error, 65535);
                 return null;
+            }
             Assembly assembly = Assembly.Load(Utilities.ParseAssembly(AssemblyFulldescription));
             if (assembly == null)
+            {
+                Log.WriteEntry("Error during loading Custom Adpater Presentation : Wrong assembly", EventLogEntryType.Error, 65535);
                 return null;
+            }
+                
             Type typetoload = assembly.GetType(Utilities.ParseType(AssemblyFulldescription));
             if (typetoload == null)
+            {
+                Log.WriteEntry("Error during loading Custom Adpater Presentation : Wrong component Type", EventLogEntryType.Error, 65535);
                 return null;
-
+            }
             if (typetoload.IsClass && !typetoload.IsAbstract && (typetoload.BaseType.IsAssignableFrom(typeof(BasePresentation)) || typetoload.BaseType.IsAssignableFrom(typeof(BaseMFAPresentation))))
                return typetoload;
             else
+            {
+                Log.WriteEntry("Error during loading Custom Adpater Presentation : Instance is NULL", EventLogEntryType.Error, 65535);
                 return null;
+            }
         }
 
         /// <summary>

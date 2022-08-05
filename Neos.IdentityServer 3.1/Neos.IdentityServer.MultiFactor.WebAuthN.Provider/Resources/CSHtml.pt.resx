@@ -165,10 +165,10 @@
   <data name="BIOERRORAUTHREPLAY" xml:space="preserve">
     <value>Erro durante o processo de autenticação ! Dados descritores de segurança já foram usados antes !</value>
   </data>
-  <data name="BIOUIMessage2" xml:space="preserve">
-    <value>Para fazer login com seu dispositivo biométrico, clique em "Conexão"</value>
-  </data>
   <data name="BIOUIMessage3" xml:space="preserve">
     <value>Para registrar seu dispositivo biométrico, clique em "Registrar dispositivo"</value>
+  </data>
+  <data name="BIOUIMessage2" xml:space="preserve">
+    <value>Para fazer login com seu dispositivo biométrico, clique em "Entrar"</value>
   </data>
 </root>

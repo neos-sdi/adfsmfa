@@ -66,6 +66,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
         public abstract bool AllowDisable { get; }
         public abstract bool AllowOverride { get; }
         public abstract bool AllowEnrollment { get; }
+        public abstract bool LockUserOnDefaultProvider { get; set; }
         public abstract ForceWizardMode ForceEnrollment { get; set; }
         public abstract string Name { get; }
         public abstract string Description { get; }
@@ -614,6 +615,11 @@ namespace Neos.IdentityServer.MultiFactor.Common
         }
 
         /// <summary>
+        /// LockUserOnDefaultProvider property implementation
+        /// </summary>
+        public override bool LockUserOnDefaultProvider { get; set; } = false;
+
+        /// <summary>
         /// ForceEnrollment property implementation
         /// </summary>
         public override ForceWizardMode ForceEnrollment
@@ -804,6 +810,11 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// </summary>
         public override bool IsAvailable(AuthenticationContext ctx)
         {
+            if (LockUserOnDefaultProvider)
+            {
+                if (ctx.PreferredMethod != this.Kind)
+                    return false;
+            }
             return true;
         }
 
@@ -812,6 +823,11 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// </summary>
         public override bool IsAvailableForUser(AuthenticationContext ctx)
         {
+            if (LockUserOnDefaultProvider)
+            {
+                if (ctx.PreferredMethod != this.Kind)
+                    return false;
+            }
             return (ctx.KeyStatus == SecretKeyStatus.Success);
         }
 
@@ -862,6 +878,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
                         PinRequired = param.PinRequired;
                         Duration = param.Duration;
                         Digits = param.Digits;
+                        LockUserOnDefaultProvider = param.LockUserOnDefaultProvider;
                         _isinitialized = true;
                         return;
                     }
@@ -1063,6 +1080,11 @@ namespace Neos.IdentityServer.MultiFactor.Common
         {
             get { return true; }
         }
+
+        /// <summary>
+        /// LockUserOnDefaultProvider property implementation
+        /// </summary>
+        public override bool LockUserOnDefaultProvider { get; set; } = false;
 
         /// <summary>
         /// ForceEnrollment property implementation
@@ -1282,6 +1304,11 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// </summary>
         public override bool IsAvailable(AuthenticationContext ctx)
         {
+            if (LockUserOnDefaultProvider)
+            {
+                if (ctx.PreferredMethod != this.Kind)
+                    return false;
+            }
             return (this._sasprovider != null);
         }
 
@@ -1291,6 +1318,11 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// </summary>
         public override bool IsAvailableForUser(AuthenticationContext ctx)
         {
+            if (LockUserOnDefaultProvider)
+            {
+                if (ctx.PreferredMethod != this.Kind)
+                    return false;
+            }
             return Utilities.ValidatePhoneNumber(ctx.PhoneNumber, true);
         }
 
@@ -1364,7 +1396,10 @@ namespace Neos.IdentityServer.MultiFactor.Common
             if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.GetInterface("IExternalOTPProvider") != null)
                 return (IExternalOTPProvider)Activator.CreateInstance(_typetoload, true); // Allow Calling internal Constructors
             else
+            {
+                Log.WriteEntry("Error during loading Legacy Exertnal adapter : Instance is NULL", EventLogEntryType.Error, 65535);
                 return null;
+            }
         }
 
         /// <summary>
@@ -1538,6 +1573,11 @@ namespace Neos.IdentityServer.MultiFactor.Common
         {
             get { return true; }
         }
+
+        /// <summary>
+        /// LockUserOnDefaultProvider property implementation
+        /// </summary>
+        public override bool LockUserOnDefaultProvider { get; set; } = false;
 
         /// <summary>
         /// ForceEnrollment property implementation
@@ -1743,6 +1783,11 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// </summary>
         public override bool IsAvailable(AuthenticationContext ctx)
         {
+            if (LockUserOnDefaultProvider)
+            {
+                if (ctx.PreferredMethod != this.Kind)
+                    return false;
+            }
             return true;
         }
 
@@ -1751,6 +1796,11 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// </summary>
         public override bool IsAvailableForUser(AuthenticationContext ctx)
         {
+            if (LockUserOnDefaultProvider)
+            {
+                if (ctx.PreferredMethod != this.Kind)
+                    return false;
+            }
             return Utilities.ValidateEmail(ctx.MailAddress, true);
         }
 
@@ -1794,6 +1844,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
                         IsRequired = param.IsRequired;
                         WizardEnabled = param.EnrollWizard;
                         WizardDisabled = param.EnrollWizardDisabled;
+                        LockUserOnDefaultProvider = param.LockUserOnDefaultProvider;
                         ForceEnrollment = param.ForceWizard;
                         PinRequired = param.PinRequired;
                         DeliveryNotifications = param.SendDeliveryNotifications;
@@ -1982,6 +2033,11 @@ namespace Neos.IdentityServer.MultiFactor.Common
         {
             get { return false; }
         }
+
+        /// <summary>
+        /// LockUserOnDefaultProvider property implementation
+        /// </summary>
+        public override bool LockUserOnDefaultProvider { get; set; } = false;
 
         /// <summary>
         /// ForceEnrollment property implementation

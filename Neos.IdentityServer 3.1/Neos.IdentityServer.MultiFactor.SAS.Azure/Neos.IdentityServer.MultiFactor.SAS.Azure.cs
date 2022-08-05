@@ -105,6 +105,11 @@ namespace Neos.IdentityServer.MultiFactor.SAS
         }
 
         /// <summary>
+        /// LockUserOnDefaultProvider property implementation
+        /// </summary>
+        public override bool LockUserOnDefaultProvider { get; set; } = false;
+
+        /// <summary>
         /// ForceEnrollment property implementation
         /// </summary>
         public override ForceWizardMode ForceEnrollment
@@ -413,7 +418,12 @@ namespace Neos.IdentityServer.MultiFactor.SAS
         public override bool IsAvailable(AuthenticationContext ctx)
         {
             try
-            { 
+            {
+                if (LockUserOnDefaultProvider)
+                {
+                    if (ctx.PreferredMethod != this.Kind)
+                        return false;
+                }
                 var meths = GetAuthenticationMethods(ctx);
                 return true;
             }
@@ -436,6 +446,11 @@ namespace Neos.IdentityServer.MultiFactor.SAS
         {
             try
             {
+                if (LockUserOnDefaultProvider)
+                {
+                    if (ctx.PreferredMethod != this.Kind)
+                        return false;
+                }
                 return GetAuthenticationMethods(ctx).Count > 0;
             }
             catch

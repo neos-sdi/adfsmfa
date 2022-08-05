@@ -668,6 +668,8 @@ namespace MFA
 
     /// <summary>
     /// PSSampleKind
+    /// <para type="synopsis">Samples Kind</para>
+    /// <para type="description">Samples Kind</para>
     /// </summary>   
     public enum PSSampleKind
     {
