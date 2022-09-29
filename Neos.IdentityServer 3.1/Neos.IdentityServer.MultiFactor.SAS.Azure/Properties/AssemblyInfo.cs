@@ -27,10 +27,10 @@ using System.Runtime.Versioning;
 [assembly: AssemblyTitle("Neos.IdentityServer.MultiFactor.SAS.Azure")]
 [assembly: AssemblyDescription("ADFS MFA Provider for Azure MFA")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Neos-Sdi")]
+[assembly: AssemblyCompany("neos-sdi")]
 [assembly: AssemblyProduct("Neos.IdentityServer.MultiFactor.SAS.Azure")]
 [assembly: AssemblyCopyright("Copyright @redhook62 © 2022")]
-[assembly: AssemblyTrademark("Neos-Sdi")]
+[assembly: AssemblyTrademark("neos-sdi")]
 [assembly: AssemblyCulture("")]
 
 
@@ -52,7 +52,7 @@ using System.Runtime.Versioning;
 // Vous pouvez spécifier toutes les valeurs ou indiquer les numéros de build et de révision par défaut 
 // en utilisant '*', comme indiqué ci-dessous :
 [assembly: AssemblyVersion("3.0.0.0")]
-[assembly: AssemblyFileVersion("3.1.2207.0")]
+[assembly: AssemblyFileVersion("3.1.2210.0")]
 [assembly: AssemblyInformationalVersion("3.0.0.0")]
 [assembly: NeutralResourcesLanguageAttribute("en")]
 

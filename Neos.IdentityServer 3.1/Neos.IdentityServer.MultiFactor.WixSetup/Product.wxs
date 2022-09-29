@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension">
-  <Product Id="a23dd485-5365-4d82-8309-103494000001" Name="MFA Provider for ADFS 2022/2019/2016/2012 R2" Language="1033" Version="3.1.2207.0" Manufacturer="Neos-sdi" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" >
+  <Product Id="a23dd485-5365-4d82-8309-103494000001" Name="MFA Provider for ADFS 2022/2019/2016/2012 R2" Language="1033" Version="3.1.2210.0" Manufacturer="neos-sdi" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" >
 
     <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" InstallPrivileges="elevated" Platform="x64" Description="Multi-Factor Authentication for ADFS 2022/2019/2016/2012R2" />
 
@@ -673,13 +673,13 @@
       <Component Id="GACDeployment60E" Guid="E7173CAB-E43F-4A07-1962-01800000660E" Win64="yes" Directory="LOCALEUK" DiskId="1" >
         <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.WebAuthN.Provider.uk.resources.dll"  Name="Neos.IdentityServer.MultiFactor.WebAuthN.Provider.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.WebAuthN.Provider.TargetDir)uk\Neos.IdentityServer.MultiFactor.WebAuthN.Provider.resources.dll" Vital="no" />
       </Component>
-
       <Component Id="GACDeployment661" Guid="E7173CAB-E43F-4A07-1962-018000006661" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
         <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.WebAuthN.Core.dll"  Name="Neos.IdentityServer.MultiFactor.WebAuthN.Core.dll" Source="$(var.Neos.IdentityServer.MultiFactor.WebAuthN.Core.TargetPath)" Vital="yes"/>
       </Component>
       <Component Id="GACDeployment662" Guid="E7173CAB-E43F-4A07-1962-018000006662" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
         <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.WebAuthN.Common.dll"  Name="Neos.IdentityServer.MultiFactor.WebAuthN.Common.dll" Source="$(var.Neos.IdentityServer.MultiFactor.WebAuthN.Common.TargetPath)" Vital="yes"/>
-      </Component>      
+      </Component>
+      
       <Component Id="GACDeployment670" Guid="E7173CAB-E43F-4A07-1962-018000006670" Win64="yes" Directory="AssemblyFolder" DiskId="1" Permanent="yes">
         <File Assembly=".net" KeyPath="yes" Id="Newtonsoft.Json.dll"  Name="Newtonsoft.Json.dll" Source="$(var.Neos.IdentityServer.MultiFactor.WebAuthN.Core.TargetDir)Newtonsoft.Json.dll" />
       </Component>     
@@ -694,7 +694,38 @@
       </Component>
       <Component Id="GACDeployment674" Guid="E7173CAB-E43F-4A07-1962-018000006674" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
         <File Assembly=".net" KeyPath="yes" Id="System.IdentityModel.Tokens.Jwt.dll"  Name="System.IdentityModel.Tokens.Jwt.dll" Source="$(var.Neos.IdentityServer.MultiFactor.WebAuthN.Core.TargetDir)System.IdentityModel.Tokens.Jwt.dll" />
-      </Component>     
+      </Component>
+      <Component Id="GACDeployment675" Guid="E7173CAB-E43F-4A07-1962-018000006675" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="Microsoft.IdentityModel.Abstractions.dll"  Name="Microsoft.IdentityModel.Abstractions.dll" Source="$(var.Neos.IdentityServer.MultiFactor.WebAuthN.Core.TargetDir)Microsoft.IdentityModel.Abstractions.dll" />
+      </Component>
+
+      <Component Id="GACDeployment676" Guid="E7173CAB-E43F-4A07-1962-018000006676" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="Microsoft.Bcl.AsyncInterfaces.dll"  Name="Microsoft.Bcl.AsyncInterfaces.dll" Source="$(var.Neos.IdentityServer.MultiFactor.WebAuthN.Core.TargetDir)Microsoft.Bcl.AsyncInterfaces.dll" />
+      </Component>
+      <Component Id="GACDeployment677" Guid="E7173CAB-E43F-4A07-1962-018000006677" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="System.Buffers.dll"  Name="System.Buffers.dll" Source="$(var.Neos.IdentityServer.MultiFactor.WebAuthN.Core.TargetDir)System.Buffers.dll" />
+      </Component>
+      <Component Id="GACDeployment678" Guid="E7173CAB-E43F-4A07-1962-018000006678" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="System.Memory.dll"  Name="System.Memory.dll" Source="$(var.Neos.IdentityServer.MultiFactor.WebAuthN.Core.TargetDir)System.Memory.dll" />
+      </Component>
+      <Component Id="GACDeployment679" Guid="E7173CAB-E43F-4A07-1962-018000006679" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="System.Numerics.Vectors.dll"  Name="System.Numerics.Vectors.dll" Source="$(var.Neos.IdentityServer.MultiFactor.WebAuthN.Core.TargetDir)System.Numerics.Vectors.dll" />
+      </Component>
+      <Component Id="GACDeployment680" Guid="E7173CAB-E43F-4A07-1962-018000006680" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="System.Runtime.CompilerServices.Unsafe.dll"  Name="System.Runtime.CompilerServices.Unsafe.dll" Source="$(var.Neos.IdentityServer.MultiFactor.WebAuthN.Core.TargetDir)System.Runtime.CompilerServices.Unsafe.dll" />
+      </Component>
+      <Component Id="GACDeployment681" Guid="E7173CAB-E43F-4A07-1962-018000006681" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="System.Text.Encodings.Web.dll"  Name="System.Text.Encodings.Web.dll" Source="$(var.Neos.IdentityServer.MultiFactor.WebAuthN.Core.TargetDir)System.Text.Encodings.Web.dll" />
+      </Component>
+      <Component Id="GACDeployment682" Guid="E7173CAB-E43F-4A07-1962-018000006682" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="System.Text.Json.dll"  Name="System.Text.Json.dll" Source="$(var.Neos.IdentityServer.MultiFactor.WebAuthN.Core.TargetDir)System.Text.Json.dll" />
+      </Component>
+      <Component Id="GACDeployment683" Guid="E7173CAB-E43F-4A07-1962-018000006683" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="System.Threading.Tasks.Extensions.dll"  Name="System.Threading.Tasks.Extensions.dll" Source="$(var.Neos.IdentityServer.MultiFactor.WebAuthN.Core.TargetDir)System.Threading.Tasks.Extensions.dll" />
+      </Component>
+      <Component Id="GACDeployment684" Guid="E7173CAB-E43F-4A07-1962-018000006684" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="System.ValueTuple.dll"  Name="System.ValueTuple.dll" Source="$(var.Neos.IdentityServer.MultiFactor.WebAuthN.Core.TargetDir)System.ValueTuple.dll" />
+      </Component>
     </ComponentGroup>
   </Fragment>
       
@@ -826,7 +857,7 @@
   <Fragment>
     <ComponentGroup Id="Neos.IdentityServer.ShortCuts">
       <Component Id="GACDeployment80" Guid="E7173CAB-E43F-4A07-0220-018000006180" Directory="INSTALLFOLDER" DiskId="1" Win64="yes">
-        <Shortcut Id="DesktopShortcut" Directory="DesktopFolder" Name="MFA" Description="Neos-SDI MFA Extensions for ADFS (2012R2/2016/2019/2022)" Show="maximized"
+        <Shortcut Id="DesktopShortcut" Directory="DesktopFolder" Name="MFA" Description="neos-sdi MFA Extensions for ADFS (2012R2/2016/2019/2022)" Show="maximized"
           WorkingDirectory="INSTALLFOLDER"
           Target="[INSTALLFOLDER]MFA.msc" >
           <Icon Id="Microsoft_201.ico" SourceFile="$(var.Neos.IdentityServer.Console.NativeResources.ProjectDir)Microsoft_201.ico" />

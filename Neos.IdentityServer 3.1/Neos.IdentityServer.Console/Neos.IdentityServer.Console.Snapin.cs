@@ -37,7 +37,7 @@ namespace Neos.IdentityServer.Console
     /// <summary>
     /// Provides the main entry point for the creation of a snap-in. 
     /// </summary>
-    [SnapInSettings("{9627F1F3-A6D2-4cf8-90A2-10F85A7A4EE7}", DisplayName = "MFA", Description = "You can use ADFS MFA to define and configure secure access to ADFS with second authentication factor like email, sms or TOTP application (Google Authenticator, Microsoft Authenticator).", Vendor="Neos-Sdi")]
+    [SnapInSettings("{9627F1F3-A6D2-4cf8-90A2-10F85A7A4EE7}", DisplayName = "MFA", Description = "You can use ADFS MFA to define and configure secure access to ADFS with second authentication factor like email, sms or TOTP application (Google Authenticator, Microsoft Authenticator).", Vendor="neos-sdi")]
     [SnapInAbout("Neos.IdentityServer.Console.NativeResources.dll", IconId = 100, VersionId=101, DescriptionId=102, DisplayNameId=103)]
     public class ADFSSnapIn : SnapIn
     {

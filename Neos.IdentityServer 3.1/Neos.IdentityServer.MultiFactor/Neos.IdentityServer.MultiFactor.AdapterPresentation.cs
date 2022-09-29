@@ -1191,7 +1191,6 @@ namespace Neos.IdentityServer.MultiFactor
         }
         #endregion
 
-
         #region Locking
         /// <summary>
         /// GetFormPreRenderHtmlLocking implementation

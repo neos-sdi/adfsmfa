@@ -662,6 +662,27 @@ namespace Neos.IdentityServer.MultiFactor
             }
         }
 
+        /// <summary>
+        /// SuspendDone property implementation
+        /// </summary>
+        [DataMember(Name = "SuspendDone")]
+        public bool SuspendDone
+        {
+            get
+            {
+                if (_context.Data.ContainsKey("_authctxsuspendone") && _context.Data["_authctxsuspendone"] != null)
+                    return (bool)_context.Data["_authctxsuspendone"];
+                else
+                    return false;
+            }
+            set
+            {
+                if (_context.Data.ContainsKey("_authctxsuspendone"))
+                    _context.Data["_authctxsuspendone"] = value;
+                else
+                    _context.Data.Add("_authctxsuspendone", value);
+            }
+        }
 
         /// <summary>
         /// ExtraInfos property implementation

@@ -575,12 +575,7 @@ namespace Neos.IdentityServer.MultiFactor
 
                             bool options = proofData.Properties.TryGetValue("mfaoptions", out object opt);
                             usercontext.ShowOptions = options;
-                            if (options)
-                            {
-                                usercontext.UIMode = ProviderPageMode.Bypass;
-                                return new AdapterPresentation(this, context);
-                            }
-                            else if ((usercontext.FirstChoiceMethod != PreferredMethod.Choose) && (usercontext.FirstChoiceMethod != PreferredMethod.None))
+                            if ((usercontext.FirstChoiceMethod != PreferredMethod.Choose) && (usercontext.FirstChoiceMethod != PreferredMethod.None))
                             {
                                 IExternalProvider prov = RuntimeAuthProvider.GetProvider(usercontext.FirstChoiceMethod);
                                 if ((prov != null) && (prov.ForceEnrollment != ForceWizardMode.Disabled))
@@ -609,6 +604,11 @@ namespace Neos.IdentityServer.MultiFactor
                                         return new AdapterPresentation(this, context);
                                     }
                                 }
+                            }
+                            else
+                            {
+                               usercontext.UIMode = ProviderPageMode.Bypass;
+                               return new AdapterPresentation(this, context);
                             }
                         }
                         else
@@ -786,6 +786,7 @@ namespace Neos.IdentityServer.MultiFactor
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
             IAdapterPresentation result = null;
             usercontext.KeyChanged = false;
+            usercontext.SuspendDone = true;
             try
             {
                 int isprovider = Convert.ToInt32(proofData.Properties["isprovider"].ToString());
@@ -938,6 +939,7 @@ namespace Neos.IdentityServer.MultiFactor
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
             IAdapterPresentation result = null;
             usercontext.KeyChanged = false;
+            usercontext.SuspendDone = true;
             try
             {
                 int isprovider = Convert.ToInt32(proofData.Properties["isprovider"].ToString());
@@ -1559,7 +1561,7 @@ namespace Neos.IdentityServer.MultiFactor
                         }
                     }
                 }
-                else if ((this.Config.AllowPauseForDays > 0) && (!usercontext.DelayForget))
+                else if ((this.Config.AllowPauseForDays > 0) && (!usercontext.DelayForget) && (!usercontext.SuspendDone))
                 {
                     usercontext.ShowOptions = false;
                     usercontext.UIMode = ProviderPageMode.PauseDelay;
@@ -1945,7 +1947,10 @@ namespace Neos.IdentityServer.MultiFactor
             try
             {
                 int btnclicked = Convert.ToInt32(proofData.Properties["selected"].ToString());
-                bool remember = proofData.Properties.TryGetValue("remember", out object rem);
+                if (proofData.Properties.TryGetValue("remember", out object rem))
+                    if ((rem != null) && (rem.ToString().ToLower().Equals("on")))
+                        usercontext.PreferredMethod = PreferredMethod.Code;
+
                 usercontext.KeyChanged = false;
 
                 IExternalProvider prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Code);
@@ -1973,8 +1978,6 @@ namespace Neos.IdentityServer.MultiFactor
                     case 2: // Next Button
                         usercontext.WizPageID = 1;
                         usercontext.KeyStatus = SecretKeyStatus.Success;
-                        if (remember)
-                            usercontext.PreferredMethod = PreferredMethod.Code;
                         SetProviderOverrideOption(usercontext, context, proofData, PreferredMethod.Code);
                         ValidateProviderManagementUrl(usercontext, context, proofData, PreferredMethod.Code);
                         if (!usercontext.NotificationSent)
@@ -2082,7 +2085,9 @@ namespace Neos.IdentityServer.MultiFactor
             try
             {                               
                 int btnclicked = Convert.ToInt32(proofData.Properties["selected"].ToString());
-                bool remember = proofData.Properties.TryGetValue("remember", out object rem);
+                if (proofData.Properties.TryGetValue("remember", out object rem))
+                    if ((rem != null) && (rem.ToString().ToLower().Equals("on")))
+                        usercontext.PreferredMethod = PreferredMethod.Email;
                 usercontext.KeyChanged = false;
 
                 IExternalProvider prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Email);
@@ -2113,8 +2118,6 @@ namespace Neos.IdentityServer.MultiFactor
                         {
                             usercontext.WizPageID = 1; // Goto Donut
                             ValidateUserEmail(usercontext, context, proofData, Resources, true);
-                            if (remember)
-                                usercontext.PreferredMethod = PreferredMethod.Email;
                             SetProviderOverrideOption(usercontext, context, proofData, PreferredMethod.Email);
                             ValidateProviderManagementUrl(usercontext, context, proofData, PreferredMethod.Email);
                             if (!usercontext.NotificationSent)
@@ -2279,7 +2282,9 @@ namespace Neos.IdentityServer.MultiFactor
             try
             {
                 int btnclicked = Convert.ToInt32(proofData.Properties["selected"].ToString());
-                bool remember = proofData.Properties.TryGetValue("remember", out object rem);
+                if (proofData.Properties.TryGetValue("remember", out object rem))
+                    if ((rem != null) && (rem.ToString().ToLower().Equals("on")))
+                        usercontext.PreferredMethod = PreferredMethod.External;
                 usercontext.KeyChanged = false;
                 IExternalProvider prov = RuntimeAuthProvider.GetProvider(PreferredMethod.External);
                 prov.GetAuthenticationContext(usercontext);
@@ -2310,8 +2315,6 @@ namespace Neos.IdentityServer.MultiFactor
                         {
                             usercontext.WizPageID = 1; // Goto Donut
                             ValidateUserPhone(usercontext, context, proofData, Resources, true);
-                            if (remember)
-                                usercontext.PreferredMethod = PreferredMethod.External;
                             SetProviderOverrideOption(usercontext, context, proofData, PreferredMethod.External);
                             ValidateProviderManagementUrl(usercontext, context, proofData, PreferredMethod.External);
                             if (!usercontext.NotificationSent) 
@@ -2475,7 +2478,9 @@ namespace Neos.IdentityServer.MultiFactor
             try
             {
                 int btnclicked = Convert.ToInt32(proofData.Properties["selected"].ToString());
-                bool remember = proofData.Properties.TryGetValue("remember", out object rem);
+                if (proofData.Properties.TryGetValue("remember", out object rem))
+                    if ((rem!=null) && (rem.ToString().ToLower().Equals("on")))
+                        usercontext.PreferredMethod = PreferredMethod.Biometrics;
                 usercontext.KeyChanged = false;
 
                 IExternalProvider prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Biometrics);
@@ -2509,8 +2514,6 @@ namespace Neos.IdentityServer.MultiFactor
                         try
                         {
                             usercontext.WizPageID = 1; // Goto Donut
-                            if (remember)
-                                usercontext.PreferredMethod = PreferredMethod.Biometrics;
                             if (proofData.Properties.ContainsKey("autenhticatorname"))
                                 usercontext.NickName = proofData.Properties["autenhticatorname"].ToString();
                             else
