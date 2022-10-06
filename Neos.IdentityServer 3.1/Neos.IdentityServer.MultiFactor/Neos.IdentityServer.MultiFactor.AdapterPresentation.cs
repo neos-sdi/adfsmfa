@@ -358,7 +358,7 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "<input id=\"gotoregistration\" type=\"submit\" class=\"submit\" name=\"gotoregistration\" value=\"" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMGoToRegistration") + "\" onclick=\"fnbtnclicked(2)\"/>";
                     result += "</td>";
                     result += "<td style=\"width: 15px\" />";
-                    if (!Provider.Config.UserFeatures.IsRegistrationMixed())
+                    if (!Provider.Config.UserFeatures.IsRegistrationMixed() && !Provider.Config.UserFeatures.IsMFARequired())
                     {
                         result += "<td>";
                         result += "<input id=\"continueButton\" type=\"submit\" class=\"submit\" name=\"Continue\" value=\"" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMConnexion") + "\" onclick=\"fnbtnclicked(1)\" />";
@@ -547,20 +547,14 @@ namespace Neos.IdentityServer.MultiFactor
                         result += "<br/>";
                     }
                     result += "<table><tr>";
-                    if (Provider.Config.UserFeatures.IsManaged())
-                    {
-                        result += "<td>";
-                        result += "<input id=\"gotoinscription\" type=\"submit\" class=\"submit\" name=\"gotoinscription\" value=\"" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMGotoInscription") + "\" onclick=\"fnbtnclicked(2)\"/>";
-                        result += "</td>";
-                        result += "<td style=\"width: 15px\" />";
+                    result += "<td>";
+                    result += "<input id=\"gotoinscription\" type=\"submit\" class=\"submit\" name=\"gotoinscription\" value=\"" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMGotoInscription") + "\" onclick=\"fnbtnclicked(2)\"/>";
+                    result += "</td>";
+                    result += "<td style=\"width: 15px\" />";
+                    if (!Provider.Config.UserFeatures.IsManaged() && !Provider.Config.UserFeatures.IsMFARequired())
+                    { 
                         result += "<td>";
                         result += "<input id=\"continueButton\" type=\"submit\" class=\"submit\" name=\"continueButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMConnexion") + "\" onclick=\"fnbtnclicked(1)\" />";
-                        result += "</td>";
-                    }
-                    else
-                    {
-                        result += "<td>";
-                        result += "<input id=\"gotoinscription\" type=\"submit\" class=\"submit\" name=\"gotoinscription\" value=\"" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMGotoInscription") + "\" onclick=\"fnbtnclicked(2)\"/>";
                         result += "</td>";
                     }
                     result += "</tr></table>";

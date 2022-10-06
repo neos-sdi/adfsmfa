@@ -750,6 +750,20 @@ namespace Neos.IdentityServer.Console.Controls
                     chkProviderEnrollDisabled.Enabled = false;
                     chkProviderRequired.Checked = false;
                     chkProviderRequired.Enabled = false;
+                    chkProviderPinNone.Checked = false;
+                    chkProviderPinNone.Enabled = false;
+                    chkProviderPinAndroidKey.Checked = false;
+                    chkProviderPinAndroidKey.Enabled = false;
+                    chkProviderPinAndroidSafetyNet.Checked = false;
+                    chkProviderPinAndroidSafetyNet.Enabled = false;
+                    chkProviderPinFido2u2f.Checked = false;
+                    chkProviderPinFido2u2f.Enabled = false;
+                    chkProviderPinPacked.Checked = false;
+                    chkProviderPinPacked.Enabled = false;
+                    chkProviderPinTPM.Checked = false;
+                    chkProviderPinTPM.Enabled = false;
+                    chkProviderPinApple.Checked = false;
+                    chkProviderPinApple.Enabled = false;
                     chkProviderPin.Checked = false;
                     chkProviderPin.Enabled = false;
                     chkLockUserToProvider.Checked = false;
@@ -806,6 +820,7 @@ namespace Neos.IdentityServer.Console.Controls
                 chkProviderEnrollDisabled.Enabled = (_provider.Enabled && !_provider.IsRequired);
 
                 chkLockUserToProvider.Checked = _provider.LockUserOnDefaultProvider;
+                chkLockUserToProvider.Enabled = _provider.Enabled;
 
                 if (_kind == PreferredMethod.Biometrics)
                 {
@@ -838,6 +853,20 @@ namespace Neos.IdentityServer.Console.Controls
                     chkProviderEnroll.Enabled = false;
                     chkProviderRequired.Checked = false;
                     chkProviderRequired.Enabled = false;
+                    chkProviderPinNone.Checked = false;
+                    chkProviderPinNone.Enabled = false;
+                    chkProviderPinAndroidKey.Checked = false;
+                    chkProviderPinAndroidKey.Enabled = false;
+                    chkProviderPinAndroidSafetyNet.Checked = false;
+                    chkProviderPinAndroidSafetyNet.Enabled = false;
+                    chkProviderPinFido2u2f.Checked = false;
+                    chkProviderPinFido2u2f.Enabled = false;
+                    chkProviderPinPacked.Checked = false;
+                    chkProviderPinPacked.Enabled = false;
+                    chkProviderPinTPM.Checked = false;
+                    chkProviderPinTPM.Enabled = false;
+                    chkProviderPinApple.Checked = false;
+                    chkProviderPinApple.Enabled = false;
                     chkProviderPin.Checked = false;
                     chkProviderPin.Enabled = false;
                     chkLockUserToProvider.Checked = false;
@@ -1244,29 +1273,44 @@ namespace Neos.IdentityServer.Console.Controls
                         chkProviderEnroll.Enabled = Config.OTPProvider.Enabled;
                         chkProviderEnrollDisabled.Enabled = (Config.OTPProvider.Enabled && !Config.OTPProvider.IsRequired);
                         chkProviderPin.Enabled = Config.OTPProvider.Enabled;
+                        chkLockUserToProvider.Enabled = Config.OTPProvider.Enabled;
                         break;
                     case PreferredMethod.Email:
                         Config.MailProvider.Enabled = chkProviderEnabled.Checked;
                         chkProviderEnroll.Enabled = Config.MailProvider.Enabled;
                         chkProviderEnrollDisabled.Enabled = (Config.MailProvider.Enabled && !Config.MailProvider.IsRequired);
                         chkProviderPin.Enabled = Config.MailProvider.Enabled;
+                        chkLockUserToProvider.Enabled = Config.MailProvider.Enabled;
                         break;
                     case PreferredMethod.External:
                         Config.ExternalProvider.Enabled = chkProviderEnabled.Checked;
                         chkProviderEnroll.Enabled = Config.ExternalProvider.Enabled;
                         chkProviderEnrollDisabled.Enabled = (Config.ExternalProvider.Enabled && !Config.ExternalProvider.IsRequired);
                         chkProviderPin.Enabled = Config.ExternalProvider.Enabled;
+                        chkLockUserToProvider.Enabled = Config.ExternalProvider.Enabled;
                         break;
                     case PreferredMethod.Azure:
                         Config.AzureProvider.Enabled = chkProviderEnabled.Checked;
                         chkProviderEnroll.Enabled = Config.AzureProvider.Enabled;
                         chkProviderEnrollDisabled.Enabled = (Config.AzureProvider.Enabled && !Config.AzureProvider.IsRequired);
                         chkProviderPin.Enabled = Config.AzureProvider.Enabled;
+                        chkLockUserToProvider.Enabled = Config.AzureProvider.Enabled;
                         break;
                     case PreferredMethod.Biometrics:
                         Config.WebAuthNProvider.Enabled = chkProviderEnabled.Checked;
                         chkProviderEnroll.Enabled = Config.WebAuthNProvider.Enabled;
                         chkProviderEnrollDisabled.Enabled = (Config.WebAuthNProvider.Enabled && !Config.WebAuthNProvider.IsRequired);
+                        chkProviderPin.Enabled = Config.WebAuthNProvider.Enabled;
+                        chkLockUserToProvider.Enabled = Config.WebAuthNProvider.Enabled;
+
+                        chkProviderPinNone.Enabled = Config.WebAuthNProvider.Enabled;
+                        chkProviderPinAndroidKey.Enabled = Config.WebAuthNProvider.Enabled;
+                        chkProviderPinAndroidSafetyNet.Enabled = Config.WebAuthNProvider.Enabled;
+                        chkProviderPinFido2u2f.Enabled = Config.WebAuthNProvider.Enabled;
+                        chkProviderPinPacked.Enabled = Config.WebAuthNProvider.Enabled;
+                        chkProviderPinTPM.Enabled = Config.WebAuthNProvider.Enabled;
+                        chkProviderPinApple.Enabled = Config.WebAuthNProvider.Enabled;
+                        chkProviderPin.Checked = Config.WebAuthNProvider.PinRequired;
                         chkProviderPin.Enabled = Config.WebAuthNProvider.Enabled;
                         break;
                 }
