@@ -576,6 +576,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = res.CTRLPROVREQUIRED,
                     Checked = _provider.IsRequired,
+                    Enabled = _provider.Enabled,
                     Left = 510,
                     Top = 30,
                     Width = 300
@@ -750,20 +751,6 @@ namespace Neos.IdentityServer.Console.Controls
                     chkProviderEnrollDisabled.Enabled = false;
                     chkProviderRequired.Checked = false;
                     chkProviderRequired.Enabled = false;
-                    chkProviderPinNone.Checked = false;
-                    chkProviderPinNone.Enabled = false;
-                    chkProviderPinAndroidKey.Checked = false;
-                    chkProviderPinAndroidKey.Enabled = false;
-                    chkProviderPinAndroidSafetyNet.Checked = false;
-                    chkProviderPinAndroidSafetyNet.Enabled = false;
-                    chkProviderPinFido2u2f.Checked = false;
-                    chkProviderPinFido2u2f.Enabled = false;
-                    chkProviderPinPacked.Checked = false;
-                    chkProviderPinPacked.Enabled = false;
-                    chkProviderPinTPM.Checked = false;
-                    chkProviderPinTPM.Enabled = false;
-                    chkProviderPinApple.Checked = false;
-                    chkProviderPinApple.Enabled = false;
                     chkProviderPin.Checked = false;
                     chkProviderPin.Enabled = false;
                     chkLockUserToProvider.Checked = false;
@@ -805,6 +792,7 @@ namespace Neos.IdentityServer.Console.Controls
                 lblProviderDesc.Text = _provider.Description;
                 chkProviderEnabled.Checked = _provider.Enabled;
                 chkProviderEnabled.Enabled = (_provider.AllowDisable);
+                chkProviderRequired.Enabled = _provider.Enabled;
                 chkProviderRequired.Checked = _provider.IsRequired;
 
                 if (_provider.AllowEnrollment)
@@ -853,20 +841,6 @@ namespace Neos.IdentityServer.Console.Controls
                     chkProviderEnroll.Enabled = false;
                     chkProviderRequired.Checked = false;
                     chkProviderRequired.Enabled = false;
-                    chkProviderPinNone.Checked = false;
-                    chkProviderPinNone.Enabled = false;
-                    chkProviderPinAndroidKey.Checked = false;
-                    chkProviderPinAndroidKey.Enabled = false;
-                    chkProviderPinAndroidSafetyNet.Checked = false;
-                    chkProviderPinAndroidSafetyNet.Enabled = false;
-                    chkProviderPinFido2u2f.Checked = false;
-                    chkProviderPinFido2u2f.Enabled = false;
-                    chkProviderPinPacked.Checked = false;
-                    chkProviderPinPacked.Enabled = false;
-                    chkProviderPinTPM.Checked = false;
-                    chkProviderPinTPM.Enabled = false;
-                    chkProviderPinApple.Checked = false;
-                    chkProviderPinApple.Enabled = false;
                     chkProviderPin.Checked = false;
                     chkProviderPin.Enabled = false;
                     chkLockUserToProvider.Checked = false;
@@ -1270,6 +1244,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     case PreferredMethod.Code:
                         Config.OTPProvider.Enabled = chkProviderEnabled.Checked;
+                        chkProviderRequired.Enabled = Config.OTPProvider.Enabled;
                         chkProviderEnroll.Enabled = Config.OTPProvider.Enabled;
                         chkProviderEnrollDisabled.Enabled = (Config.OTPProvider.Enabled && !Config.OTPProvider.IsRequired);
                         chkProviderPin.Enabled = Config.OTPProvider.Enabled;
@@ -1277,6 +1252,7 @@ namespace Neos.IdentityServer.Console.Controls
                         break;
                     case PreferredMethod.Email:
                         Config.MailProvider.Enabled = chkProviderEnabled.Checked;
+                        chkProviderRequired.Enabled = Config.MailProvider.Enabled;
                         chkProviderEnroll.Enabled = Config.MailProvider.Enabled;
                         chkProviderEnrollDisabled.Enabled = (Config.MailProvider.Enabled && !Config.MailProvider.IsRequired);
                         chkProviderPin.Enabled = Config.MailProvider.Enabled;
@@ -1284,6 +1260,7 @@ namespace Neos.IdentityServer.Console.Controls
                         break;
                     case PreferredMethod.External:
                         Config.ExternalProvider.Enabled = chkProviderEnabled.Checked;
+                        chkProviderRequired.Enabled = Config.ExternalProvider.Enabled;
                         chkProviderEnroll.Enabled = Config.ExternalProvider.Enabled;
                         chkProviderEnrollDisabled.Enabled = (Config.ExternalProvider.Enabled && !Config.ExternalProvider.IsRequired);
                         chkProviderPin.Enabled = Config.ExternalProvider.Enabled;
@@ -1291,6 +1268,7 @@ namespace Neos.IdentityServer.Console.Controls
                         break;
                     case PreferredMethod.Azure:
                         Config.AzureProvider.Enabled = chkProviderEnabled.Checked;
+                        chkProviderRequired.Enabled = Config.AzureProvider.Enabled;
                         chkProviderEnroll.Enabled = Config.AzureProvider.Enabled;
                         chkProviderEnrollDisabled.Enabled = (Config.AzureProvider.Enabled && !Config.AzureProvider.IsRequired);
                         chkProviderPin.Enabled = Config.AzureProvider.Enabled;
@@ -1298,6 +1276,7 @@ namespace Neos.IdentityServer.Console.Controls
                         break;
                     case PreferredMethod.Biometrics:
                         Config.WebAuthNProvider.Enabled = chkProviderEnabled.Checked;
+                        chkProviderRequired.Enabled = Config.WebAuthNProvider.Enabled;
                         chkProviderEnroll.Enabled = Config.WebAuthNProvider.Enabled;
                         chkProviderEnrollDisabled.Enabled = (Config.WebAuthNProvider.Enabled && !Config.WebAuthNProvider.IsRequired);
                         chkProviderPin.Enabled = Config.WebAuthNProvider.Enabled;
