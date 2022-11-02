@@ -20,7 +20,7 @@ This extension works with Active Directory or an SQL Server Database for storing
 ## Downloads
 - <https://github.com/neos-sdi/adfsmfa/releases>
 
-- <https://github.com/neos-sdi/adfsmfa/releases/download/3.1/adfsmfa.3.1.2210.1.msi>
+- <https://github.com/neos-sdi/adfsmfa/releases/download/3.1/adfsmfa.3.1.2211.0.msi>
 
 ## Building Solution
 
@@ -33,7 +33,7 @@ ___
 ## Features
 * Localized UI French/English/Spanish/Italian/German/Dutch/Portuguese/Polish/Swedish/Romanian/Russian/Danish/Japanese/Quebec/Ukrainian
 * TOTP, Email, Phone, Biometric, Azure Providers for MFA
-* Run with ADFS 2012 R2, 2016 and 2019
+* Run with ADFS 2012 R2, 2016, 2019 and 2022
 * Secret Keys length (Guid, 128, 256, 384 & 512 bytes) RNG generator
 * Secret Keys RSA asymmetric encryption length (2048 bytes) RSA
 * Secret Keys AES symmetric encryption length (256 bytes) AES256, ECDH_P256
@@ -49,7 +49,7 @@ ___
 * Enable self-registration with QR code (George Mamaladze and his team <https://qrcodenet.codeplex.com>)
 * Enable custom change password.
 * Can work with ADDS multi-forests with trust relationships
-* Can work with LDAP 3.0 Providers (ADFS 2016/2019) when using SQL Storage mode
+* Can work with LDAP 3.0 Providers (ADFS 2016/2019/2022) when using SQL Storage mode
 * Full sample for Azure MFA (additional configuration tasks and costs implied)
 * Developers can easily extend this component for other verification modes (Azure MFA, RSA,…) with the IExternalProvider, ISecretKeyManager interfaces
 * Developers can easily extend this component for other storages modes (AD & SQL by default)
