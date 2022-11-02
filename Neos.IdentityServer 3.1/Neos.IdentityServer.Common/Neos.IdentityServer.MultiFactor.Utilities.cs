@@ -1786,10 +1786,13 @@ namespace Neos.IdentityServer.MultiFactor
         internal static bool IsUserPasswordExpired(MFAConfig cfg, AuthenticationContext usercontext)
         {
             try
-            { 
+            {
                 PasswordPolicyResults result = PasswordPolicyManager.GetPasswordPolicyForUser(cfg, usercontext);
                 if (result == null)
+                {
+                    usercontext.PasswordFeatures = (byte)UserPasswordFeatures.PasswordDontCare;
                     return false;
+                }
                 usercontext.PasswordFeatures = (byte)result.Features;
                 usercontext.PasswordMaxAge = result.MaxAge;
                 usercontext.PasswordMinAge = result.MinAge;
@@ -1820,6 +1823,8 @@ namespace Neos.IdentityServer.MultiFactor
         {
             try
             {
+                if (((UserPasswordFeatures)usercontext.PasswordFeatures).Equals(UserPasswordFeatures.PasswordDontCare))
+                    return true;
                 if (((UserPasswordFeatures)usercontext.PasswordFeatures).Equals(UserPasswordFeatures.PasswordNone))
                     return false;
                 if (((UserPasswordFeatures)usercontext.PasswordFeatures).HasFlag(UserPasswordFeatures.PasswordCanBeChanged))

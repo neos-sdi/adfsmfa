@@ -1402,7 +1402,6 @@ namespace Neos.IdentityServer.MultiFactor.Data
                             WebAuthNPublicKeySerialization ser = new WebAuthNPublicKeySerialization(ADHost);
                             foreach (string s in xcoll)
                             {
-                                // WebAuthNPublicKeySerialization ser = new WebAuthNPublicKeySerialization(ADHost);
                                 MFAUserCredential usr = ser.DeserializeCredentials(s, user.Name);
                                 if (HexaEncoding.GetHexStringFromByteArray(usr.Descriptor.Id).Equals(credentialid))
                                 {

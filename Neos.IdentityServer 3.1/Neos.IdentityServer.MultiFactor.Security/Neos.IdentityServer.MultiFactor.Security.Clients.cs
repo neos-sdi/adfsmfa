@@ -564,6 +564,31 @@ namespace Neos.IdentityServer.MultiFactor.Data
         }
 
         /// <summary>
+        /// CreateSelfSignedCertificate method implementation
+        /// </summary>
+        public static bool CreateSelfSignedCertificate(string subjectName, string dnsName, CertificatesKind kind, int years, string path, string pwd = "")
+        {
+            WebAdminClient manager = new WebAdminClient();
+            manager.Initialize();
+            try
+            {
+                IWebAdminServices client = manager.Open();
+                try
+                {
+                    return client.CreateSelfSignedCertificate(subjectName, dnsName, kind, years, path, pwd);
+                }
+                finally
+                {
+                    manager.Close(client);
+                }
+            }
+            finally
+            {
+                manager.UnInitialize();
+            }
+        }
+
+        /// <summary>
         /// CreateRSACertificate method implementation
         /// </summary>
         public static string CreateRSACertificate(MFAConfig config, string subject, int years)
@@ -616,7 +641,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// CreateADFSCertificate method implementation
         /// </summary>
-        public static bool CreateADFSCertificate(MFAConfig config, string subject, bool issigning, int years)
+        public static bool CreateADFSCertificate(MFAConfig config, string subject, ADFSCertificatesKind kind, int years)
         {
             WebAdminClient manager = new WebAdminClient();
             manager.Initialize();
@@ -625,7 +650,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 IWebAdminServices client = manager.Open();
                 try
                 {
-                    return client.CreateADFSCertificate(GetServers(config), subject, issigning, years);
+                    return client.CreateADFSCertificate(GetServers(config), subject, kind, years);
                 }
                 finally
                 {

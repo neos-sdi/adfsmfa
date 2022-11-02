@@ -6750,6 +6750,102 @@ namespace MFA
     }
     #endregion
 
+    #region Create-MFASelfSignedCertificate
+    /// <summary>
+    /// <para type="synopsis">Create a Self Signed Certificate (PFX).</para>
+    /// <para type="description">Create a Self Signed Certificate (PFX).</para>
+    /// </summary>
+    /// <example>
+    ///   <para>Create-MFASelfSignedCertificate -Subject "myapp decrypt" -Kind Decrypting -Duration 5 -PFXFileName "c:\temp\myapp-decrypt.pfx"</para>
+    ///   <para>Create a new certificate for Users.</para>
+    /// </example>
+    [Cmdlet("Create", "MFASelfSignedCertificate", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    [AdministratorsRightsRequired, NotRemotable]
+    public sealed class InstallMFASelfSignedCertificate : MFACmdlet
+    {
+        /// <summary>
+        /// Subject property
+        /// <para type="description">Subject/Issuer Certificate property extension</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Data"), ValidateNotNullOrEmpty()]
+        public string Subject { get; set; }
+
+        /// <summary>
+        /// DnsName property
+        /// <para type="description">DnsName Certificate property extension (SSL, All)</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Data")]
+        public string DnsName { get; set; }
+
+        /// <summary>
+        /// Kind property
+        /// <para type="description">Kind for Certificate (SSL, Client, Signing, Decrypting, All)</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Data")]
+        public PSCertificatesKind Kind { get; set; } = PSCertificatesKind.All;
+
+        /// <summary>
+        /// Duration property
+        /// <para type="description">Duration for the new certificate (Years)</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Data")]
+        public int Duration { get; set; } = 10;
+
+        /// <summary>
+        /// PFXFileName property
+        /// <para type="description">PFX output filename with full path</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Data"), ValidateNotNullOrEmpty()]
+        public string PFXFileName { get; set; }
+
+        /// <summary>
+        /// Password property
+        /// <para type="description">PFX password protection (can be empty)</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Data")]
+        public string Password { get; set; } = "";
+
+        /// <summary>
+        /// BeginProcessing method implementation
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            base.BeginProcessing();
+            try
+            {
+                ManagementService.Initialize(this.Host, true);
+            }
+            catch (Exception ex)
+            {
+                this.ThrowTerminatingError(new ErrorRecord(ex, "3019", ErrorCategory.OperationStopped, this));
+            }
+        }
+
+        /// <summary>
+        /// ProcessRecord method override
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            try
+            {
+                if (ShouldProcess("Create-SelfSignedCertificate"))
+                {
+                    PSHost hh = GetHostForVerbose();
+                    ADFSServiceManager svc = ManagementService.ADFSManager;
+                    if (svc.CreateSelfSignedCertificate(this.Subject, this.DnsName, (CertificatesKind)this.Kind, this.Duration, this.PFXFileName, this.Password))
+                        this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosSelfSignedGenerated);
+                    else
+                        this.Host.UI.WriteLine(ConsoleColor.Red, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosSelfSignedNotGenerated);
+                }
+            }
+            catch (Exception ex)
+            {
+                this.ThrowTerminatingError(new ErrorRecord(ex, "3020", ErrorCategory.OperationStopped, this));
+            }
+        }
+    }
+    #endregion
+
     #region Install-MFACertificate
     /// <summary>
     /// <para type="synopsis">Install RSA Certificate.</para>
@@ -6889,7 +6985,7 @@ namespace MFA
                 {
                     PSHost hh = GetHostForVerbose();
                     ADFSServiceManager svc = ManagementService.ADFSManager;
-                    if (svc.RegisterNewADFSCertificate(hh, this.Subject, (this.Kind==PSADFSCertificateKind.Signing), this.Duration))
+                    if (svc.RegisterNewADFSCertificate(hh, this.Subject, (ADFSCertificatesKind)this.Kind, this.Duration))
                         this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosADFSCertificateChanged);
                 }
             }

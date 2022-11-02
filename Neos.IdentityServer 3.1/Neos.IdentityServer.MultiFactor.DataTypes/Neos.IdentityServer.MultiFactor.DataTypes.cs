@@ -2078,7 +2078,9 @@ namespace Neos.IdentityServer.MultiFactor
         [EnumMember]
         PasswordHasValue = 0x10,
         [EnumMember]
-        PasswordCanBeChanged = 0x20
+        PasswordCanBeChanged = 0x20,
+        [EnumMember]
+        PasswordDontCare = 0x40,
     }
 
     /// <summary>
@@ -2166,6 +2168,29 @@ namespace Neos.IdentityServer.MultiFactor
         Optional = 0x1,
         OptionalWithCredentialIDList = 0x2,
         Required = 0x3
+    }
+
+    /// <summary>
+    /// CerticatesKind enum
+    /// </summary>
+    [Serializable, Flags]
+    public enum CertificatesKind
+    {
+        SSL = 0x1,
+        Client = 0x2,
+        Signing = 0x4,
+        Decrypting = 0x8,
+        All = 0xE
+    }
+
+    /// <summary>
+    /// ADFSCertificatesKind enum
+    /// </summary>
+    [Serializable, Flags]
+    public enum ADFSCertificatesKind
+    {
+        Signing = 0x1,
+        Decrypting = 0x2
     }
 
     /// <summary>

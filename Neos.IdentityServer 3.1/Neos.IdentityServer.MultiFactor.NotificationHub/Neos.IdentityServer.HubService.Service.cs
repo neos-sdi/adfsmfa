@@ -481,6 +481,22 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
+        /// CreateSelfSignedCertificate method implementation
+        /// </summary>
+        public bool CreateSelfSignedCertificate(string subjectName, string dnsName, CertificatesKind kind, int years, string path, string pwd = "")
+        {
+            try
+            {
+                return _manager.CreateSelfSignedCertificate(subjectName, dnsName, kind, years, path, pwd);
+            }
+            catch (Exception e)
+            {
+                _log.WriteEntry(string.Format("Error on WebAdminService Service CreateRSACertificate method : {0}.", e.Message), EventLogEntryType.Error, 2010);
+                return false;
+            }
+        }
+
+        /// <summary>
         /// CreateRSACertificate method implementation
         /// </summary>
         public string CreateRSACertificate(Dictionary<string, bool> servers, string subject, int years)
@@ -515,11 +531,11 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// CreateADFSCertificate method implementation
         /// </summary>
-        public bool CreateADFSCertificate(Dictionary<string, bool> servers, string subject, bool issigning, int years)
+        public bool CreateADFSCertificate(Dictionary<string, bool> servers, string subject, ADFSCertificatesKind kind, int years)
         {
             try
             {
-                return (_manager.CreateADFSCertificate(servers, subject, issigning, years)!=null);
+                return (_manager.CreateADFSCertificate(servers, subject, kind, years)!=null);
             }
             catch (Exception e)
             {

@@ -921,22 +921,58 @@ namespace MFA
         Discouraged = 2
     }
 
+
+    /// <summary>
+    /// PSCertificateKind
+    /// <para type="synopsis">Self Signed certificate Kind (SSL, Client, Signing, Decrypting, All).</para>
+    /// <para type="description">Self Signed certificate Kind (SSL, Client, Signing, Decrypting, All).</para>
+    /// </summary>   
+    [Flags]
+    public enum PSCertificatesKind
+    {
+        /// <summary>
+        /// <para type="description">SSL Certificate.</para>
+        /// </summary>
+        SSL = 0x1,
+
+        /// <summary>
+        /// <para type="description">Client Certificate.</para>
+        /// </summary>
+        Client = 0x2,
+
+        /// <summary>
+        /// <para type="description">Signing Certificate.</para>
+        /// </summary>
+        Signing = 0x4,
+
+        /// <summary>
+        /// <para type="description">Decrypting Certificate.</para>
+        /// </summary>
+        Decrypting = 0x8,
+
+        /// <summary>
+        /// <para type="description">All usages Certificate.</para>
+        /// </summary>
+        All = 0xE
+    }
+
     /// <summary>
     /// PSADFSCertificateKind
     /// <para type="synopsis">MFA ADFS certificate Kind (Signing, Decrypting).</para>
     /// /// <para type="description">MFA ADFS certificate Kind (Signing, Decrypting).</para>
-    /// </summary>    
+    /// </summary>   
+    [Flags]
     public enum PSADFSCertificateKind
     {
         /// <summary>
         /// <para type="description">Signing Certificate.</para>
         /// </summary>
-        Signing = 0,
+        Signing = 0x1,
 
         /// <summary>
         /// <para type="description">Decrypting certificate.</para>
         /// </summary>
-        Decrypting = 1
+        Decrypting = 0x2
     }
 
     /// <summary>

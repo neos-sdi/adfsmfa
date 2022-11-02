@@ -2068,7 +2068,6 @@ namespace Neos.IdentityServer.MultiFactor
 
         [XmlAttribute("NoCounterBrowsers")]
         public string NoCounterBrowsers { get; set; } = "safari";
-
     }
 
     /// <summary>
@@ -2346,6 +2345,9 @@ namespace Neos.IdentityServer.MultiFactor
 
         [XmlAttribute("UseSSL")]
         public bool UseSSL { get; set; } = false;
+
+        [XmlAttribute("WeakPublicKeyEncoding")]
+        public bool WeakPublicKeyEncoding { get; set; } = false;
 
         /// <summary>
         /// ApplyAttributesTemplate method implementation

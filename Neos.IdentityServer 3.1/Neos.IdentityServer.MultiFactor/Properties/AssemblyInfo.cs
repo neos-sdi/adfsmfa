@@ -28,7 +28,7 @@ using System.Runtime.Versioning;
 [assembly: AssemblyDescription("ADFS MFA Provider")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("neos-sdi")]
-[assembly: AssemblyProduct("Microsoft.IdentityServer.MultiFactor")]
+[assembly: AssemblyProduct("Neos.IdentityServer.MultiFactor")]
 [assembly: AssemblyCopyright("Copyright @redhook62 © 2022")]
 [assembly: AssemblyTrademark("neos-sdi")]
 [assembly: AssemblyCulture("")]
@@ -52,7 +52,7 @@ using System.Runtime.Versioning;
 // en utilisant '*', comme indiqué ci-dessous :
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("3.0.0.0")]
-[assembly: AssemblyFileVersion("3.1.2210.1")]
+[assembly: AssemblyFileVersion("3.1.2211.0")]
 [assembly: AssemblyInformationalVersion("3.0.0.0")]
-[assembly: NeutralResourcesLanguageAttribute("en")]
+[assembly: NeutralResourcesLanguage("en")]
 

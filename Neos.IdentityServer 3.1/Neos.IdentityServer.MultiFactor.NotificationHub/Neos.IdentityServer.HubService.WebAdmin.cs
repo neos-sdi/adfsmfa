@@ -856,6 +856,43 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
+        /// CreateSelfSignedCertificate method implementation
+        /// </summary>
+        internal bool CreateSelfSignedCertificate(string subjectName, string dnsName, CertificatesKind kind, int years, string path, string pwd = "")
+        {
+            try
+            {
+                string strcert = string.Empty;
+                X509Certificate2 cert = null;
+                try
+                {
+                    cert = Certs.CreateSelfSignedCertificate(subjectName, dnsName, kind, years, pwd);
+                    if (cert == null)
+                        return false;
+                    else
+                    {
+                        byte[] data = null;
+                        if (string.IsNullOrEmpty(pwd))
+                            data = cert.Export(X509ContentType.Pfx);
+                        else
+                            data = cert.Export(X509ContentType.Pfx, pwd);
+                        File.WriteAllBytes(path, data);
+                        return true;
+                    }
+                }
+                finally
+                {
+                    cert.Reset();
+                }
+            }
+            catch (Exception e)
+            {
+                _log.WriteEntry(string.Format("Error on WebAdminService Service CreateSelfSignedCertificate method : {0}.", e.Message), EventLogEntryType.Error, 2010);
+                throw e;
+            }
+        }
+
+        /// <summary>
         /// CreateRSACertificate method implementation
         /// </summary>
         internal string CreateRSACertificate(Dictionary<string, bool> servers, string subject, int years)
@@ -987,7 +1024,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// CreateADFSCertificate method implementation
         /// </summary>
-        internal string CreateADFSCertificate(Dictionary<string, bool> servers, string subject, bool issigning, int years)
+        internal string CreateADFSCertificate(Dictionary<string, bool> servers, string subject, ADFSCertificatesKind kind, int years)
         {
             SIDs.Initialize();
 
@@ -998,7 +1035,7 @@ namespace Neos.IdentityServer.MultiFactor
                 X509Certificate2 cert = null;
                 try
                 {
-                    cert = Certs.CreateADFSCertificate(subject, issigning, years, out strcert);
+                    cert = Certs.CreateADFSCertificate(subject, kind, years, out strcert);
                     if (cert == null)
                         return null;
                     else

@@ -595,6 +595,23 @@ namespace Neos.IdentityServer.MultiFactor
 
         #region Certificates Creation
         /// <summary>
+        /// CreateSelfSignedCertificate method implementation
+        /// </summary>
+        public static X509Certificate2 CreateSelfSignedCertificate(string subjectName, string dnsName, CertificatesKind kind, int years, string pwd = "")
+        {
+            string strcert = string.Empty;
+            if (_RegistryVersion.IsWindows2012R2)
+                strcert = InternalCreateSelfSignedCertificate2012R2(subjectName, dnsName, kind, years, pwd);
+            else
+                strcert = InternalCreateSelfSignedCertificate(subjectName, dnsName, kind, years, pwd);
+            X509Certificate2 x509 = new X509Certificate2(Convert.FromBase64String(strcert), pwd, X509KeyStorageFlags.Exportable | X509KeyStorageFlags.PersistKeySet);
+            if (DropSelfSignedCertificate(x509, StoreLocation.LocalMachine))
+                return x509;
+            else
+                return null;
+        }
+
+        /// <summary>
         /// CreateRSACertificate method implementation
         /// </summary>
         internal static X509Certificate2 CreateRSACertificate(string subjectName, int years, out string cert)
@@ -615,13 +632,13 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// CreateADFSCertificate method implementation
         /// </summary>
-        internal static X509Certificate2 CreateADFSCertificate(string subjectName, bool issigning, int years, out string cert)
+        internal static X509Certificate2 CreateADFSCertificate(string subjectName, ADFSCertificatesKind kind, int years, out string cert)
         {
             string strcert = string.Empty;
             if (_RegistryVersion.IsWindows2012R2)
-                strcert = InternalCreateADFSCertificate2012R2(subjectName, issigning, years);
+                strcert = InternalCreateADFSCertificate2012R2(subjectName, kind, years);
             else
-                strcert = InternalCreateADFSCertificate(subjectName, issigning, years);
+                strcert = InternalCreateADFSCertificate(subjectName, kind, years);
             cert = strcert;
             X509Certificate2 x509 = new X509Certificate2(Convert.FromBase64String(strcert), "", X509KeyStorageFlags.Exportable | X509KeyStorageFlags.PersistKeySet);
             if (CleanSelfSignedCertificate(x509, StoreLocation.LocalMachine))
@@ -666,7 +683,133 @@ namespace Neos.IdentityServer.MultiFactor
         }
         #endregion
 
-        #region Windows 2016 & 2019 && 2022       
+        #region Windows 2016 & 2019 && 2022
+        /// <summary>
+        /// InternalCreateRSACertificate method implementation
+        /// </summary>
+        [SuppressUnmanagedCodeSecurity]
+        private static string InternalCreateSelfSignedCertificate(string subjectName, string dnsName, CertificatesKind kind, int years, string pwd)
+        {
+            string base64encoded = string.Empty;
+            CX500DistinguishedName subject = new CX500DistinguishedName();
+            CX500DistinguishedName issuer = new CX500DistinguishedName();
+            subject.Encode("CN=" + subjectName, X500NameFlags.XCN_CERT_NAME_STR_NONE);
+            issuer.Encode("CN=" + subjectName, X500NameFlags.XCN_CERT_NAME_STR_NONE);
+
+            CX509PrivateKey privateKey = new CX509PrivateKey
+            {
+                ProviderName = "Microsoft Enhanced Cryptographic Provider v1.0",
+                MachineContext = true,
+                Length = 2048,
+                KeySpec = X509KeySpec.XCN_AT_KEYEXCHANGE, // use is not limited
+                ExportPolicy = X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_EXPORT_FLAG,
+                SecurityDescriptor = "D:(A;;FA;;;SY)(A;;FA;;;BA)"
+            };
+
+            privateKey.KeyUsage = X509PrivateKeyUsageFlags.XCN_NCRYPT_ALLOW_USAGES_NONE;
+            if (kind.HasFlag(CertificatesKind.Signing) || kind.HasFlag(CertificatesKind.SSL) || kind.HasFlag(CertificatesKind.Client) || kind.HasFlag(CertificatesKind.All))
+                privateKey.KeyUsage |= X509PrivateKeyUsageFlags.XCN_NCRYPT_ALLOW_SIGNING_FLAG;
+            if (kind.HasFlag(CertificatesKind.Decrypting) || kind.HasFlag(CertificatesKind.SSL) || kind.HasFlag(CertificatesKind.Client) || kind.HasFlag(CertificatesKind.All))
+                privateKey.KeyUsage |= X509PrivateKeyUsageFlags.XCN_NCRYPT_ALLOW_DECRYPT_FLAG; 
+
+            try
+            {
+                privateKey.Create();
+                CObjectId hashobj = new CObjectId();
+                hashobj.InitializeFromAlgorithmName(ObjectIdGroupId.XCN_CRYPT_HASH_ALG_OID_GROUP_ID,
+                                                    ObjectIdPublicKeyFlags.XCN_CRYPT_OID_INFO_PUBKEY_ANY,
+                                                    AlgorithmFlags.AlgorithmFlagsNone, "SHA256");
+
+                CERTENROLLLib.X509KeyUsageFlags flg = CERTENROLLLib.X509KeyUsageFlags.XCN_CERT_NO_KEY_USAGE;
+                CObjectIds oidlist = new CObjectIds();
+                if (kind.HasFlag(CertificatesKind.SSL) || kind.HasFlag(CertificatesKind.All))
+                { 
+                    CObjectId oid = new CObjectId();
+                    oid.InitializeFromValue("1.3.6.1.5.5.7.3.1"); // SSL server  
+                    oidlist.Add(oid);
+                    flg |= CERTENROLLLib.X509KeyUsageFlags.XCN_CERT_DIGITAL_SIGNATURE_KEY_USAGE | CERTENROLLLib.X509KeyUsageFlags.XCN_CERT_KEY_ENCIPHERMENT_KEY_USAGE;
+                }
+                if (kind.HasFlag(CertificatesKind.Client) || kind.HasFlag(CertificatesKind.All))
+                {
+                    CObjectId oid = new CObjectId();
+                    oid.InitializeFromValue("1.3.6.1.5.5.7.3.2"); // Client Auth
+                    oidlist.Add(oid);
+                    flg |= CERTENROLLLib.X509KeyUsageFlags.XCN_CERT_DIGITAL_SIGNATURE_KEY_USAGE | CERTENROLLLib.X509KeyUsageFlags.XCN_CERT_KEY_ENCIPHERMENT_KEY_USAGE;
+                }
+                if (kind.HasFlag(CertificatesKind.Signing) || kind.HasFlag(CertificatesKind.All))
+                {
+                    CObjectId oid = new CObjectId();
+                    oid.InitializeFromValue("1.3.6.1.5.5.7.3.3"); // Signature
+                    oidlist.Add(oid);
+                    flg |= CERTENROLLLib.X509KeyUsageFlags.XCN_CERT_DIGITAL_SIGNATURE_KEY_USAGE;
+                }
+                if (kind.HasFlag(CertificatesKind.Decrypting) || kind.HasFlag(CertificatesKind.All))
+                {
+                    CObjectId oid = new CObjectId();
+                    oid.InitializeFromValue("1.3.6.1.4.1.311.80.1"); // Encryption
+                    oidlist.Add(oid);
+                    flg |= CERTENROLLLib.X509KeyUsageFlags.XCN_CERT_KEY_ENCIPHERMENT_KEY_USAGE;
+                }
+
+                CX509ExtensionEnhancedKeyUsage eku = new CX509ExtensionEnhancedKeyUsage();
+                eku.InitializeEncode(oidlist);
+
+                CX509ExtensionKeyUsage ku = new CX509ExtensionKeyUsage();
+                ku.InitializeEncode(flg);
+
+                CX509ExtensionBasicConstraints bc = new CX509ExtensionBasicConstraints
+                {
+                    Critical = true
+                };
+                bc.InitializeEncode(false, 0);
+
+                CX509ExtensionAlternativeNames san = new CX509ExtensionAlternativeNames();
+                if ((!string.IsNullOrEmpty(dnsName)) && (kind.HasFlag(CertificatesKind.SSL) || kind.HasFlag(CertificatesKind.All)))
+                {
+                    CAlternativeNames dnlist = new CAlternativeNames();
+                    CAlternativeName dns = new CAlternativeName();
+                    dns.InitializeFromString(AlternativeNameType.XCN_CERT_ALT_NAME_DNS_NAME, dnsName);
+                    dnlist.Add(dns);
+                    san.InitializeEncode(dnlist);
+                }
+
+                // Create the self signing request
+                CX509CertificateRequestCertificate certreq = new CX509CertificateRequestCertificate();
+                certreq.InitializeFromPrivateKey(X509CertificateEnrollmentContext.ContextMachine, privateKey, "");
+                certreq.Subject = subject;
+                certreq.Issuer = issuer;
+                certreq.NotBefore = DateTime.Now.AddDays(-10);
+
+                certreq.NotAfter = DateTime.Now.AddYears(years);
+                certreq.X509Extensions.Add((CX509Extension)eku); // add the EKU
+                certreq.X509Extensions.Add((CX509Extension)ku); // add the KU
+                certreq.X509Extensions.Add((CX509Extension)bc); // add the BC
+                if ((!string.IsNullOrEmpty(dnsName)) && (kind.HasFlag(CertificatesKind.SSL) || kind.HasFlag(CertificatesKind.All)))
+                    certreq.X509Extensions.Add((CX509Extension)san); // add the SAN
+                certreq.HashAlgorithm = hashobj; // Specify the hashing algorithm
+                certreq.Encode(); // encode the certificate
+
+                // Do the final enrollment process
+                CX509Enrollment enroll = new CX509Enrollment();
+                enroll.InitializeFromRequest(certreq); // load the certificate
+                enroll.CertificateFriendlyName = subjectName; // Optional: add a friendly name
+
+                string csr = enroll.CreateRequest(); // Output the request in base64
+
+                // and install it back as the response
+                enroll.InstallResponse(InstallResponseRestrictionFlags.AllowUntrustedCertificate, csr, EncodingType.XCN_CRYPT_STRING_BASE64, pwd);
+
+                // output a base64 encoded PKCS#12 so we can import it back to the .Net security classes
+                base64encoded = enroll.CreatePFX(pwd, PFXExportOptions.PFXExportEEOnly);
+            }
+            finally
+            {
+                if (privateKey != null)
+                    privateKey.Delete(); // Remove Stored elsewhere
+            }
+            return base64encoded;
+        }
+
         /// <summary>
         /// InternalCreateRSACertificate method implementation
         /// </summary>
@@ -703,22 +846,27 @@ namespace Neos.IdentityServer.MultiFactor
                                                     ObjectIdPublicKeyFlags.XCN_CRYPT_OID_INFO_PUBKEY_ANY,
                                                     AlgorithmFlags.AlgorithmFlagsNone, "SHA256");
 
-                CObjectId oid = new CObjectId();
-                // oid.InitializeFromValue("1.3.6.1.5.5.7.3.1"); // SSL server  
-                oid.InitializeFromValue("1.3.6.1.4.1.311.80.1"); // Encryption
+                CObjectIds oidlist = new CObjectIds();
 
-                CObjectIds oidlist = new CObjectIds
-                {
-                    oid
-                };
+                CObjectId oid = new CObjectId();
+                oid.InitializeFromValue("1.3.6.1.4.1.311.80.1"); // Encryption
+                oidlist.Add(oid);
 
                 CObjectId coid = new CObjectId();
-                // coid.InitializeFromValue("1.3.6.1.5.5.7.3.2"); // Client auth
                 coid.InitializeFromValue("1.3.6.1.5.5.7.3.3"); // Signature
                 oidlist.Add(coid);
 
                 CX509ExtensionEnhancedKeyUsage eku = new CX509ExtensionEnhancedKeyUsage();
                 eku.InitializeEncode(oidlist);
+
+                CX509ExtensionKeyUsage ku = new CX509ExtensionKeyUsage();
+                ku.InitializeEncode(CERTENROLLLib.X509KeyUsageFlags.XCN_CERT_DIGITAL_SIGNATURE_KEY_USAGE | CERTENROLLLib.X509KeyUsageFlags.XCN_CERT_KEY_ENCIPHERMENT_KEY_USAGE);
+
+                CX509ExtensionBasicConstraints bc = new CX509ExtensionBasicConstraints
+                {
+                    Critical = true
+                };
+                bc.InitializeEncode(false, 0);
 
                 // Create the self signing request
                 CX509CertificateRequestCertificate certreq = new CX509CertificateRequestCertificate();
@@ -729,6 +877,8 @@ namespace Neos.IdentityServer.MultiFactor
 
                 certreq.NotAfter = DateTime.Now.AddYears(years);
                 certreq.X509Extensions.Add((CX509Extension)eku); // add the EKU
+                certreq.X509Extensions.Add((CX509Extension)ku); // add the KU
+                certreq.X509Extensions.Add((CX509Extension)bc); // add the BC
                 certreq.HashAlgorithm = hashobj; // Specify the hashing algorithm
                 certreq.Encode(); // encode the certificate
 
@@ -788,22 +938,27 @@ namespace Neos.IdentityServer.MultiFactor
                                                     ObjectIdPublicKeyFlags.XCN_CRYPT_OID_INFO_PUBKEY_ANY,
                                                     AlgorithmFlags.AlgorithmFlagsNone, "SHA256");
 
-                CObjectId oid = new CObjectId();
-                // oid.InitializeFromValue("1.3.6.1.5.5.7.3.1"); // SSL server  
-                oid.InitializeFromValue("1.3.6.1.4.1.311.80.1"); // Encryption
+                CObjectIds oidlist = new CObjectIds();
 
-                CObjectIds oidlist = new CObjectIds
-                {
-                    oid
-                };
+                CObjectId oid = new CObjectId();
+                oid.InitializeFromValue("1.3.6.1.4.1.311.80.1"); // Encryption
+                oidlist.Add(oid);
 
                 CObjectId coid = new CObjectId();
-                // coid.InitializeFromValue("1.3.6.1.5.5.7.3.2"); // Client auth
                 coid.InitializeFromValue("1.3.6.1.5.5.7.3.3"); // Signature
                 oidlist.Add(coid);
 
                 CX509ExtensionEnhancedKeyUsage eku = new CX509ExtensionEnhancedKeyUsage();
                 eku.InitializeEncode(oidlist);
+
+                CX509ExtensionKeyUsage ku = new CX509ExtensionKeyUsage();
+                ku.InitializeEncode(CERTENROLLLib.X509KeyUsageFlags.XCN_CERT_DIGITAL_SIGNATURE_KEY_USAGE | CERTENROLLLib.X509KeyUsageFlags.XCN_CERT_KEY_ENCIPHERMENT_KEY_USAGE);
+
+                CX509ExtensionBasicConstraints bc = new CX509ExtensionBasicConstraints
+                {
+                    Critical = true
+                };
+                bc.InitializeEncode(false, 0);
 
                 // Create the self signing request
                 CX509CertificateRequestCertificate certreq = new CX509CertificateRequestCertificate();
@@ -814,6 +969,8 @@ namespace Neos.IdentityServer.MultiFactor
 
                 certreq.NotAfter = DateTime.Now.AddYears(years);
                 certreq.X509Extensions.Add((CX509Extension)eku); // add the EKU
+                certreq.X509Extensions.Add((CX509Extension)ku); // add the KU
+                certreq.X509Extensions.Add((CX509Extension)bc); // add the BC
                 certreq.HashAlgorithm = hashobj; // Specify the hashing algorithm
                 certreq.Encode(); // encode the certificate
 
@@ -875,14 +1032,11 @@ namespace Neos.IdentityServer.MultiFactor
                                                     AlgorithmFlags.AlgorithmFlagsNone, "SHA256");
 
 
+                CObjectIds oidlist = new CObjectIds();
                 // 2.5.29.37 – Enhanced Key Usage includes
-
                 CObjectId oid = new CObjectId();
                 oid.InitializeFromValue("1.3.6.1.5.5.8.2.2"); // IP security IKE intermediate
-                var oidlist = new CObjectIds
-                {
-                    oid
-                };
+                oidlist.Add(oid);
 
                 CObjectId coid = new CObjectId();
                 coid.InitializeFromValue("1.3.6.1.4.1.311.10.3.11"); // Key Recovery
@@ -890,6 +1044,15 @@ namespace Neos.IdentityServer.MultiFactor
 
                 CX509ExtensionEnhancedKeyUsage eku = new CX509ExtensionEnhancedKeyUsage();
                 eku.InitializeEncode(oidlist);
+
+                CX509ExtensionKeyUsage ku = new CX509ExtensionKeyUsage();
+                ku.InitializeEncode(CERTENROLLLib.X509KeyUsageFlags.XCN_CERT_DIGITAL_SIGNATURE_KEY_USAGE | CERTENROLLLib.X509KeyUsageFlags.XCN_CERT_KEY_ENCIPHERMENT_KEY_USAGE);
+
+                CX509ExtensionBasicConstraints bc = new CX509ExtensionBasicConstraints
+                {
+                    Critical = true
+                };
+                bc.InitializeEncode(false, 0);
 
                 // Create the self signing request
                 CX509CertificateRequestCertificate certreq = new CX509CertificateRequestCertificate();
@@ -900,6 +1063,9 @@ namespace Neos.IdentityServer.MultiFactor
 
                 certreq.NotAfter = DateTime.Now.AddYears(years);
                 certreq.X509Extensions.Add((CX509Extension)eku); // add the EKU
+                certreq.X509Extensions.Add((CX509Extension)ku); // add the KU
+                certreq.X509Extensions.Add((CX509Extension)bc); // add the BC
+
                 certreq.HashAlgorithm = hashobj; // Specify the hashing algorithm
                 certreq.Encode(); // encode the certificate
 
@@ -928,7 +1094,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// InternalCreateADFSCertificate method implementation
         /// </summary>
         [SuppressUnmanagedCodeSecurity]
-        private static string InternalCreateADFSCertificate(string subjectName, bool issigning, int years)
+        private static string InternalCreateADFSCertificate(string subjectName, ADFSCertificatesKind kind, int years)
         {
             string base64encoded = string.Empty;
             CX500DistinguishedName dn = new CX500DistinguishedName();
@@ -943,10 +1109,13 @@ namespace Neos.IdentityServer.MultiFactor
                 ExportPolicy = X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_EXPORT_FLAG,
                 SecurityDescriptor = "D:(A;;FA;;;SY)(A;;FA;;;BA)"
             };
-            if (issigning)
-                privateKey.KeyUsage = X509PrivateKeyUsageFlags.XCN_NCRYPT_ALLOW_SIGNING_FLAG;
-            else
-                privateKey.KeyUsage = X509PrivateKeyUsageFlags.XCN_NCRYPT_ALLOW_DECRYPT_FLAG;
+
+            privateKey.KeyUsage = X509PrivateKeyUsageFlags.XCN_NCRYPT_ALLOW_USAGES_NONE;
+            if (kind.HasFlag(ADFSCertificatesKind.Signing))
+                privateKey.KeyUsage |= X509PrivateKeyUsageFlags.XCN_NCRYPT_ALLOW_SIGNING_FLAG;
+            if (kind.HasFlag(ADFSCertificatesKind.Decrypting))
+                privateKey.KeyUsage |= X509PrivateKeyUsageFlags.XCN_NCRYPT_ALLOW_DECRYPT_FLAG;
+
             if (!string.IsNullOrEmpty(ClientSIDsProxy.ADFSServiceSID))
                 privateKey.SecurityDescriptor += "(A;;FA;;;" + ClientSIDsProxy.ADFSServiceSID + ")";
             if (!string.IsNullOrEmpty(ClientSIDsProxy.ADFSAccountSID))
@@ -959,26 +1128,39 @@ namespace Neos.IdentityServer.MultiFactor
 
                 CObjectId hashobj = new CObjectId();
                 hashobj.InitializeFromAlgorithmName(ObjectIdGroupId.XCN_CRYPT_HASH_ALG_OID_GROUP_ID, ObjectIdPublicKeyFlags.XCN_CRYPT_OID_INFO_PUBKEY_ANY, AlgorithmFlags.AlgorithmFlagsNone, "SHA256");
+
+                CERTENROLLLib.X509KeyUsageFlags flg = CERTENROLLLib.X509KeyUsageFlags.XCN_CERT_NO_KEY_USAGE;
                 CObjectIds oidlist = new CObjectIds();
-                if (!issigning)
+                if (kind.HasFlag(ADFSCertificatesKind.Decrypting))
                 {
                     CObjectId oid = new CObjectId();
                     oid.InitializeFromValue("1.3.6.1.4.1.311.80.1"); // Encryption
                     oidlist.Add(oid);
+                    flg |= CERTENROLLLib.X509KeyUsageFlags.XCN_CERT_KEY_ENCIPHERMENT_KEY_USAGE;
                     dn.Encode("CN=ADFS Encrypt - " + subjectName, X500NameFlags.XCN_CERT_NAME_STR_NONE);
                     neos.Encode("CN=ADFS Encrypt - " + subjectName, X500NameFlags.XCN_CERT_NAME_STR_NONE);
                 }
-                else
+                if (kind.HasFlag(ADFSCertificatesKind.Signing))
                 {
                     CObjectId coid = new CObjectId();
                     coid.InitializeFromValue("1.3.6.1.5.5.7.3.3"); // Signature
                     oidlist.Add(coid);
+                    flg |= CERTENROLLLib.X509KeyUsageFlags.XCN_CERT_DIGITAL_SIGNATURE_KEY_USAGE;
                     dn.Encode("CN=ADFS Sign - " + subjectName, X500NameFlags.XCN_CERT_NAME_STR_NONE);
                     neos.Encode("CN=ADFS Sign - " + subjectName, X500NameFlags.XCN_CERT_NAME_STR_NONE);
                 }
 
                 CX509ExtensionEnhancedKeyUsage eku = new CX509ExtensionEnhancedKeyUsage();
                 eku.InitializeEncode(oidlist);
+
+                CX509ExtensionKeyUsage ku = new CX509ExtensionKeyUsage();
+                ku.InitializeEncode(flg);
+
+                CX509ExtensionBasicConstraints bc = new CX509ExtensionBasicConstraints
+                {
+                    Critical = true
+                };
+                bc.InitializeEncode(false, 0);
 
                 // Create the self signing request
                 CX509CertificateRequestCertificate certreq = new CX509CertificateRequestCertificate();
@@ -989,6 +1171,9 @@ namespace Neos.IdentityServer.MultiFactor
 
                 certreq.NotAfter = DateTime.Now.AddYears(years);
                 certreq.X509Extensions.Add((CX509Extension)eku); // add the EKU
+                certreq.X509Extensions.Add((CX509Extension)ku); // add the KU
+                certreq.X509Extensions.Add((CX509Extension)bc); // add the BC
+
                 certreq.HashAlgorithm = hashobj; // Specify the hashing algorithm
                 certreq.Encode(); // encode the certificate
 
@@ -1015,6 +1200,127 @@ namespace Neos.IdentityServer.MultiFactor
         #endregion
 
         #region Windows 2012R2
+        [SuppressUnmanagedCodeSecurity]
+        private static string InternalCreateSelfSignedCertificate2012R2(string subjectName, string dnsName, CertificatesKind kind, int years, string pwd)
+        {
+            string base64encoded = string.Empty;
+            CX500DistinguishedName subject = new CX500DistinguishedName();
+            CX500DistinguishedName issuer = new CX500DistinguishedName();
+            subject.Encode("CN=" + subjectName, X500NameFlags.XCN_CERT_NAME_STR_NONE);
+            issuer.Encode("CN=" + subjectName, X500NameFlags.XCN_CERT_NAME_STR_NONE);
+
+            IX509PrivateKey privateKey = (IX509PrivateKey)Activator.CreateInstance(Type.GetTypeFromProgID("X509Enrollment.CX509PrivateKey"));
+            privateKey.ProviderName = "Microsoft Enhanced Cryptographic Provider v1.0";
+            privateKey.MachineContext = true;
+            privateKey.Length = 2048;
+            privateKey.KeySpec = X509KeySpec.XCN_AT_KEYEXCHANGE; // use is not limited
+            privateKey.ExportPolicy = X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_EXPORT_FLAG;
+            privateKey.SecurityDescriptor = "D:(A;;FA;;;SY)(A;;FA;;;BA)";
+
+            privateKey.KeyUsage = X509PrivateKeyUsageFlags.XCN_NCRYPT_ALLOW_USAGES_NONE;
+            if (kind.HasFlag(CertificatesKind.Signing) || kind.HasFlag(CertificatesKind.SSL) || kind.HasFlag(CertificatesKind.Client) || kind.HasFlag(CertificatesKind.All))
+                privateKey.KeyUsage |= X509PrivateKeyUsageFlags.XCN_NCRYPT_ALLOW_SIGNING_FLAG;
+            if (kind.HasFlag(CertificatesKind.Decrypting) || kind.HasFlag(CertificatesKind.SSL) || kind.HasFlag(CertificatesKind.Client) || kind.HasFlag(CertificatesKind.All))
+                privateKey.KeyUsage |= X509PrivateKeyUsageFlags.XCN_NCRYPT_ALLOW_DECRYPT_FLAG;
+
+            try
+            {
+                privateKey.Create();
+                CObjectId hashobj = new CObjectId();
+                hashobj.InitializeFromAlgorithmName(ObjectIdGroupId.XCN_CRYPT_HASH_ALG_OID_GROUP_ID,
+                                                    ObjectIdPublicKeyFlags.XCN_CRYPT_OID_INFO_PUBKEY_ANY,
+                                                    AlgorithmFlags.AlgorithmFlagsNone, "SHA256");
+
+                CERTENROLLLib.X509KeyUsageFlags flg = CERTENROLLLib.X509KeyUsageFlags.XCN_CERT_NO_KEY_USAGE;
+                CObjectIds oidlist = new CObjectIds();
+                if (kind.HasFlag(CertificatesKind.SSL) || kind.HasFlag(CertificatesKind.All))
+                {
+                    CObjectId oid = new CObjectId();
+                    oid.InitializeFromValue("1.3.6.1.5.5.7.3.1"); // SSL server  
+                    oidlist.Add(oid);
+                    flg |= CERTENROLLLib.X509KeyUsageFlags.XCN_CERT_DIGITAL_SIGNATURE_KEY_USAGE | CERTENROLLLib.X509KeyUsageFlags.XCN_CERT_KEY_ENCIPHERMENT_KEY_USAGE;
+                }
+                if (kind.HasFlag(CertificatesKind.Client) || kind.HasFlag(CertificatesKind.All))
+                {
+                    CObjectId oid = new CObjectId();
+                    oid.InitializeFromValue("1.3.6.1.5.5.7.3.2"); // Client Auth
+                    oidlist.Add(oid);
+                    flg |= CERTENROLLLib.X509KeyUsageFlags.XCN_CERT_DIGITAL_SIGNATURE_KEY_USAGE | CERTENROLLLib.X509KeyUsageFlags.XCN_CERT_KEY_ENCIPHERMENT_KEY_USAGE;
+                }
+                if (kind.HasFlag(CertificatesKind.Signing) || kind.HasFlag(CertificatesKind.All))
+                {
+                    CObjectId oid = new CObjectId();
+                    oid.InitializeFromValue("1.3.6.1.5.5.7.3.3"); // Signature
+                    oidlist.Add(oid);
+                    flg |= CERTENROLLLib.X509KeyUsageFlags.XCN_CERT_DIGITAL_SIGNATURE_KEY_USAGE;
+                }
+                if (kind.HasFlag(CertificatesKind.Decrypting) || kind.HasFlag(CertificatesKind.All))
+                {
+                    CObjectId oid = new CObjectId();
+                    oid.InitializeFromValue("1.3.6.1.4.1.311.80.1"); // Encryption
+                    oidlist.Add(oid);
+                    flg |= CERTENROLLLib.X509KeyUsageFlags.XCN_CERT_KEY_ENCIPHERMENT_KEY_USAGE;
+                }
+
+                CX509ExtensionEnhancedKeyUsage eku = new CX509ExtensionEnhancedKeyUsage();
+                eku.InitializeEncode(oidlist);
+
+                CX509ExtensionKeyUsage ku = new CX509ExtensionKeyUsage();
+                ku.InitializeEncode(flg);
+
+                CX509ExtensionBasicConstraints bc = new CX509ExtensionBasicConstraints
+                {
+                    Critical = true
+                };
+                bc.InitializeEncode(false, 0);
+
+                CX509ExtensionAlternativeNames san = new CX509ExtensionAlternativeNames();
+                if ((!string.IsNullOrEmpty(dnsName)) && (kind.HasFlag(CertificatesKind.SSL) || kind.HasFlag(CertificatesKind.All)))
+                {
+                    CAlternativeNames dnlist = new CAlternativeNames();
+                    CAlternativeName dns = new CAlternativeName();
+                    dns.InitializeFromString(AlternativeNameType.XCN_CERT_ALT_NAME_DNS_NAME, dnsName);
+                    dnlist.Add(dns);
+                    san.InitializeEncode(dnlist);
+                }
+
+                // Create the self signing request
+                CX509CertificateRequestCertificate certreq = new CX509CertificateRequestCertificate();
+                certreq.InitializeFromPrivateKey(X509CertificateEnrollmentContext.ContextMachine, privateKey, "");
+                certreq.Subject = subject;
+                certreq.Issuer = issuer;
+                certreq.NotBefore = DateTime.Now.AddDays(-10);
+
+                certreq.NotAfter = DateTime.Now.AddYears(years);
+                certreq.X509Extensions.Add((CX509Extension)eku); // add the EKU
+                certreq.X509Extensions.Add((CX509Extension)ku); // add the KU
+                certreq.X509Extensions.Add((CX509Extension)bc); // add the BC
+                if ((!string.IsNullOrEmpty(dnsName)) && (kind.HasFlag(CertificatesKind.SSL) || kind.HasFlag(CertificatesKind.All)))
+                    certreq.X509Extensions.Add((CX509Extension)san); // add the SAN
+                certreq.HashAlgorithm = hashobj; // Specify the hashing algorithm
+                certreq.Encode(); // encode the certificate
+
+                // Do the final enrollment process
+                CX509Enrollment enroll = new CX509Enrollment();
+                enroll.InitializeFromRequest(certreq); // load the certificate
+                enroll.CertificateFriendlyName = subjectName; // Optional: add a friendly name
+
+                string csr = enroll.CreateRequest(); // Output the request in base64
+
+                // and install it back as the response
+                enroll.InstallResponse(InstallResponseRestrictionFlags.AllowUntrustedCertificate, csr, EncodingType.XCN_CRYPT_STRING_BASE64, pwd);
+
+                // output a base64 encoded PKCS#12 so we can import it back to the .Net security classes
+                base64encoded = enroll.CreatePFX(pwd, PFXExportOptions.PFXExportEEOnly);
+            }
+            finally
+            {
+                if (privateKey != null)
+                    privateKey.Delete(); // Remove Stored elsewhere
+            }
+            return base64encoded;
+        }
+
         /// <summary>
         /// InternalCreateRSACertificate2012R2 method implementation
         /// </summary>
@@ -1049,22 +1355,26 @@ namespace Neos.IdentityServer.MultiFactor
                                                     ObjectIdPublicKeyFlags.XCN_CRYPT_OID_INFO_PUBKEY_ANY,
                                                     AlgorithmFlags.AlgorithmFlagsNone, "SHA256");
 
+                CObjectIds oidlist = new CObjectIds();
                 CObjectId oid = new CObjectId();
-                // oid.InitializeFromValue("1.3.6.1.5.5.7.3.1"); // SSL server  
                 oid.InitializeFromValue("1.3.6.1.4.1.311.80.1"); // Encryption
-
-                CObjectIds oidlist = new CObjectIds
-                {
-                    oid
-                };
+                oidlist.Add(oid);
 
                 CObjectId coid = new CObjectId();
-                // coid.InitializeFromValue("1.3.6.1.5.5.7.3.2"); // Client auth
                 coid.InitializeFromValue("1.3.6.1.5.5.7.3.3"); // Signature
                 oidlist.Add(coid);
 
                 CX509ExtensionEnhancedKeyUsage eku = new CX509ExtensionEnhancedKeyUsage();
                 eku.InitializeEncode(oidlist);
+
+                CX509ExtensionKeyUsage ku = new CX509ExtensionKeyUsage();
+                ku.InitializeEncode(CERTENROLLLib.X509KeyUsageFlags.XCN_CERT_DIGITAL_SIGNATURE_KEY_USAGE | CERTENROLLLib.X509KeyUsageFlags.XCN_CERT_KEY_ENCIPHERMENT_KEY_USAGE);
+
+                CX509ExtensionBasicConstraints bc = new CX509ExtensionBasicConstraints
+                {
+                    Critical = true
+                };
+                bc.InitializeEncode(false, 0);
 
                 // Create the self signing request
                 CX509CertificateRequestCertificate certreq = new CX509CertificateRequestCertificate();
@@ -1072,9 +1382,12 @@ namespace Neos.IdentityServer.MultiFactor
                 certreq.Subject = dn;
                 certreq.Issuer = neos;
                 certreq.NotBefore = DateTime.Now.AddDays(-10);
-
                 certreq.NotAfter = DateTime.Now.AddYears(years);
+
                 certreq.X509Extensions.Add((CX509Extension)eku); // add the EKU
+                certreq.X509Extensions.Add((CX509Extension)ku); // add the KU
+                certreq.X509Extensions.Add((CX509Extension)bc); // add the BC
+
                 certreq.HashAlgorithm = hashobj; // Specify the hashing algorithm
                 certreq.Encode(); // encode the certificate
 
@@ -1133,22 +1446,26 @@ namespace Neos.IdentityServer.MultiFactor
                                                     ObjectIdPublicKeyFlags.XCN_CRYPT_OID_INFO_PUBKEY_ANY,
                                                     AlgorithmFlags.AlgorithmFlagsNone, "SHA256");
 
+                CObjectIds oidlist = new CObjectIds();
                 CObjectId oid = new CObjectId();
-                // oid.InitializeFromValue("1.3.6.1.5.5.7.3.1"); // SSL server  
                 oid.InitializeFromValue("1.3.6.1.4.1.311.80.1"); // Encryption
-
-                CObjectIds oidlist = new CObjectIds
-                {
-                    oid
-                };
+                oidlist.Add(oid);
 
                 CObjectId coid = new CObjectId();
-                // coid.InitializeFromValue("1.3.6.1.5.5.7.3.2"); // Client auth
                 coid.InitializeFromValue("1.3.6.1.5.5.7.3.3"); // Signature
                 oidlist.Add(coid);
 
                 CX509ExtensionEnhancedKeyUsage eku = new CX509ExtensionEnhancedKeyUsage();
                 eku.InitializeEncode(oidlist);
+
+                CX509ExtensionKeyUsage ku = new CX509ExtensionKeyUsage();
+                ku.InitializeEncode(CERTENROLLLib.X509KeyUsageFlags.XCN_CERT_DIGITAL_SIGNATURE_KEY_USAGE | CERTENROLLLib.X509KeyUsageFlags.XCN_CERT_KEY_ENCIPHERMENT_KEY_USAGE);
+
+                CX509ExtensionBasicConstraints bc = new CX509ExtensionBasicConstraints
+                {
+                    Critical = true
+                };
+                bc.InitializeEncode(false, 0);
 
                 // Create the self signing request
                 CX509CertificateRequestCertificate certreq = new CX509CertificateRequestCertificate();
@@ -1156,9 +1473,12 @@ namespace Neos.IdentityServer.MultiFactor
                 certreq.Subject = dn;
                 certreq.Issuer = neos;
                 certreq.NotBefore = DateTime.Now.AddDays(-10);
-
                 certreq.NotAfter = DateTime.Now.AddYears(years);
+
                 certreq.X509Extensions.Add((CX509Extension)eku); // add the EKU
+                certreq.X509Extensions.Add((CX509Extension)ku); // add the KU
+                certreq.X509Extensions.Add((CX509Extension)bc); // add the BC
+
                 certreq.HashAlgorithm = hashobj; // Specify the hashing algorithm
                 certreq.Encode(); // encode the certificate
 
@@ -1219,13 +1539,10 @@ namespace Neos.IdentityServer.MultiFactor
 
 
                 // 2.5.29.37 – Enhanced Key Usage includes
-
+                var oidlist = new CObjectIds();
                 CObjectId oid = new CObjectId();
                 oid.InitializeFromValue("1.3.6.1.5.5.8.2.2"); // IP security IKE intermediate
-                var oidlist = new CObjectIds
-                {
-                    oid
-                };
+                oidlist.Add(oid);
 
                 CObjectId coid = new CObjectId();
                 coid.InitializeFromValue("1.3.6.1.4.1.311.10.3.11"); // Key Recovery
@@ -1234,15 +1551,27 @@ namespace Neos.IdentityServer.MultiFactor
                 CX509ExtensionEnhancedKeyUsage eku = new CX509ExtensionEnhancedKeyUsage();
                 eku.InitializeEncode(oidlist);
 
+                CX509ExtensionKeyUsage ku = new CX509ExtensionKeyUsage();
+                ku.InitializeEncode(CERTENROLLLib.X509KeyUsageFlags.XCN_CERT_DIGITAL_SIGNATURE_KEY_USAGE | CERTENROLLLib.X509KeyUsageFlags.XCN_CERT_KEY_ENCIPHERMENT_KEY_USAGE);
+
+                CX509ExtensionBasicConstraints bc = new CX509ExtensionBasicConstraints
+                {
+                    Critical = true
+                };
+                bc.InitializeEncode(false, 0);
+
                 // Create the self signing request
                 CX509CertificateRequestCertificate certreq = new CX509CertificateRequestCertificate();
                 certreq.InitializeFromPrivateKey(X509CertificateEnrollmentContext.ContextMachine, privateKey, "");
                 certreq.Subject = dn;
                 certreq.Issuer = neos;
                 certreq.NotBefore = DateTime.Now.AddDays(-10);
-
                 certreq.NotAfter = DateTime.Now.AddYears(years);
+
                 certreq.X509Extensions.Add((CX509Extension)eku); // add the EKU
+                certreq.X509Extensions.Add((CX509Extension)ku); // add the EKU
+                certreq.X509Extensions.Add((CX509Extension)bc); // add the EKU
+
                 certreq.HashAlgorithm = hashobj; // Specify the hashing algorithm
                 certreq.Encode(); // encode the certificate
 
@@ -1271,7 +1600,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// InternalCreateADFSCertificate method implementation
         /// </summary>
         [SuppressUnmanagedCodeSecurity]
-        private static string InternalCreateADFSCertificate2012R2(string subjectName, bool issigning, int years)
+        private static string InternalCreateADFSCertificate2012R2(string subjectName, ADFSCertificatesKind kind, int years)
         {
             string base64encoded = string.Empty;
             CX500DistinguishedName dn = new CX500DistinguishedName();
@@ -1285,10 +1614,12 @@ namespace Neos.IdentityServer.MultiFactor
             privateKey.ExportPolicy = X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_EXPORT_FLAG;
             privateKey.SecurityDescriptor = "D:(A;;FA;;;SY)(A;;FA;;;BA)";
 
-            if (issigning)
-                privateKey.KeyUsage = X509PrivateKeyUsageFlags.XCN_NCRYPT_ALLOW_SIGNING_FLAG;
-            else
-                privateKey.KeyUsage = X509PrivateKeyUsageFlags.XCN_NCRYPT_ALLOW_DECRYPT_FLAG;
+            privateKey.KeyUsage = X509PrivateKeyUsageFlags.XCN_NCRYPT_ALLOW_USAGES_NONE;
+            if (kind.HasFlag(ADFSCertificatesKind.Signing)                )
+                privateKey.KeyUsage |= X509PrivateKeyUsageFlags.XCN_NCRYPT_ALLOW_SIGNING_FLAG;
+            if (kind.HasFlag(ADFSCertificatesKind.Decrypting))
+                privateKey.KeyUsage |= X509PrivateKeyUsageFlags.XCN_NCRYPT_ALLOW_DECRYPT_FLAG;
+
             if (!string.IsNullOrEmpty(ClientSIDsProxy.ADFSServiceSID))
                 privateKey.SecurityDescriptor += "(A;;FA;;;" + ClientSIDsProxy.ADFSServiceSID + ")";
             if (!string.IsNullOrEmpty(ClientSIDsProxy.ADFSAccountSID))
@@ -1301,20 +1632,24 @@ namespace Neos.IdentityServer.MultiFactor
 
                 CObjectId hashobj = new CObjectId();
                 hashobj.InitializeFromAlgorithmName(ObjectIdGroupId.XCN_CRYPT_HASH_ALG_OID_GROUP_ID, ObjectIdPublicKeyFlags.XCN_CRYPT_OID_INFO_PUBKEY_ANY, AlgorithmFlags.AlgorithmFlagsNone, "SHA256");
+
+                CERTENROLLLib.X509KeyUsageFlags flg = CERTENROLLLib.X509KeyUsageFlags.XCN_CERT_NO_KEY_USAGE;
                 CObjectIds oidlist = new CObjectIds();
-                if (!issigning)
+                if (kind.HasFlag(ADFSCertificatesKind.Decrypting))
                 {
                     CObjectId oid = new CObjectId();
                     oid.InitializeFromValue("1.3.6.1.4.1.311.80.1"); // Encryption
                     oidlist.Add(oid);
+                    flg |= CERTENROLLLib.X509KeyUsageFlags.XCN_CERT_KEY_ENCIPHERMENT_KEY_USAGE;
                     dn.Encode("CN=ADFS Encrypt - " + subjectName, X500NameFlags.XCN_CERT_NAME_STR_NONE);
                     neos.Encode("CN=ADFS Encrypt - " + subjectName, X500NameFlags.XCN_CERT_NAME_STR_NONE);
                 }
-                else
+                if (kind.HasFlag(ADFSCertificatesKind.Signing))
                 {
                     CObjectId coid = new CObjectId();
                     coid.InitializeFromValue("1.3.6.1.5.5.7.3.3"); // Signature
                     oidlist.Add(coid);
+                    flg |= CERTENROLLLib.X509KeyUsageFlags.XCN_CERT_DIGITAL_SIGNATURE_KEY_USAGE;
                     dn.Encode("CN=ADFS Sign - " + subjectName, X500NameFlags.XCN_CERT_NAME_STR_NONE);
                     neos.Encode("CN=ADFS Sign - " + subjectName, X500NameFlags.XCN_CERT_NAME_STR_NONE);
                 }
@@ -1322,15 +1657,26 @@ namespace Neos.IdentityServer.MultiFactor
                 CX509ExtensionEnhancedKeyUsage eku = new CX509ExtensionEnhancedKeyUsage();
                 eku.InitializeEncode(oidlist);
 
+                CX509ExtensionKeyUsage ku = new CX509ExtensionKeyUsage();
+                ku.InitializeEncode(flg);
+
+                CX509ExtensionBasicConstraints bc = new CX509ExtensionBasicConstraints
+                {
+                    Critical = true
+                };
+                bc.InitializeEncode(false, 0);
+
                 // Create the self signing request
                 CX509CertificateRequestCertificate certreq = new CX509CertificateRequestCertificate();
                 certreq.InitializeFromPrivateKey(X509CertificateEnrollmentContext.ContextMachine, privateKey, "");
                 certreq.Subject = dn;
                 certreq.Issuer = neos;
                 certreq.NotBefore = DateTime.Now.AddDays(-10);
-
                 certreq.NotAfter = DateTime.Now.AddYears(years);
+
                 certreq.X509Extensions.Add((CX509Extension)eku); // add the EKU
+                certreq.X509Extensions.Add((CX509Extension)ku); // add the KU
+                certreq.X509Extensions.Add((CX509Extension)bc); // add the BC
                 certreq.HashAlgorithm = hashobj; // Specify the hashing algorithm
                 certreq.Encode(); // encode the certificate
 

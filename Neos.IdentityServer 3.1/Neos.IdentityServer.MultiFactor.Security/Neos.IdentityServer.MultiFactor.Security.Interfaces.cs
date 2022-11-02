@@ -199,13 +199,16 @@ namespace Neos.IdentityServer.MultiFactor
         bool CertificateExists(string thumbprint, byte location);
 
         [OperationContract]
+        bool CreateSelfSignedCertificate(string subjectName, string dnsName, CertificatesKind kind, int years, string path, string pwd = "");
+
+        [OperationContract]
         string CreateRSACertificate(Dictionary<string, bool> servers, string subject, int years);
 
         [OperationContract]
         string CreateRSACertificateForSQLEncryption(Dictionary<string, bool> servers, string subject, int years);
 
         [OperationContract]
-        bool CreateADFSCertificate(Dictionary<string, bool> servers, string subject, bool issigning, int years);
+        bool CreateADFSCertificate(Dictionary<string, bool> servers, string subject, ADFSCertificatesKind kind, int years);
 
         [OperationContract]
         void PushCertificate(string cert);

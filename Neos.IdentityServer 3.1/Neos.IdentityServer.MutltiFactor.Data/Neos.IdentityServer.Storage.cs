@@ -25,10 +25,13 @@ namespace Neos.IdentityServer.MultiFactor.Data
     public class WebAuthNPublicKeySerialization
     {
         private ADDSHost _host;
+        private bool _weakencoding = false;
 
         public WebAuthNPublicKeySerialization(ADDSHost host = null)
         {
             _host = host;
+            if (_host!=null)
+                _weakencoding = _host.WeakPublicKeyEncoding;
         }
 
         /// <summary>
@@ -66,7 +69,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             string Descriptor = HexaEncoding.GetHexStringFromByteArray(stream.ToArray());
 
             string distinguishedName = string.Empty;
-            if (_host != null)
+            if ((_host != null) && (!_weakencoding))
                 distinguishedName = GetMFAdistinguishedName(username);
             else
                 distinguishedName = username;
@@ -83,14 +86,14 @@ namespace Neos.IdentityServer.MultiFactor.Data
         public MFAUserCredential DeserializeCredentials(string descriptor, string username)
         {
             string distinguishedName = string.Empty;
-            if (_host != null)
+            if ((_host != null) && (!_weakencoding))
                 distinguishedName = GetMFAdistinguishedName(username);
             else
                 distinguishedName = username;
             string[] values = descriptor.Split(':');
             string securitydescriptor = values[2];
             if (!CheckUserName(values[3].ToString(), distinguishedName))
-                throw new SecurityException("Invalid Key for user " + username);
+                throw new SecurityException("SECURITY ERROR : Invalid Key for user " + username);
 
             string nickName = string.Empty;
             if (values.Length == 5)

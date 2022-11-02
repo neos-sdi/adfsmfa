@@ -276,4 +276,10 @@
   <data name="InfosConfigNotUpdated" xml:space="preserve">
     <value>Конфігурація МЗС НЕ оновлюється!</value>
   </data>
+  <data name="InfosSelfSignedGenerated" xml:space="preserve">
+    <value>Створено самопідписаний сертифікат</value>
+  </data>
+  <data name="InfosSelfSignedNotGenerated" xml:space="preserve">
+    <value>Самопідписаний сертифікат не генерується</value>
+  </data>
 </root>
