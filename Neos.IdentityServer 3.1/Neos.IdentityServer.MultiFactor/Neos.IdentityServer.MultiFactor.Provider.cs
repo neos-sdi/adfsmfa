@@ -604,6 +604,11 @@ namespace Neos.IdentityServer.MultiFactor
                                         return new AdapterPresentation(this, context);
                                     }
                                 }
+                                else
+                                {
+                                    usercontext.UIMode = ProviderPageMode.Bypass;
+                                    return new AdapterPresentation(this, context);
+                                }
                             }
                             else
                             {
