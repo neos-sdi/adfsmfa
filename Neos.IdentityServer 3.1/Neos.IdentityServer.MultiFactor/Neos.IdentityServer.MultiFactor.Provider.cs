@@ -1976,6 +1976,10 @@ namespace Neos.IdentityServer.MultiFactor
                         {
                             usercontext.UIMode = ProviderPageMode.ManageOptions;
                         }
+                        else if (usercontext.WizContext == WizardContextMode.ForceWizard)
+                        {
+                            usercontext.UIMode = ProviderPageMode.Bypass;
+                        }
                         else
                             usercontext.UIMode = ProviderPageMode.SelectOptions;
 
@@ -2114,6 +2118,10 @@ namespace Neos.IdentityServer.MultiFactor
                         else if (usercontext.TargetUIMode == ProviderPageMode.ManageOptions)
                         {
                             usercontext.UIMode = ProviderPageMode.ManageOptions;
+                        }
+                        else if (usercontext.WizContext == WizardContextMode.ForceWizard)
+                        {
+                            usercontext.UIMode = ProviderPageMode.Bypass;
                         }
                         else
                             usercontext.UIMode = ProviderPageMode.SelectOptions;
@@ -2311,6 +2319,10 @@ namespace Neos.IdentityServer.MultiFactor
                         else if (usercontext.TargetUIMode == ProviderPageMode.ManageOptions)
                         {
                             usercontext.UIMode = ProviderPageMode.ManageOptions;
+                        }
+                        else if (usercontext.WizContext == WizardContextMode.ForceWizard)
+                        {
+                            usercontext.UIMode = ProviderPageMode.Bypass;
                         }
                         else
                             usercontext.UIMode = ProviderPageMode.SelectOptions;                        
@@ -2511,6 +2523,10 @@ namespace Neos.IdentityServer.MultiFactor
                         else if (usercontext.TargetUIMode == ProviderPageMode.ManageOptions)
                         {
                             usercontext.UIMode = ProviderPageMode.ManageOptions;
+                        }
+                        else if (usercontext.WizContext == WizardContextMode.ForceWizard)
+                        {
+                            usercontext.UIMode = ProviderPageMode.Bypass;
                         }
                         else
                             usercontext.UIMode = ProviderPageMode.SelectOptions;

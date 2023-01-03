@@ -152,7 +152,7 @@ namespace MFA
     {
         string _identity = string.Empty;
         private PSRegistration[] _list = null;
-        private DataFilterObject _filter = new DataFilterObject();
+        private DataFilterObject _filter = new DataFilterObject { EnabledOnly = true };
         private DataPagingObject _paging = new DataPagingObject();
         private DataOrderObject _order = new DataOrderObject();
 

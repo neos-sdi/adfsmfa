@@ -103,7 +103,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\SErrors.da.resx" />
-    <EmbeddedResource Include="Resources\SErrors.de.resx" />
+    <EmbeddedResource Include="Resources\SErrors.de.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\SErrors.es.resx" />
     <EmbeddedResource Include="Resources\SErrors.fr-CA.resx" />
     <EmbeddedResource Include="Resources\SErrors.fr.resx">
