@@ -7199,6 +7199,7 @@ namespace MFA
     ///   <para>Import-MFAUsersADDS -LDAPPath "dc=domain,dc=com" -DisableAll -SendMail -NewKey</para>
     ///   <para>Import-MFAUsersADDS -LDAPPath "dc=domain,dc=com" -Method Code -ModifiedSince ([DateTime]::UtcNow.AddHours(-4))</para>
     ///   <para>Import-MFAUsersADDS -LDAPPath "dc=domain,dc=com" -Method Code -ModifiedSince ([DateTime]::UtcNow.AddMinutes(-30))</para>
+    ///   <para>Import-MFAUsersADDS -LDAPPath "dc=domain,dc=com" -LDAPFilter "(memberof=CN=my Users,OU=Extranet,DC=domain,DC=com)" </para>
     ///   <para></para>
     ///   <para>NewKey generation of a new Key only if an update occurs, when adding a user, a key is always generated</para>
     ///   <para></para>
@@ -7214,6 +7215,12 @@ namespace MFA
         [Parameter(Mandatory = true, ParameterSetName = "Identity")]
         [ValidateNotNullOrEmpty()]
         public string LDAPPath { get; set; } = string.Empty;
+
+        /// <summary>
+        /// <para type="description">ADDS LDAP path to query (dc=domain,dc=com)</para>
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = "Identity")]
+        public string LDAPFilter { get; set; } = string.Empty;
 
         /// <summary>
         /// <para type="description">ADDS DNS domain or forest</para>
@@ -7330,6 +7337,7 @@ namespace MFA
                     imp.Parameters.ModifiedSince = this.ModifiedSince;
                     imp.Parameters.DomainName = this.DomainName;
                     imp.Parameters.LDAPPath = this.LDAPPath;
+                    imp.Parameters.LDAPFilter= this.LDAPFilter;
                     imp.Parameters.MailAttribute = this.MailAttributes;
                     imp.Parameters.PhoneAttribute = this.PhoneAttribute;
                     imp.Parameters.Method = (PreferredMethod)this.Method;
