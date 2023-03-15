@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.329
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neos.IdentityServer.MultiFactor.Administration", "Neos.IdentityServer.Common.Admin\Neos.IdentityServer.MultiFactor.Administration.csproj", "{BB08DC85-4E6E-4220-A0FC-01BFB6C468F6}"
 EndProject
@@ -22,9 +22,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neos.IdentityServer.MultiFa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neos.IdentityServer.MultiFactor.NotificationHub", "Neos.IdentityServer.MultiFactor.NotificationHub\Neos.IdentityServer.MultiFactor.NotificationHub.csproj", "{CDC9E4D1-379C-42B4-A28D-C7F833306E60}"
 EndProject
-Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Neos.IdentityServer.MultiFactor.WixSetup", "Neos.IdentityServer.MultiFactor.WixSetup\Neos.IdentityServer.MultiFactor.WixSetup.wixproj", "{DAC67ED4-89FE-46CB-866D-C0CB52FC6115}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neos.IdentityServer.Deployment", "Neos.IdentityServer.Deployment\Neos.IdentityServer.Deployment.csproj", "{713C4D81-3780-4D5A-A691-878F48ECA43C}"
+Project("{B7DD6F7E-DEF8-4E67-B5B7-07EF123DB6F0}") = "Neos.IdentityServer.MultiFactor.WixSetup", "Neos.IdentityServer.MultiFactor.WixSetup\Neos.IdentityServer.MultiFactor.WixSetup.wixproj", "{DAC67ED4-89FE-46CB-866D-C0CB52FC6115}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Neos.IdentityServer.Console.NativeResources", "Neos.IdentityServer.Console.NativeResources\Win32Project1.vcxproj", "{C2740F84-46EF-449D-ABF2-8268C9A4CE02}"
 EndProject
@@ -47,6 +45,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neos.IdentityServer.MultiFactor.Security", "Neos.IdentityServer.MultiFactor.Security\Neos.IdentityServer.MultiFactor.Security.csproj", "{9EC6D40A-4366-4066-BDFC-8AF65BCE7EAD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neos.IdentityServer.MultiFactor.PresentationSample", "Neos.IdentityServer.MultiFactor.PresenationSample\Neos.IdentityServer.MultiFactor.PresentationSample.csproj", "{1500B83A-39CD-420C-A617-DAEBA3FD0C96}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neos.IdentityServer.Deployment", "Neos.IdentityServer.Deployment\Neos.IdentityServer.Deployment.csproj", "{713C4D81-3780-4D5A-A691-878F48ECA43C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -192,24 +192,6 @@ Global
 		{DAC67ED4-89FE-46CB-866D-C0CB52FC6115}.Release|x64.ActiveCfg = Release|x86
 		{DAC67ED4-89FE-46CB-866D-C0CB52FC6115}.Release|x86.ActiveCfg = Release|x86
 		{DAC67ED4-89FE-46CB-866D-C0CB52FC6115}.Release|x86.Build.0 = Release|x86
-		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Debug|Win32.ActiveCfg = Debug|x86
-		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Debug|Win32.Build.0 = Debug|x86
-		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Debug|x64.ActiveCfg = Debug|x86
-		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Debug|x86.ActiveCfg = Debug|x86
-		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Debug|x86.Build.0 = Debug|x86
-		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Release|Win32.ActiveCfg = Release|x86
-		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Release|Win32.Build.0 = Release|x86
-		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Release|x64.ActiveCfg = Release|x86
-		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Release|x86.ActiveCfg = Release|x86
-		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Release|x86.Build.0 = Release|x86
 		{C2740F84-46EF-449D-ABF2-8268C9A4CE02}.Debug|Any CPU.ActiveCfg = Debug|Win32
 		{C2740F84-46EF-449D-ABF2-8268C9A4CE02}.Debug|Any CPU.Build.0 = Debug|Win32
 		{C2740F84-46EF-449D-ABF2-8268C9A4CE02}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
@@ -404,15 +386,35 @@ Global
 		{1500B83A-39CD-420C-A617-DAEBA3FD0C96}.Release|x64.Build.0 = Release|Any CPU
 		{1500B83A-39CD-420C-A617-DAEBA3FD0C96}.Release|x86.ActiveCfg = Release|Any CPU
 		{1500B83A-39CD-420C-A617-DAEBA3FD0C96}.Release|x86.Build.0 = Release|Any CPU
+		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Debug|Win32.Build.0 = Debug|Any CPU
+		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Debug|x64.Build.0 = Debug|Any CPU
+		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Debug|x86.Build.0 = Debug|Any CPU
+		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Release|Win32.ActiveCfg = Release|Any CPU
+		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Release|Win32.Build.0 = Release|Any CPU
+		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Release|x64.ActiveCfg = Release|Any CPU
+		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Release|x64.Build.0 = Release|Any CPU
+		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Release|x86.ActiveCfg = Release|Any CPU
+		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {0A227451-7DA8-4A2D-BED4-C2ED59370850}
-		RESX_AutoCreateNewLanguageFiles = True
-		RESX_Rules = {"EnabledRules":["StringFormat"]}
-		RESX_PrefixTranslations = False
 		RESX_TranslatorConfiguration = {"Azure":"{\"AutoDetectHtml\":true,\"MaxCharactersPerMinute\":33300,\"AuthenticationKey\":\"1023338415de478aacebf0a28e12b30a\",\"Region\":null,\"IsEnabled\":true,\"SaveCredentials\":true,\"Ranking\":1.0}","Baidu":"{\"AppId\":null,\"SecretKey\":null,\"ApiUrl\":null,\"Domain\":null,\"IsEnabled\":false,\"SaveCredentials\":false,\"Ranking\":1.0}","DeepL":"{\"ApiKey\":null,\"ApiUrl\":null,\"IsEnabled\":false,\"SaveCredentials\":false,\"Ranking\":1.0}","Google":"{\"ApiKey\":null,\"IsEnabled\":false,\"SaveCredentials\":false,\"Ranking\":1.0}","MSTerm":"{\"IsEnabled\":false,\"SaveCredentials\":false,\"Ranking\":1.0}","MyMemory":"{\"Key\":null,\"Mail\":null,\"IsEnabled\":false,\"SaveCredentials\":false,\"Ranking\":1.0}"}
+		RESX_PrefixTranslations = False
+		RESX_Rules = {"EnabledRules":["StringFormat"]}
+		RESX_AutoCreateNewLanguageFiles = True
+		SolutionGuid = {0A227451-7DA8-4A2D-BED4-C2ED59370850}
 	EndGlobalSection
 EndGlobal

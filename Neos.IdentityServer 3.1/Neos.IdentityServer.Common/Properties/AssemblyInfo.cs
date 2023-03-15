@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2022 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2023 redhook (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -29,7 +29,7 @@ using System.Runtime.Versioning;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("neos-sdi")]
 [assembly: AssemblyProduct("Microsoft.IdentityServer.MultiFactor.Common")]
-[assembly: AssemblyCopyright("Copyright @redhook62 © 2022")]
+[assembly: AssemblyCopyright("Copyright redhook © 2023")]
 [assembly: AssemblyTrademark("neos-sdi")]
 [assembly: AssemblyCulture("")]
 
@@ -53,7 +53,7 @@ using System.Runtime.Versioning;
 // en utilisant '*', comme ci-dessous :
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("3.0.0.0")]
-[assembly: AssemblyFileVersion("3.1.2302.0")]
+[assembly: AssemblyFileVersion("3.1.2303.0")]
 [assembly: AssemblyInformationalVersion("3.0.0.0")]
 [assembly: NeutralResourcesLanguage("en")]
 
