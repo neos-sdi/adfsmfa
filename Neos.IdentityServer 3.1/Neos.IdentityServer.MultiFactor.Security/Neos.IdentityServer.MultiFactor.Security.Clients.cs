@@ -21,6 +21,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 
 namespace Neos.IdentityServer.MultiFactor.Data
@@ -1261,12 +1262,29 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 {
                     MFAConfig config = null;
                     if (cfg == null)
-                        config = CFGReaderUtilities.ReadConfiguration();
+                        try
+                        {
+                            config = CFGReaderUtilities.ReadConfiguration();
+                        }
+                        catch (Exception e)
+                        {
+                            Log.WriteEntry(string.Format("Error retreiving security descriptors configuration : {0} ", e.Message), EventLogEntryType.Error, 22012);
+                            throw e;
+                        }
                     else
                         config = cfg;
                     if (config != null)
                     {
-                        SIDsParametersRecord rec = WebAdminManagerClient.GetSIDsInformations(config);
+                        SIDsParametersRecord rec = null;
+                        try
+                        {
+                            rec = WebAdminManagerClient.GetSIDsInformations(config);
+                        }
+                        catch (Exception e)
+                        {
+                            Log.WriteEntry(string.Format("Error retreiving security descriptors from MFA Service : {0} ", e.Message), EventLogEntryType.Error, 22012);
+                            throw e;
+                        }
                         ADFSAccountSID = rec.ADFSAccountSID;
                         ADFSAccountName = rec.ADFSAccountName;
                         ADFSServiceSID = rec.ADFSServiceAccountSID;
@@ -1278,11 +1296,14 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         ADFSSystemServiceAdministrationAllowed = rec.ADFSSystemServiceAdministrationAllowed;
                         Loaded = rec.Loaded;
                     }
+                    else
+                        Log.WriteEntry("Error retreiving security descriptors : Configuration is NULL", EventLogEntryType.Error, 22012);
                 }
             }
             catch (Exception e)
             {
                 Log.WriteEntry(string.Format("Error retreiving security descriptors : {0} ", e.Message), EventLogEntryType.Error, 2012);
+                throw e;
             }
         }
     }

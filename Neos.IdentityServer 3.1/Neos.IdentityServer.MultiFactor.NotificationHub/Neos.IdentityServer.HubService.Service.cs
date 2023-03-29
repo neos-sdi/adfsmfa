@@ -36,7 +36,7 @@ namespace Neos.IdentityServer.MultiFactor
     {
         private static ReplayManager _manager = null;
         private static readonly object _lock = new object();
-        private EventLog _log;
+        private readonly EventLog _log;
 
         /// <summary>
         /// Constructor implmentation
@@ -153,10 +153,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public void WarmUp()
         {
-            if (_manager != null)
-            {
-                _manager.Start();
-            }
+            _manager?.Start();
         }
     }
     #endregion
@@ -169,7 +166,7 @@ namespace Neos.IdentityServer.MultiFactor
     public class WebThemeService : IWebThemeManager
     {
         private static WebThemeManager _manager = null;
-        private EventLog _log;
+        private readonly EventLog _log;
 
         /// <summary>
         /// Constructor implmentation
@@ -349,8 +346,8 @@ namespace Neos.IdentityServer.MultiFactor
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession, ConcurrencyMode = ConcurrencyMode.Multiple)]
     public class WebAdminService : IWebAdminServices
     {
-        private WebAdminManager _manager = null;
-        private EventLog _log;
+        private readonly WebAdminManager _manager = null;
+        private readonly EventLog _log;
 
         /// <summary>
         /// Constructor implmentation
@@ -374,8 +371,10 @@ namespace Neos.IdentityServer.MultiFactor
             catch (Exception e)
             {
                 _log.WriteEntry(string.Format("Error on WebAdminService Service GetSIDsInformations method : {0}.", e.Message), EventLogEntryType.Error, 2010);
-                SIDsParametersRecord rec = new SIDsParametersRecord();
-                rec.Loaded = false;
+                SIDsParametersRecord rec = new SIDsParametersRecord
+                {
+                    Loaded = false
+                };
                 return rec;
             }
         }
@@ -392,8 +391,10 @@ namespace Neos.IdentityServer.MultiFactor
             catch (Exception e)
             {
                 _log.WriteEntry(string.Format("Error on WebAdminService Service GetSIDsInformations method : {0}.", e.Message), EventLogEntryType.Error, 2010);
-                SIDsParametersRecord rec = new SIDsParametersRecord();
-                rec.Loaded = false;
+                SIDsParametersRecord rec = new SIDsParametersRecord
+                {
+                    Loaded = false
+                };
                 return rec;
             }
         }
@@ -841,7 +842,7 @@ namespace Neos.IdentityServer.MultiFactor
     public class NTService : INTService
     {
         private static NTServiceManager _manager = null;
-        private EventLog _log;
+        private readonly EventLog _log;
 
         /// <summary>
         /// Constructor implmentation

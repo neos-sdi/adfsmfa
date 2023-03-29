@@ -44,7 +44,7 @@ namespace Neos.IdentityServer.MultiFactor
         internal const int MAILSLOT_NO_MESSAGE = -1;
         private SafeMailslotHandle _mailslot = null;
         private SECURITY_ATTRIBUTES _securityattr = null;
-        private List<T> _messages = new List<T>();
+        private readonly List<T> _messages = new List<T>();
         private CancellationTokenSource _canceltokensource = null;
         private readonly string _appname = string.Empty;
         private readonly int _processid = 0;
@@ -244,7 +244,6 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private bool InternalReadMailslot()
         {
-            int cbBytesRead = 0;
             int nMessageId = 0;
 
             bool succeeded = false;
@@ -263,7 +262,7 @@ namespace Neos.IdentityServer.MultiFactor
                 {
                     nMessageId++;
                     byte[] bBuffer = new byte[cbMessageBytes];
-                    succeeded = NativeMethod.ReadFile(_mailslot, bBuffer, cbMessageBytes, out cbBytesRead, IntPtr.Zero);
+                    succeeded = NativeMethod.ReadFile(_mailslot, bBuffer, cbMessageBytes, out int cbBytesRead, IntPtr.Zero);
                     if (!succeeded)
                         throw new Win32Exception(Marshal.GetLastWin32Error());
 
@@ -412,8 +411,8 @@ namespace Neos.IdentityServer.MultiFactor
     #region MailSlotServerDispatcher
     public class MailSlotServerDispatcher : BaseMailSlotServer<MailSlotMessage>
     {
-        private List<MailSlotDispatcherMessage> _instances = new List<MailSlotDispatcherMessage>();
-        private MailSlotServerManager _manager;
+        private readonly List<MailSlotDispatcherMessage> _instances = new List<MailSlotDispatcherMessage>();
+        private readonly MailSlotServerManager _manager;
 
         /// <summary>
         /// Constructor implementation
@@ -536,8 +535,8 @@ namespace Neos.IdentityServer.MultiFactor
     #region MailSlotServerManager
     public class MailSlotServerManager : BaseMailSlotServer<MailSlotDispatcherMessage>
     {
-        private List<MailSlotServerDispatcher> _mailslotlst = new List<MailSlotServerDispatcher>();
-        private MailSlotServer _broadcast = null;
+        private readonly List<MailSlotServerDispatcher> _mailslotlst = new List<MailSlotServerDispatcher>();
+        private readonly MailSlotServer _broadcast = null;
         public delegate void MailSlotSystemEvent(MailSlotServerDispatcher mailslotserver);
         public event MailSlotSystemEvent MailSlotSystemMessageArrived;
 
@@ -733,14 +732,13 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         protected virtual void WriteMailslot(T message)
         {
-            int cbMessageBytes = 0;
-            int cbBytesWritten = 0;
+            int cbMessageBytes;
             byte[] bMessage = GetMessage(message);
             cbMessageBytes = bMessage.Length;
             try
             {
                 CreateMailSlot();
-                bool succeeded = NativeMethod.WriteFile(_mailslot, bMessage, cbMessageBytes, out cbBytesWritten, IntPtr.Zero);
+                bool succeeded = NativeMethod.WriteFile(_mailslot, bMessage, cbMessageBytes, out int cbBytesWritten, IntPtr.Zero);
                 if (!succeeded || cbMessageBytes != cbBytesWritten)
                     throw new Win32Exception(Marshal.GetLastWin32Error());
             }
@@ -1026,7 +1024,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public static implicit operator MailSlotDispatcherMessageStruct(MailSlotDispatcherMessage data)
         {
-            MailSlotDispatcherMessageStruct flatted = default(MailSlotDispatcherMessageStruct);
+            MailSlotDispatcherMessageStruct flatted = default;
             flatted.MsgType = 0xFF;
             flatted.Operation = data.Operation;
             flatted.TargetID = data.TargetID;
@@ -1091,7 +1089,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public static implicit operator MailSlotMessageStruct(MailSlotMessage data)
         {
-            MailSlotMessageStruct flatted = default(MailSlotMessageStruct);
+            MailSlotMessageStruct flatted = default;
             flatted.MsgType = 0xEE;
             flatted.Operation = data.Operation;
             flatted.SenderID = data.SenderID;
@@ -1214,7 +1212,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             int rawsize = Marshal.SizeOf(typeof(T));
             if (rawsize > rawData.Length)
-                return default(T);
+                return default;
 
             IntPtr buffer = Marshal.AllocHGlobal(rawsize);
             try
@@ -1335,8 +1333,8 @@ namespace Neos.IdentityServer.MultiFactor
     /// Represents a wrapper class for a mailslot handle. 
     /// </summary>
     [SuppressUnmanagedCodeSecurity,
-    HostProtection(SecurityAction.LinkDemand, MayLeakOnAbort = true),
-    SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
+    HostProtection(SecurityAction.Demand, MayLeakOnAbort = true),
+    SecurityPermission(SecurityAction.Demand, UnmanagedCode = true)]
     internal sealed class SafeMailslotHandle : SafeHandleZeroOrMinusOneIsInvalid
     {
         private SafeMailslotHandle(): base(true)
@@ -1364,7 +1362,7 @@ namespace Neos.IdentityServer.MultiFactor
     /// Represents a wrapper class for a local memory pointer. 
     /// </summary>
     [SuppressUnmanagedCodeSecurity,
-    HostProtection(SecurityAction.LinkDemand, MayLeakOnAbort = true)]
+    HostProtection(SecurityAction.Demand, MayLeakOnAbort = true)]
     internal sealed class SafeLocalMemHandle : SafeHandleZeroOrMinusOneIsInvalid
     {
         public SafeLocalMemHandle(): base(true)

@@ -172,11 +172,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public void ReleaseInstance(InstanceContext instanceContext, object instance)
         {
-            var disposable = instance as IDisposable;
-            if (disposable != null)
-            {
-                disposable.Dispose();
-            }
+            IDisposable disposable = instance as IDisposable;
+            disposable?.Dispose();
         }
         #endregion
 
@@ -254,10 +251,7 @@ namespace Neos.IdentityServer.MultiFactor
         public void ReleaseInstance(InstanceContext instanceContext, object instance)
         {
             var disposable = instance as IDisposable;
-            if (disposable != null)
-            {
-                disposable.Dispose();
-            }
+            disposable?.Dispose();
         }
         #endregion
 
@@ -334,11 +328,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public void ReleaseInstance(InstanceContext instanceContext, object instance)
         {
-            var disposable = instance as IDisposable;
-            if (disposable != null)
-            {
-                disposable.Dispose();
-            }
+            IDisposable disposable = instance as IDisposable;
+            disposable?.Dispose();
         }
         #endregion
 
@@ -415,11 +406,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public void ReleaseInstance(InstanceContext instanceContext, object instance)
         {
-            var disposable = instance as IDisposable;
-            if (disposable != null)
-            {
-                disposable.Dispose();
-            }
+            IDisposable disposable = instance as IDisposable;
+            disposable?.Dispose();
         }
         #endregion
 
@@ -462,7 +450,7 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     public class EventLogDependency : IDependency
     {
-        private EventLog _eventlog;
+        private readonly EventLog _eventlog;
         public EventLogDependency(EventLog eventLog)
         {
             _eventlog = eventLog;
@@ -481,7 +469,7 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     public class ReplayServer<T>
     {
-        private bool useEncryption = true;
+        private readonly bool useEncryption = true;
 
         /// <summary>
         /// StartService method implementation
@@ -505,9 +493,11 @@ namespace Neos.IdentityServer.MultiFactor
                 ServiceThrottlingBehavior prf = Servicehost.Description.Behaviors.Find<ServiceThrottlingBehavior>();
                 if (smb == null)
                 {
-                    smb = new ServiceMetadataBehavior();
-                    smb.HttpGetEnabled = false;
-                    smb.HttpsGetEnabled = false;
+                    smb = new ServiceMetadataBehavior
+                    {
+                        HttpGetEnabled = false,
+                        HttpsGetEnabled = false
+                    };
                     smb.MetadataExporter.PolicyVersion = PolicyVersion.Default;
                     Servicehost.Description.Behaviors.Add(smb);
                 }
@@ -519,10 +509,12 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 if (dbg == null)
                 {
-                    dbg = new ServiceDebugBehavior();
-                    dbg.HttpHelpPageEnabled = false;
-                    dbg.HttpsHelpPageEnabled = false;
-                    dbg.IncludeExceptionDetailInFaults = true;
+                    dbg = new ServiceDebugBehavior
+                    {
+                        HttpHelpPageEnabled = false,
+                        HttpsHelpPageEnabled = false,
+                        IncludeExceptionDetailInFaults = true
+                    };
                     Servicehost.Description.Behaviors.Add(dbg);
                 }
                 else
@@ -533,10 +525,12 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 if (prf == null)
                 {
-                    prf = new ServiceThrottlingBehavior();
-                    prf.MaxConcurrentCalls = 256;
-                    prf.MaxConcurrentInstances = 256;
-                    prf.MaxConcurrentSessions = 256;
+                    prf = new ServiceThrottlingBehavior
+                    {
+                        MaxConcurrentCalls = 256,
+                        MaxConcurrentInstances = 256,
+                        MaxConcurrentSessions = 256
+                    };
                     Servicehost.Description.Behaviors.Add(prf);
                 }
                 else
@@ -549,16 +543,20 @@ namespace Neos.IdentityServer.MultiFactor
                 tcp.Security.Transport.ClientCredentialType = TcpClientCredentialType.Windows;
                 tcp.MaxConnections = 256;
 
-                List<IAuthorizationPolicy> policies = new List<IAuthorizationPolicy>();
-                policies.Add(new MFAAuthorizationPolicy());
+                List<IAuthorizationPolicy> policies = new List<IAuthorizationPolicy>
+                {
+                    new MFAAuthorizationPolicy()
+                };
                 Servicehost.Authorization.ExternalAuthorizationPolicies = policies.AsReadOnly();
                 Servicehost.Authorization.PrincipalPermissionMode = PrincipalPermissionMode.UseWindowsGroups;
 
                 ServiceEndpoint svcendpoint = null;
                 if (useEncryption)
                 {
-                    CustomBinding custombinding = new CustomBinding(tcp);
-                    custombinding.Name = "MFAReplayBinding";
+                    CustomBinding custombinding = new CustomBinding(tcp)
+                    {
+                        Name = "MFAReplayBinding"
+                    };
                     var currentEncoder = custombinding.Elements.Find<MessageEncodingBindingElement>();
                     if (currentEncoder != default(MessageEncodingBindingElement))
                     {
@@ -634,7 +632,7 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     public class WebThemesServer<T>
     {
-        private bool useEncryption = true;
+        private readonly bool useEncryption = true;
 
         /// <summary>
         /// StartService method implementation
@@ -658,9 +656,11 @@ namespace Neos.IdentityServer.MultiFactor
                 ServiceThrottlingBehavior prf = Servicehost.Description.Behaviors.Find<ServiceThrottlingBehavior>();
                 if (smb == null)
                 {
-                    smb = new ServiceMetadataBehavior();
-                    smb.HttpGetEnabled = false;
-                    smb.HttpsGetEnabled = false;
+                    smb = new ServiceMetadataBehavior
+                    {
+                        HttpGetEnabled = false,
+                        HttpsGetEnabled = false
+                    };
                     smb.MetadataExporter.PolicyVersion = PolicyVersion.Default;
                     Servicehost.Description.Behaviors.Add(smb);
                 }
@@ -672,10 +672,12 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 if (dbg == null)
                 {
-                    dbg = new ServiceDebugBehavior();
-                    dbg.HttpHelpPageEnabled = false;
-                    dbg.HttpsHelpPageEnabled = false;
-                    dbg.IncludeExceptionDetailInFaults = true;
+                    dbg = new ServiceDebugBehavior
+                    {
+                        HttpHelpPageEnabled = false,
+                        HttpsHelpPageEnabled = false,
+                        IncludeExceptionDetailInFaults = true
+                    };
                     Servicehost.Description.Behaviors.Add(dbg);
                 }
                 else
@@ -686,10 +688,12 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 if (prf == null)
                 {
-                    prf = new ServiceThrottlingBehavior();
-                    prf.MaxConcurrentCalls = 256;
-                    prf.MaxConcurrentInstances = 256;
-                    prf.MaxConcurrentSessions = 256;
+                    prf = new ServiceThrottlingBehavior
+                    {
+                        MaxConcurrentCalls = 256,
+                        MaxConcurrentInstances = 256,
+                        MaxConcurrentSessions = 256
+                    };
                     Servicehost.Description.Behaviors.Add(prf);
                 }
                 else
@@ -702,16 +706,20 @@ namespace Neos.IdentityServer.MultiFactor
                 tcp.Security.Transport.ClientCredentialType = TcpClientCredentialType.Windows;
                 tcp.MaxConnections = 256;
 
-                List<IAuthorizationPolicy> policies = new List<IAuthorizationPolicy>();
-                policies.Add(new MFAAuthorizationPolicy());
+                List<IAuthorizationPolicy> policies = new List<IAuthorizationPolicy>
+                {
+                    new MFAAuthorizationPolicy()
+                };
                 Servicehost.Authorization.ExternalAuthorizationPolicies = policies.AsReadOnly();
                 Servicehost.Authorization.PrincipalPermissionMode = PrincipalPermissionMode.UseWindowsGroups;
 
                 ServiceEndpoint svcendpoint = null;
                 if (useEncryption)
                 {
-                    CustomBinding custombinding = new CustomBinding(tcp);
-                    custombinding.Name = "MFAThemesBinding";
+                    CustomBinding custombinding = new CustomBinding(tcp)
+                    {
+                        Name = "MFAThemesBinding"
+                    };
                     var currentEncoder = custombinding.Elements.Find<MessageEncodingBindingElement>();
                     if (currentEncoder != default(MessageEncodingBindingElement))
                     {
@@ -787,7 +795,7 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     public class WebAdminServer<T>
     {
-        private bool useEncryption = true;
+        private readonly bool useEncryption = true;
 
         /// <summary>
         /// StartService method implementation
@@ -811,9 +819,11 @@ namespace Neos.IdentityServer.MultiFactor
                 ServiceThrottlingBehavior prf = Servicehost.Description.Behaviors.Find<ServiceThrottlingBehavior>();
                 if (smb == null)
                 {
-                    smb = new ServiceMetadataBehavior();
-                    smb.HttpGetEnabled = false;
-                    smb.HttpsGetEnabled = false;
+                    smb = new ServiceMetadataBehavior
+                    {
+                        HttpGetEnabled = false,
+                        HttpsGetEnabled = false
+                    };
                     smb.MetadataExporter.PolicyVersion = PolicyVersion.Default;
                     Servicehost.Description.Behaviors.Add(smb);
                 }
@@ -825,10 +835,12 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 if (dbg == null)
                 {
-                    dbg = new ServiceDebugBehavior();
-                    dbg.HttpHelpPageEnabled = false;
-                    dbg.HttpsHelpPageEnabled = false;
-                    dbg.IncludeExceptionDetailInFaults = true;
+                    dbg = new ServiceDebugBehavior
+                    {
+                        HttpHelpPageEnabled = false,
+                        HttpsHelpPageEnabled = false,
+                        IncludeExceptionDetailInFaults = true
+                    };
                     Servicehost.Description.Behaviors.Add(dbg);
                 }
                 else
@@ -839,10 +851,12 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 if (prf == null)
                 {
-                    prf = new ServiceThrottlingBehavior();
-                    prf.MaxConcurrentCalls = 256;
-                    prf.MaxConcurrentInstances = 256;
-                    prf.MaxConcurrentSessions = 256;
+                    prf = new ServiceThrottlingBehavior
+                    {
+                        MaxConcurrentCalls = 256,
+                        MaxConcurrentInstances = 256,
+                        MaxConcurrentSessions = 256
+                    };
                     Servicehost.Description.Behaviors.Add(prf);
                 }
                 else
@@ -852,21 +866,27 @@ namespace Neos.IdentityServer.MultiFactor
                     prf.MaxConcurrentSessions = 256;
                 }
 
-                NetTcpBinding tcp = new NetTcpBinding(SecurityMode.Transport);
-                tcp.MaxConnections = 256;
-                tcp.MaxReceivedMessageSize = 2147483647;
+                NetTcpBinding tcp = new NetTcpBinding(SecurityMode.Transport)
+                {
+                    MaxConnections = 256,
+                    MaxReceivedMessageSize = 2147483647
+                };
                 tcp.Security.Transport.ClientCredentialType = TcpClientCredentialType.Windows;
 
-                List<IAuthorizationPolicy> policies = new List<IAuthorizationPolicy>();
-                policies.Add(new MFAAuthorizationPolicy());
+                List<IAuthorizationPolicy> policies = new List<IAuthorizationPolicy>
+                {
+                    new MFAAuthorizationPolicy()
+                };
                 Servicehost.Authorization.ExternalAuthorizationPolicies = policies.AsReadOnly();
                 Servicehost.Authorization.PrincipalPermissionMode = PrincipalPermissionMode.UseWindowsGroups;
 
                 ServiceEndpoint svcendpoint = null;
                 if (useEncryption)
                 {
-                    CustomBinding custombinding = new CustomBinding(tcp);
-                    custombinding.Name = "MFAWebAdminBinding";
+                    CustomBinding custombinding = new CustomBinding(tcp)
+                    {
+                        Name = "MFAWebAdminBinding"
+                    };
                     var currentEncoder = custombinding.Elements.Find<MessageEncodingBindingElement>();
                     if (currentEncoder != default(MessageEncodingBindingElement))
                     {
@@ -942,7 +962,7 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     public class NTServiceServer<T>
     {
-        private bool useEncryption = true;
+        private readonly bool useEncryption = true;
 
         /// <summary>
         /// StartService method implementation
@@ -966,9 +986,11 @@ namespace Neos.IdentityServer.MultiFactor
                 ServiceThrottlingBehavior prf = Servicehost.Description.Behaviors.Find<ServiceThrottlingBehavior>();
                 if (smb == null)
                 {
-                    smb = new ServiceMetadataBehavior();
-                    smb.HttpGetEnabled = false;
-                    smb.HttpsGetEnabled = false;
+                    smb = new ServiceMetadataBehavior
+                    {
+                        HttpGetEnabled = false,
+                        HttpsGetEnabled = false
+                    };
                     smb.MetadataExporter.PolicyVersion = PolicyVersion.Default;
                     Servicehost.Description.Behaviors.Add(smb);
                 }
@@ -980,10 +1002,12 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 if (dbg == null)
                 {
-                    dbg = new ServiceDebugBehavior();
-                    dbg.HttpHelpPageEnabled = false;
-                    dbg.HttpsHelpPageEnabled = false;
-                    dbg.IncludeExceptionDetailInFaults = true;
+                    dbg = new ServiceDebugBehavior
+                    {
+                        HttpHelpPageEnabled = false,
+                        HttpsHelpPageEnabled = false,
+                        IncludeExceptionDetailInFaults = true
+                    };
                     Servicehost.Description.Behaviors.Add(dbg);
                 }
                 else
@@ -994,10 +1018,12 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 if (prf == null)
                 {
-                    prf = new ServiceThrottlingBehavior();
-                    prf.MaxConcurrentCalls = 256;
-                    prf.MaxConcurrentInstances = 256;
-                    prf.MaxConcurrentSessions = 256;
+                    prf = new ServiceThrottlingBehavior
+                    {
+                        MaxConcurrentCalls = 256,
+                        MaxConcurrentInstances = 256,
+                        MaxConcurrentSessions = 256
+                    };
                     Servicehost.Description.Behaviors.Add(prf);
                 }
                 else
@@ -1006,20 +1032,26 @@ namespace Neos.IdentityServer.MultiFactor
                     prf.MaxConcurrentInstances = 250;
                     prf.MaxConcurrentSessions = 250;
                 }
-                NetTcpBinding tcp = new NetTcpBinding(SecurityMode.Transport);
-                tcp.MaxConnections = 256;
+                NetTcpBinding tcp = new NetTcpBinding(SecurityMode.Transport)
+                {
+                    MaxConnections = 256
+                };
                 tcp.Security.Transport.ClientCredentialType = TcpClientCredentialType.Windows;
 
-                List<IAuthorizationPolicy> policies = new List<IAuthorizationPolicy>();
-                policies.Add(new MFAAuthorizationPolicy());
+                List<IAuthorizationPolicy> policies = new List<IAuthorizationPolicy>
+                {
+                    new MFAAuthorizationPolicy()
+                };
                 Servicehost.Authorization.ExternalAuthorizationPolicies = policies.AsReadOnly();
                 Servicehost.Authorization.PrincipalPermissionMode = PrincipalPermissionMode.UseWindowsGroups;
 
                 ServiceEndpoint svcendpoint = null;
                 if (useEncryption)
                 {
-                    CustomBinding custombinding = new CustomBinding(tcp);
-                    custombinding.Name = "MFAServiceNTBinding";
+                    CustomBinding custombinding = new CustomBinding(tcp)
+                    {
+                        Name = "MFAServiceNTBinding"
+                    };
                     var currentEncoder = custombinding.Elements.Find<MessageEncodingBindingElement>();
                     if (currentEncoder != default(MessageEncodingBindingElement))
                     {
@@ -1096,7 +1128,7 @@ namespace Neos.IdentityServer.MultiFactor
     public class ReplayClient
     {
         private ChannelFactory<IReplay> _factory = null;
-        private bool useEncryption = true;
+        private readonly bool useEncryption = true;
 
         public bool IsInitialized { get; private set; }
 
@@ -1118,8 +1150,10 @@ namespace Neos.IdentityServer.MultiFactor
 
             if (useEncryption)
             {
-                CustomBinding custombinding = new CustomBinding(tcp);
-                custombinding.Name = "MFAClientReplayBinding";
+                CustomBinding custombinding = new CustomBinding(tcp)
+                {
+                    Name = "MFAClientReplayBinding"
+                };
                 var currentEncoder = custombinding.Elements.Find<MessageEncodingBindingElement>();
                 if (currentEncoder != default(MessageEncodingBindingElement))
                 {
@@ -1189,7 +1223,7 @@ namespace Neos.IdentityServer.MultiFactor
     public class WebThemesClient
     {
         private ChannelFactory<IWebThemeManager> _factory = null;
-        private bool useEncryption = true;
+        private readonly bool useEncryption = true;
 
         public bool IsInitialized { get; private set; }
 
@@ -1208,8 +1242,10 @@ namespace Neos.IdentityServer.MultiFactor
             tcp.MaxConnections = 256;
             if (useEncryption)
             {
-                CustomBinding custombinding = new CustomBinding(tcp);
-                custombinding.Name = "MFAClientThemesBinding";
+                CustomBinding custombinding = new CustomBinding(tcp)
+                {
+                    Name = "MFAClientThemesBinding"
+                };
                 var currentEncoder = custombinding.Elements.Find<MessageEncodingBindingElement>();
                 if (currentEncoder != default(MessageEncodingBindingElement))
                 {
@@ -1279,7 +1315,7 @@ namespace Neos.IdentityServer.MultiFactor
     public class WebAdminClient
     {
         private ChannelFactory<IWebAdminServices> _factory = null;
-        private bool useEncryption = true;
+        private readonly bool useEncryption = true;
 
         public bool IsInitialized { get; private set; }
 
@@ -1299,8 +1335,10 @@ namespace Neos.IdentityServer.MultiFactor
 
             if (useEncryption)
             {
-                CustomBinding custombinding = new CustomBinding(tcp);
-                custombinding.Name = "MFAClientWebAdminBinding";
+                CustomBinding custombinding = new CustomBinding(tcp)
+                {
+                    Name = "MFAClientWebAdminBinding"
+                };
                 var currentEncoder = custombinding.Elements.Find<MessageEncodingBindingElement>();
                 if (currentEncoder != default(MessageEncodingBindingElement))
                 {
@@ -1371,7 +1409,7 @@ namespace Neos.IdentityServer.MultiFactor
     public class NTServiceClient
     {
         private ChannelFactory<INTService> _factory = null;
-        private bool useEncryption = true;
+        private readonly bool useEncryption = true;
 
         public bool IsInitialized { get; private set; }
 
@@ -1390,8 +1428,10 @@ namespace Neos.IdentityServer.MultiFactor
 
             if (useEncryption)
             {
-                CustomBinding custombinding = new CustomBinding(tcp);
-                custombinding.Name = "MFAClientServiceNTBinding";
+                CustomBinding custombinding = new CustomBinding(tcp)
+                {
+                    Name = "MFAClientServiceNTBinding"
+                };
                 var currentEncoder = custombinding.Elements.Find<MessageEncodingBindingElement>();
                 if (currentEncoder != default(MessageEncodingBindingElement))
                 {
@@ -1460,7 +1500,7 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     internal class ServicesMessageEncoderFactory : MessageEncoderFactory
     {
-        MessageEncoder encoder;
+        readonly MessageEncoder encoder;
 
         /// <summary>
         /// ServicesMessageEncoderFactory Class
@@ -1494,13 +1534,12 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         class SercicesMessageEncoder : MessageEncoder
         {
-            static string ReplayContentType = " application/soap+xml";
-            static object _lck = new object();
+            static readonly string ReplayContentType = " application/soap+xml";
 
             /// <summary>
             /// innerEncoder variable
             /// </summary>
-            MessageEncoder innerEncoder;
+            readonly MessageEncoder innerEncoder;
 
 
             /// <summary>
@@ -1509,9 +1548,7 @@ namespace Neos.IdentityServer.MultiFactor
             /// <param name="messageEncoder"></param>
             internal SercicesMessageEncoder(MessageEncoder messageEncoder) : base()
             {
-                if (messageEncoder == null)
-                    throw new ArgumentNullException("messageEncoder", "A valid message encoder must be passed to the Replay Encoder");
-                innerEncoder = messageEncoder;
+                innerEncoder = messageEncoder ?? throw new ArgumentNullException("messageEncoder", "A valid message encoder must be passed to the Replay Encoder");
             }
 
             /// <summary>
@@ -1913,9 +1950,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public bool Evaluate(EvaluationContext context, ref object state)
         {
-            bool bRet = false;
-            MFAAuthState customstate = null;
-
+            MFAAuthState customstate;
             if (state == null)
             {
                 customstate = new MFAAuthState();
@@ -1924,6 +1959,7 @@ namespace Neos.IdentityServer.MultiFactor
             else
                 customstate = (MFAAuthState)state;
 
+            bool bRet;
             if (!customstate.Checked)
             {
                 if (!context.Properties.TryGetValue("Identities", out object obj))

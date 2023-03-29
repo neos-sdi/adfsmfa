@@ -42,7 +42,7 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     public class WebAdminManager
     {
-        private EventLog _log;
+        private readonly EventLog _log;
 
         /// <summary>
         /// Constructor implmentation
@@ -79,7 +79,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private SIDsParametersRecord GetLocalSIDsInformations(Dictionary<string, bool> servers)
         {
-            SIDsParametersRecord retvalue = null;
+            SIDsParametersRecord retvalue;
             try
             {
                 retvalue = SIDs.Initialize();
@@ -129,7 +129,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private SIDsParametersRecord GetRemoteSIDsInformations(Dictionary<string, bool> servers)
         {
-            SIDsParametersRecord retvalue = null;
+            SIDsParametersRecord retvalue;
             try
             {
                 retvalue = SIDs.GetSIDs();
@@ -180,7 +180,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public SIDsParametersRecord RequestSIDsInformations()
         {
-            SIDsParametersRecord retvalue = null;
+            SIDsParametersRecord retvalue;
             try
             {
                 retvalue = SIDs.Initialize();
@@ -792,10 +792,8 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 finally
                 {
-                    if (SPRunSpace != null)
-                        SPRunSpace.Close();
-                    if (SPPowerShell != null)
-                        SPPowerShell.Dispose();
+                    SPRunSpace?.Close();
+                    SPPowerShell?.Dispose();
                 }
             }
             return _list;
@@ -829,10 +827,8 @@ namespace Neos.IdentityServer.MultiFactor
             }
             finally
             {
-                if (SPRunSpace != null)
-                    SPRunSpace.Close();
-                if (SPPowerShell != null)
-                    SPPowerShell.Dispose();
+                SPRunSpace?.Close();
+                SPPowerShell?.Dispose();
             }
             return nodetype;
         }
@@ -1106,8 +1102,7 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 Certs.CleanSelfSignedCertificate(x509, StoreLocation.LocalMachine);
                 SIDs.InternalUpdateCertificatesACLs(KeyMgtOptions.MFACerts | KeyMgtOptions.ADFSCerts);
-                if (x509 != null)
-                    x509.Reset();
+                x509?.Reset();
             }
         }
         #endregion

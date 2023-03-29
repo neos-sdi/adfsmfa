@@ -34,16 +34,29 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         internal static MFAConfig ReadConfiguration()
         {
-            MFAConfig config = null;
+            MFAConfig config;
             try
             {
-                config = ReadConfigurationFromCache();
-                if (config == null)
+                try
+                {
+                    config = ReadConfigurationFromCache();
+                    if (config == null)
+                        config = ReadConfigurationFromDatabase();
+                }
+                catch
+                {
                     config = ReadConfigurationFromDatabase();
+                }
             }
-            catch
+            catch (Exception ex)
             {
-                config = ReadConfigurationFromDatabase();
+                Log.WriteEntry(string.Format("Error retrieving configuration : {0} ", ex.Message), EventLogEntryType.Error, 2013);
+                throw ex;
+            }
+            if (config==null)
+            {
+                Log.WriteEntry("Error retrieving configuration : config is NULL", EventLogEntryType.Error, 2013);
+                throw new Exception("Error retrieving configuration : config is NULL");
             }
             return config;
         }
@@ -78,10 +91,8 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 finally
                 {
-                    if (SPRunSpace != null)
-                        SPRunSpace.Close();
-                    if (SPPowerShell != null)
-                        SPPowerShell.Dispose();
+                    SPRunSpace?.Close();
+                    SPPowerShell?.Dispose();
                 }
 
                 FileStream stm = new FileStream(pth, FileMode.Open, FileAccess.Read);
@@ -100,6 +111,11 @@ namespace Neos.IdentityServer.MultiFactor
                     };
                 }
             }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(string.Format("Error retrieving configuration from ADFS Database : {0} ", ex.Message), EventLogEntryType.Error, 2013);
+                throw ex;
+            }
             finally
             {
                 File.Delete(pth);
@@ -115,35 +131,43 @@ namespace Neos.IdentityServer.MultiFactor
             MFAConfig config = null;
             if (!File.Exists(ConfigReaderCacheFile))
                 return null;
-            XmlConfigSerializer xmlserializer = new XmlConfigSerializer(typeof(MFAConfig));
-            using (FileStream fs = new FileStream(ConfigReaderCacheFile, FileMode.Open, FileAccess.Read))
+            try
             {
-                byte[] bytes = new byte[fs.Length];
-                int n = fs.Read(bytes, 0, (int)fs.Length);
-                fs.Close();
-
-                byte[] byt = null;
-                using (AESSystemEncryption aes = new AESSystemEncryption())
+                XmlConfigSerializer xmlserializer = new XmlConfigSerializer(typeof(MFAConfig));
+                using (FileStream fs = new FileStream(ConfigReaderCacheFile, FileMode.Open, FileAccess.Read))
                 {
-                    byt = aes.Decrypt(bytes);
-                }
+                    byte[] bytes = new byte[fs.Length];
+                    int n = fs.Read(bytes, 0, (int)fs.Length);
+                    fs.Close();
 
-                using (MemoryStream ms = new MemoryStream(byt))
-                {
-                    using (StreamReader reader = new StreamReader(ms))
+                    byte[] byt = null;
+                    using (AESSystemEncryption aes = new AESSystemEncryption())
                     {
-                        config = (MFAConfig)xmlserializer.Deserialize(ms);
-                        using (SystemEncryption MSIS = new SystemEncryption())
+                        byt = aes.Decrypt(bytes);
+                    }
+
+                    using (MemoryStream ms = new MemoryStream(byt))
+                    {
+                        using (StreamReader reader = new StreamReader(ms))
                         {
-                            config.KeysConfig.XORSecret = MSIS.Decrypt(config.KeysConfig.XORSecret, "Pass Phrase Encryption");
-                            config.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(config.Hosts.ActiveDirectoryHost.Password, "ADDS Super Account Password");
-                            config.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(config.Hosts.SQLServerHost.SQLPassword, "SQL Super Account Password");
-                            config.MailProvider.Password = MSIS.Decrypt(config.MailProvider.Password, "Mail Provider Account Password");
-                            config.DefaultPin = MSIS.Decrypt(config.DefaultPin, "Default Users Pin");
-                            config.AdministrationPin = MSIS.Decrypt(config.AdministrationPin, "Administration Pin");
-                        };
+                            config = (MFAConfig)xmlserializer.Deserialize(ms);
+                            using (SystemEncryption MSIS = new SystemEncryption())
+                            {
+                                config.KeysConfig.XORSecret = MSIS.Decrypt(config.KeysConfig.XORSecret, "Pass Phrase Encryption");
+                                config.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(config.Hosts.ActiveDirectoryHost.Password, "ADDS Super Account Password");
+                                config.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(config.Hosts.SQLServerHost.SQLPassword, "SQL Super Account Password");
+                                config.MailProvider.Password = MSIS.Decrypt(config.MailProvider.Password, "Mail Provider Account Password");
+                                config.DefaultPin = MSIS.Decrypt(config.DefaultPin, "Default Users Pin");
+                                config.AdministrationPin = MSIS.Decrypt(config.AdministrationPin, "Administration Pin");
+                            };
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(string.Format("Error retrieving configuration from cache config file : {0} ", ex.Message), EventLogEntryType.Error, 2013);
+                throw ex;
             }
             return config;
         }
@@ -452,7 +476,7 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     public static class Certs
     {
-        private static RegistryVersion _RegistryVersion;
+        private static readonly RegistryVersion _RegistryVersion;
 
         static Certs()
         {
@@ -471,17 +495,12 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 X509Certificate2Collection collection = (X509Certificate2Collection)store.Certificates;
                 X509Certificate2Collection findCollection = (X509Certificate2Collection)collection.Find(X509FindType.FindByThumbprint, thumbprint, false);
-
-                foreach (X509Certificate2 x509 in findCollection)
-                {
-                    return true;
-                }
+                return (findCollection.Count > 0);
             }
             finally
             {
                 store.Close();
             }
-            return false;
         }
 
         /// <summary>
@@ -599,7 +618,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public static X509Certificate2 CreateSelfSignedCertificate(string subjectName, string dnsName, CertificatesKind kind, int years, string pwd = "")
         {
-            string strcert = string.Empty;
+            string strcert;
             if (_RegistryVersion.IsWindows2012R2)
                 strcert = InternalCreateSelfSignedCertificate2012R2(subjectName, dnsName, kind, years, pwd);
             else
@@ -616,7 +635,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         internal static X509Certificate2 CreateRSACertificate(string subjectName, int years, out string cert)
         {
-            string strcert = string.Empty;
+            string strcert;
             if (_RegistryVersion.IsWindows2012R2)
                 strcert = InternalCreateRSACertificate2012R2(subjectName, years);
             else
@@ -634,7 +653,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         internal static X509Certificate2 CreateADFSCertificate(string subjectName, ADFSCertificatesKind kind, int years, out string cert)
         {
-            string strcert = string.Empty;
+            string strcert;
             if (_RegistryVersion.IsWindows2012R2)
                 strcert = InternalCreateADFSCertificate2012R2(subjectName, kind, years);
             else
@@ -652,7 +671,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         internal static X509Certificate2 CreateRSACertificateForSQLEncryption(string subjectName, int years, out string cert)
         {
-            string strcert = string.Empty;
+            string strcert;
             if (_RegistryVersion.IsWindows2012R2)
                 strcert = InternalCreateSQLCertificate2012R2(subjectName, years);
             else
@@ -670,7 +689,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public static X509Certificate2 CreateRSAEncryptionCertificateForUser(string subjectName, int years, string pwd = "")
         {
-            string strcert = string.Empty;
+            string strcert;
             if (_RegistryVersion.IsWindows2012R2)
                 strcert = InternalCreateUserRSACertificate2012R2(subjectName, years, pwd);
             else
@@ -703,10 +722,9 @@ namespace Neos.IdentityServer.MultiFactor
                 Length = 2048,
                 KeySpec = X509KeySpec.XCN_AT_KEYEXCHANGE, // use is not limited
                 ExportPolicy = X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_EXPORT_FLAG,
-                SecurityDescriptor = "D:(A;;FA;;;SY)(A;;FA;;;BA)"
+                SecurityDescriptor = "D:(A;;FA;;;SY)(A;;FA;;;BA)",
+                KeyUsage = X509PrivateKeyUsageFlags.XCN_NCRYPT_ALLOW_USAGES_NONE
             };
-
-            privateKey.KeyUsage = X509PrivateKeyUsageFlags.XCN_NCRYPT_ALLOW_USAGES_NONE;
             if (kind.HasFlag(CertificatesKind.Signing) || kind.HasFlag(CertificatesKind.SSL) || kind.HasFlag(CertificatesKind.Client) || kind.HasFlag(CertificatesKind.All))
                 privateKey.KeyUsage |= X509PrivateKeyUsageFlags.XCN_NCRYPT_ALLOW_SIGNING_FLAG;
             if (kind.HasFlag(CertificatesKind.Decrypting) || kind.HasFlag(CertificatesKind.SSL) || kind.HasFlag(CertificatesKind.Client) || kind.HasFlag(CertificatesKind.All))
@@ -804,8 +822,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             finally
             {
-                if (privateKey != null)
-                    privateKey.Delete(); // Remove Stored elsewhere
+                privateKey?.Delete(); // Remove Stored elsewhere
             }
             return base64encoded;
         }
@@ -897,8 +914,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             finally
             {
-                if (privateKey != null)
-                    privateKey.Delete(); // Remove Stored elsewhere
+                privateKey?.Delete(); // Remove Stored elsewhere
             }
             return base64encoded;
         }
@@ -989,8 +1005,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             finally
             {
-                if (privateKey != null)
-                    privateKey.Delete(); // Remove Stored elsewhere
+                privateKey?.Delete(); // Remove Stored elsewhere
             }
             return base64encoded;
         }
@@ -1084,8 +1099,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             finally
             {
-                if (privateKey != null)
-                    privateKey.Delete(); // Remove Stored elsewhere
+                privateKey?.Delete(); // Remove Stored elsewhere
             }
             return base64encoded;
         }
@@ -1107,10 +1121,9 @@ namespace Neos.IdentityServer.MultiFactor
                 Length = 2048,
                 KeySpec = X509KeySpec.XCN_AT_KEYEXCHANGE, // use is not limited
                 ExportPolicy = X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_EXPORT_FLAG,
-                SecurityDescriptor = "D:(A;;FA;;;SY)(A;;FA;;;BA)"
+                SecurityDescriptor = "D:(A;;FA;;;SY)(A;;FA;;;BA)",
+                KeyUsage = X509PrivateKeyUsageFlags.XCN_NCRYPT_ALLOW_USAGES_NONE
             };
-
-            privateKey.KeyUsage = X509PrivateKeyUsageFlags.XCN_NCRYPT_ALLOW_USAGES_NONE;
             if (kind.HasFlag(ADFSCertificatesKind.Signing))
                 privateKey.KeyUsage |= X509PrivateKeyUsageFlags.XCN_NCRYPT_ALLOW_SIGNING_FLAG;
             if (kind.HasFlag(ADFSCertificatesKind.Decrypting))
@@ -1192,8 +1205,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             finally
             {
-                if (privateKey != null)
-                    privateKey.Delete(); // Remove Stored elsewhere
+                privateKey?.Delete(); // Remove Stored elsewhere
             }
             return base64encoded;
         }
@@ -1315,8 +1327,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             finally
             {
-                if (privateKey != null)
-                    privateKey.Delete(); // Remove Stored elsewhere
+                privateKey?.Delete(); // Remove Stored elsewhere
             }
             return base64encoded;
         }
@@ -1406,8 +1417,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             finally
             {
-                if (privateKey != null)
-                    privateKey.Delete(); // Remove Stored elsewhere
+                privateKey?.Delete(); // Remove Stored elsewhere
             }
             return base64encoded;
         }
@@ -1497,8 +1507,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             finally
             {
-                if (privateKey != null)
-                    privateKey.Delete(); // Remove Stored elsewhere
+                privateKey?.Delete(); // Remove Stored elsewhere
             }
             return base64encoded;
         }
@@ -1590,8 +1599,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             finally
             {
-                if (privateKey != null)
-                    privateKey.Delete(); // Remove Stored elsewhere
+                privateKey?.Delete(); // Remove Stored elsewhere
             }
             return base64encoded;
         }
@@ -1695,8 +1703,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             finally
             {
-                if (privateKey != null)
-                    privateKey.Delete();
+                privateKey?.Delete();
             }
             return base64encoded;
         }
@@ -1719,10 +1726,14 @@ namespace Neos.IdentityServer.MultiFactor
                     {
                         string cntName = string.Empty;
                         var rsakey = x509.GetRSAPrivateKey();
-                        if (rsakey is RSACng)
-                            cntName = ((RSACng)rsakey).Key.UniqueName;
-                        else if (rsakey is RSACryptoServiceProvider)
-                            cntName = ((RSACryptoServiceProvider)rsakey).CspKeyContainerInfo.UniqueKeyContainerName;
+                        if (rsakey is RSACng cng)
+                        {
+                            cntName = cng.Key.UniqueName;
+                        }
+                        else if (rsakey is RSACryptoServiceProvider provider)
+                        {
+                            cntName = provider.CspKeyContainerInfo.UniqueKeyContainerName;
+                        }
                         if (filename.ToLower().Equals(cntName.ToLower()))
                             return true;
                     }
@@ -1753,7 +1764,7 @@ namespace Neos.IdentityServer.MultiFactor
             List<string> paths = new List<string>()
             {
                 Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + sep + "Microsoft" + sep + "Crypto" + sep + "RSA" + sep + "MachineKeys"+ sep,
-               // Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + sep + "Microsoft" + sep + "Crypto" + sep + "Keys" + sep,
+                // Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + sep + "Microsoft" + sep + "Crypto" + sep + "Keys" + sep,
             };
             foreach (string pth in paths)
             {
@@ -1786,22 +1797,13 @@ namespace Neos.IdentityServer.MultiFactor
                 return;
             if (option == 0x01)  // Enable
             {
-                RegistryKey ek = Registry.LocalMachine.OpenSubKey("Software\\MFA", true);
-                if (ek == null)
-                {
-                    ek = Registry.LocalMachine.CreateSubKey("Software\\MFA", true);
-                }
+                RegistryKey ek = Registry.LocalMachine.OpenSubKey("Software\\MFA", true) ?? Registry.LocalMachine.CreateSubKey("Software\\MFA", true);
                 ek.SetValue("PrivateKeysCleanUpEnabled", 1, RegistryValueKind.DWord);
                 ek.SetValue("PrivateKeysCleanUpDelay", delay, RegistryValueKind.DWord);
-
             }
             if (option == 0x02)  // Disable
             {
-                RegistryKey dk = Registry.LocalMachine.OpenSubKey("Software\\MFA", true);
-                if (dk == null)
-                {
-                    dk = Registry.LocalMachine.CreateSubKey("Software\\MFA", true);
-                }
+                RegistryKey dk = Registry.LocalMachine.OpenSubKey("Software\\MFA", true) ?? Registry.LocalMachine.CreateSubKey("Software\\MFA", true);
                 dk.SetValue("PrivateKeysCleanUpEnabled", 0, RegistryValueKind.DWord);
             }
         }
@@ -1813,9 +1815,9 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         internal static byte[] CreateMFARSACngKey(out string uniquekeyname)
         {
-            byte[] result = null;
             uniquekeyname = string.Empty;
             CngProvider keyStorageProvider = CngProvider.MicrosoftSoftwareKeyStorageProvider;
+            byte[] result;
             try
             {
                 CngKeyCreationParameters keyCreationParameters = new CngKeyCreationParameters()
@@ -1826,7 +1828,7 @@ namespace Neos.IdentityServer.MultiFactor
                 };
                 CngProperty cngProperty = new CngProperty("Length", System.BitConverter.GetBytes(2048), CngPropertyOptions.None);
                 keyCreationParameters.Parameters.Add(cngProperty);
-                CngKey key = CngKey.Create(CngAlgorithm.Rsa, SystemUtilities.SystemKeyName, keyCreationParameters);               
+                CngKey key = CngKey.Create(CngAlgorithm.Rsa, SystemUtilities.SystemKeyName, keyCreationParameters);
                 result = key.Export(CngKeyBlobFormat.GenericPrivateBlob);
                 uniquekeyname = key.UniqueName;
             }
@@ -1842,8 +1844,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         internal static byte[] ExportMFARSACngKey(out string uniquekeyname)
         {
-            byte[] result = null;
             uniquekeyname = string.Empty;
+            byte[] result;
             try
             {
                 CngKey key = CngKey.Open(SystemUtilities.SystemKeyName, CngProvider.MicrosoftSoftwareKeyStorageProvider, CngKeyOpenOptions.MachineKey);
@@ -1929,9 +1931,9 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         internal static byte[] CreateMFAAESCngKey(string keyname, out string uniquekeyname)
         {
-            byte[] result = null;
             uniquekeyname = string.Empty;
             CngProvider keyStorageProvider = CngProvider.MicrosoftSoftwareKeyStorageProvider;
+            byte[] result;
             try
             {
                 CngKeyCreationParameters keyCreationParameters = new CngKeyCreationParameters()
@@ -1958,8 +1960,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         internal static byte[] ExportMFAAESCngKey(string keyname, out string uniquekeyname)
         {
-            byte[] result = null;
             uniquekeyname = string.Empty;
+            byte[] result;
             try
             {
                 CngKey key = CngKey.Open(keyname, CngProvider.MicrosoftSoftwareKeyStorageProvider, CngKeyOpenOptions.MachineKey);

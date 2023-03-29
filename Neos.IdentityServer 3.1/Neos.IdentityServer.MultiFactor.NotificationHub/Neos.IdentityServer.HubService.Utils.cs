@@ -450,14 +450,14 @@ namespace Neos.IdentityServer.MultiFactor
                         }
                         if (doit)
                         {
-                            var rsakey = x509.GetRSAPrivateKey();
-                            if (rsakey is RSACng)
+                            RSA rsax = x509.GetRSAPrivateKey();
+                            if (rsax is RSACng cng)
                             {
-                                fileName = ((RSACng)rsakey).Key.UniqueName;
+                                fileName = cng.Key.UniqueName;
                             }
-                            else if (rsakey is RSACryptoServiceProvider)
+                            else if (rsax is RSACryptoServiceProvider provider)
                             {
-                                fileName = ((RSACryptoServiceProvider)rsakey).CspKeyContainerInfo.UniqueKeyContainerName;
+                                fileName = provider.CspKeyContainerInfo.UniqueKeyContainerName;
                             }
                             if (!string.IsNullOrEmpty(fileName))
                             {
@@ -476,8 +476,9 @@ namespace Neos.IdentityServer.MultiFactor
                             }
                         }
                     }
-                    catch
+                    catch (Exception ex)
                     {
+                        Log.WriteEntry("Error Updating certificates ACLs : \r" + ex.Message, EventLogEntryType.Error, 667);
                     }
                 }
             }
@@ -543,7 +544,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private static string GetADFSServiceSID()
         {
-            NativeMethods.LSA_UNICODE_STRING lSA_UNICODE_STRING = default(NativeMethods.LSA_UNICODE_STRING);
+            NativeMethods.LSA_UNICODE_STRING lSA_UNICODE_STRING = default;
             lSA_UNICODE_STRING.SetTo("adfssrv");
             int cb = 0;
             try
@@ -738,10 +739,8 @@ namespace Neos.IdentityServer.MultiFactor
             }
             finally
             {
-                if (SPRunSpace != null)
-                    SPRunSpace.Close();
-                if (SPPowerShell != null)
-                    SPPowerShell.Dispose();
+                SPRunSpace?.Close();
+                SPPowerShell?.Dispose();
             }
             return grpname;
         }

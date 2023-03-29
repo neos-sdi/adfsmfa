@@ -35,7 +35,7 @@ namespace Neos.IdentityServer.MultiFactor
     [DataContract]
     public class AuthenticationContext
     {
-        private IAuthenticationContext _context = null;
+        private readonly IAuthenticationContext _context = null;
 
         /// <summary>
         /// Constructor
@@ -1558,8 +1558,8 @@ namespace Neos.IdentityServer.MultiFactor
         private DataFilterOperator filteroperator = DataFilterOperator.Contains;
         private PreferredMethod filtermethod = PreferredMethod.None;
         private string filtervalue = string.Empty;
-        private bool enabledonly = false;
-        private bool filterisactive = true;
+        private bool enabledonly = true;
+        private bool filterisactive = false;
 
 
         /// <summary>
