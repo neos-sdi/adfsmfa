@@ -43,8 +43,8 @@
             // 
             // tableLayoutPanel
             // 
-            this.tableLayoutPanel.BackColor = System.Drawing.SystemColors.Window;
             resources.ApplyResources(this.tableLayoutPanel, "tableLayoutPanel");
+            this.tableLayoutPanel.BackColor = System.Drawing.SystemColors.Window;
             this.tableLayoutPanel.Controls.Add(this.panelConfig, 0, 0);
             this.tableLayoutPanel.Controls.Add(this.panelServers, 0, 2);
             this.tableLayoutPanel.Name = "tableLayoutPanel";
@@ -75,9 +75,9 @@
             // 
             // panelServers
             // 
+            resources.ApplyResources(this.panelServers, "panelServers");
             this.panelServers.BackColor = System.Drawing.SystemColors.Window;
             this.panelServers.Controls.Add(this.label4);
-            resources.ApplyResources(this.panelServers, "panelServers");
             this.panelServers.Name = "panelServers";
             // 
             // label4
@@ -93,11 +93,13 @@
             this.Controls.Add(this.tableLayoutPanel);
             this.Name = "ServiceViewControl";
             this.tableLayoutPanel.ResumeLayout(false);
+            this.tableLayoutPanel.PerformLayout();
             this.panelConfig.ResumeLayout(false);
             this.panelConfig.PerformLayout();
             this.panelServers.ResumeLayout(false);
             this.panelServers.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 

@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2022 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2023 redhook (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -205,7 +205,9 @@ namespace Neos.IdentityServer.MultiFactor
                     string subldap = string.Empty;
                     bool hasval1 = false;
                     bool hasval2 = false;
-                    qryldap = "(|(&(objectCategory=group)(objectClass=group))(&(objectCategory=user)(objectClass=user)";
+                    qryldap = "(| (&(objectCategory=group)(objectClass=group)) (&(objectCategory=user)(objectClass=user)";
+                    if (!string.IsNullOrEmpty(Parameters.LDAPFilter))
+                        qryldap += "(" + Parameters.LDAPFilter + ")";
                     if (Parameters.CreatedSince.HasValue)
                     {
                         subldap += "(whenCreated>=" + Parameters.CreatedSince.Value.ToString("yyyyMMddHHmmss.0Z") + ")";
@@ -282,6 +284,8 @@ namespace Neos.IdentityServer.MultiFactor
                     bool hasval1 = false;
                     bool hasval2 = false;
                     qryldap = "(| (&(objectCategory=group)(objectClass=group)(memberof=" + distinguishedName + ")) (&(objectCategory=user)(objectClass=user)(|(memberof=" + distinguishedName + ")(primaryGroupID=" + sidstr + "))";
+                    if (!string.IsNullOrEmpty(Parameters.LDAPFilter))
+                        qryldap += "(" + Parameters.LDAPFilter + ")";
                     if (Parameters.CreatedSince.HasValue)
                     {
                         subldap += "(whenCreated>=" + Parameters.CreatedSince.Value.ToString("yyyyMMddHHmmss.0Z") + ")";
@@ -534,6 +538,11 @@ namespace Neos.IdentityServer.MultiFactor
         /// LDAPPath property
         /// </summary>
         public string LDAPPath { get; set; }
+
+        /// <summary>
+        /// LDAPFilter property
+        /// </summary>
+        public string LDAPFilter { get; set; }
 
         /// <summary>
         /// CreatedSince property

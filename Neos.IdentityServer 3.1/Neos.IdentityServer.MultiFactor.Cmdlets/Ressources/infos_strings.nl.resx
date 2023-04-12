@@ -276,4 +276,10 @@
   <data name="InfosConfigNotUpdated" xml:space="preserve">
     <value>MFA-configuratie NIET bijgewerkt!</value>
   </data>
+  <data name="InfosSelfSignedGenerated" xml:space="preserve">
+    <value>Zelfondertekend certificaat gemaakt</value>
+  </data>
+  <data name="InfosSelfSignedNotGenerated" xml:space="preserve">
+    <value>Zelfondertekend certificaat niet gegenereerd</value>
+  </data>
 </root>

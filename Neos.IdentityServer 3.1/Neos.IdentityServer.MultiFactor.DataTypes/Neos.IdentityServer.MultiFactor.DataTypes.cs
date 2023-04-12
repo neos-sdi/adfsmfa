@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2022 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2023 redhook (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -35,7 +35,7 @@ namespace Neos.IdentityServer.MultiFactor
     [DataContract]
     public class AuthenticationContext
     {
-        private IAuthenticationContext _context = null;
+        private readonly IAuthenticationContext _context = null;
 
         /// <summary>
         /// Constructor
@@ -662,6 +662,27 @@ namespace Neos.IdentityServer.MultiFactor
             }
         }
 
+        /// <summary>
+        /// SuspendDone property implementation
+        /// </summary>
+        [DataMember(Name = "SuspendDone")]
+        public bool SuspendDone
+        {
+            get
+            {
+                if (_context.Data.ContainsKey("_authctxsuspendone") && _context.Data["_authctxsuspendone"] != null)
+                    return (bool)_context.Data["_authctxsuspendone"];
+                else
+                    return false;
+            }
+            set
+            {
+                if (_context.Data.ContainsKey("_authctxsuspendone"))
+                    _context.Data["_authctxsuspendone"] = value;
+                else
+                    _context.Data.Add("_authctxsuspendone", value);
+            }
+        }
 
         /// <summary>
         /// ExtraInfos property implementation
@@ -1537,8 +1558,8 @@ namespace Neos.IdentityServer.MultiFactor
         private DataFilterOperator filteroperator = DataFilterOperator.Contains;
         private PreferredMethod filtermethod = PreferredMethod.None;
         private string filtervalue = string.Empty;
-        private bool enabledonly = false;
-        private bool filterisactive = true;
+        private bool enabledonly = true;
+        private bool filterisactive = false;
 
 
         /// <summary>
@@ -2057,7 +2078,9 @@ namespace Neos.IdentityServer.MultiFactor
         [EnumMember]
         PasswordHasValue = 0x10,
         [EnumMember]
-        PasswordCanBeChanged = 0x20
+        PasswordCanBeChanged = 0x20,
+        [EnumMember]
+        PasswordDontCare = 0x40,
     }
 
     /// <summary>
@@ -2145,6 +2168,29 @@ namespace Neos.IdentityServer.MultiFactor
         Optional = 0x1,
         OptionalWithCredentialIDList = 0x2,
         Required = 0x3
+    }
+
+    /// <summary>
+    /// CerticatesKind enum
+    /// </summary>
+    [Serializable, Flags]
+    public enum CertificatesKind
+    {
+        SSL = 0x1,
+        Client = 0x2,
+        Signing = 0x4,
+        Decrypting = 0x8,
+        All = 0xE
+    }
+
+    /// <summary>
+    /// ADFSCertificatesKind enum
+    /// </summary>
+    [Serializable, Flags]
+    public enum ADFSCertificatesKind
+    {
+        Signing = 0x1,
+        Decrypting = 0x2
     }
 
     /// <summary>

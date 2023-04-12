@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2022 @redhook62 (adfsmfa@gmail.com)                                                                                                                                        //                        
+// Copyright (c) 2023 redhook (adfsmfa@gmail.com)                                                                                                                                        //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -42,7 +42,7 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     public class WebAdminManager
     {
-        private EventLog _log;
+        private readonly EventLog _log;
 
         /// <summary>
         /// Constructor implmentation
@@ -79,7 +79,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private SIDsParametersRecord GetLocalSIDsInformations(Dictionary<string, bool> servers)
         {
-            SIDsParametersRecord retvalue = null;
+            SIDsParametersRecord retvalue;
             try
             {
                 retvalue = SIDs.Initialize();
@@ -129,7 +129,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private SIDsParametersRecord GetRemoteSIDsInformations(Dictionary<string, bool> servers)
         {
-            SIDsParametersRecord retvalue = null;
+            SIDsParametersRecord retvalue;
             try
             {
                 retvalue = SIDs.GetSIDs();
@@ -180,7 +180,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public SIDsParametersRecord RequestSIDsInformations()
         {
-            SIDsParametersRecord retvalue = null;
+            SIDsParametersRecord retvalue;
             try
             {
                 retvalue = SIDs.Initialize();
@@ -792,10 +792,8 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 finally
                 {
-                    if (SPRunSpace != null)
-                        SPRunSpace.Close();
-                    if (SPPowerShell != null)
-                        SPPowerShell.Dispose();
+                    SPRunSpace?.Close();
+                    SPPowerShell?.Dispose();
                 }
             }
             return _list;
@@ -829,10 +827,8 @@ namespace Neos.IdentityServer.MultiFactor
             }
             finally
             {
-                if (SPRunSpace != null)
-                    SPRunSpace.Close();
-                if (SPPowerShell != null)
-                    SPPowerShell.Dispose();
+                SPRunSpace?.Close();
+                SPPowerShell?.Dispose();
             }
             return nodetype;
         }
@@ -851,6 +847,43 @@ namespace Neos.IdentityServer.MultiFactor
             catch (Exception e)
             {
                 _log.WriteEntry(string.Format("Error on WebAdminService Service CertificateExists method : {0}.", e.Message), EventLogEntryType.Error, 2010);
+                throw e;
+            }
+        }
+
+        /// <summary>
+        /// CreateSelfSignedCertificate method implementation
+        /// </summary>
+        internal bool CreateSelfSignedCertificate(string subjectName, string dnsName, CertificatesKind kind, int years, string path, string pwd = "")
+        {
+            try
+            {
+                string strcert = string.Empty;
+                X509Certificate2 cert = null;
+                try
+                {
+                    cert = Certs.CreateSelfSignedCertificate(subjectName, dnsName, kind, years, pwd);
+                    if (cert == null)
+                        return false;
+                    else
+                    {
+                        byte[] data = null;
+                        if (string.IsNullOrEmpty(pwd))
+                            data = cert.Export(X509ContentType.Pfx);
+                        else
+                            data = cert.Export(X509ContentType.Pfx, pwd);
+                        File.WriteAllBytes(path, data);
+                        return true;
+                    }
+                }
+                finally
+                {
+                    cert.Reset();
+                }
+            }
+            catch (Exception e)
+            {
+                _log.WriteEntry(string.Format("Error on WebAdminService Service CreateSelfSignedCertificate method : {0}.", e.Message), EventLogEntryType.Error, 2010);
                 throw e;
             }
         }
@@ -987,7 +1020,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// CreateADFSCertificate method implementation
         /// </summary>
-        internal string CreateADFSCertificate(Dictionary<string, bool> servers, string subject, bool issigning, int years)
+        internal string CreateADFSCertificate(Dictionary<string, bool> servers, string subject, ADFSCertificatesKind kind, int years)
         {
             SIDs.Initialize();
 
@@ -998,7 +1031,7 @@ namespace Neos.IdentityServer.MultiFactor
                 X509Certificate2 cert = null;
                 try
                 {
-                    cert = Certs.CreateADFSCertificate(subject, issigning, years, out strcert);
+                    cert = Certs.CreateADFSCertificate(subject, kind, years, out strcert);
                     if (cert == null)
                         return null;
                     else
@@ -1069,8 +1102,7 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 Certs.CleanSelfSignedCertificate(x509, StoreLocation.LocalMachine);
                 SIDs.InternalUpdateCertificatesACLs(KeyMgtOptions.MFACerts | KeyMgtOptions.ADFSCerts);
-                if (x509 != null)
-                    x509.Reset();
+                x509?.Reset();
             }
         }
         #endregion

@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2022 @redhook62 (adfsmfa@gmail.com)                                                                                                                                        //                        
+// Copyright (c) 2023 redhook (adfsmfa@gmail.com)                                                                                                                                        //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -1786,10 +1786,13 @@ namespace Neos.IdentityServer.MultiFactor
         internal static bool IsUserPasswordExpired(MFAConfig cfg, AuthenticationContext usercontext)
         {
             try
-            { 
+            {
                 PasswordPolicyResults result = PasswordPolicyManager.GetPasswordPolicyForUser(cfg, usercontext);
                 if (result == null)
+                {
+                    usercontext.PasswordFeatures = (byte)UserPasswordFeatures.PasswordDontCare;
                     return false;
+                }
                 usercontext.PasswordFeatures = (byte)result.Features;
                 usercontext.PasswordMaxAge = result.MaxAge;
                 usercontext.PasswordMinAge = result.MinAge;
@@ -1820,6 +1823,8 @@ namespace Neos.IdentityServer.MultiFactor
         {
             try
             {
+                if (((UserPasswordFeatures)usercontext.PasswordFeatures).Equals(UserPasswordFeatures.PasswordDontCare))
+                    return true;
                 if (((UserPasswordFeatures)usercontext.PasswordFeatures).Equals(UserPasswordFeatures.PasswordNone))
                     return false;
                 if (((UserPasswordFeatures)usercontext.PasswordFeatures).HasFlag(UserPasswordFeatures.PasswordCanBeChanged))

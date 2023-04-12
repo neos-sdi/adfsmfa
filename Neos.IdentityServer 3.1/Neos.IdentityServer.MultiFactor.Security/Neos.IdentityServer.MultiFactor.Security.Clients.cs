@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2022 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2023 redhook (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -21,6 +21,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 
 namespace Neos.IdentityServer.MultiFactor.Data
@@ -564,6 +565,31 @@ namespace Neos.IdentityServer.MultiFactor.Data
         }
 
         /// <summary>
+        /// CreateSelfSignedCertificate method implementation
+        /// </summary>
+        public static bool CreateSelfSignedCertificate(string subjectName, string dnsName, CertificatesKind kind, int years, string path, string pwd = "")
+        {
+            WebAdminClient manager = new WebAdminClient();
+            manager.Initialize();
+            try
+            {
+                IWebAdminServices client = manager.Open();
+                try
+                {
+                    return client.CreateSelfSignedCertificate(subjectName, dnsName, kind, years, path, pwd);
+                }
+                finally
+                {
+                    manager.Close(client);
+                }
+            }
+            finally
+            {
+                manager.UnInitialize();
+            }
+        }
+
+        /// <summary>
         /// CreateRSACertificate method implementation
         /// </summary>
         public static string CreateRSACertificate(MFAConfig config, string subject, int years)
@@ -616,7 +642,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// CreateADFSCertificate method implementation
         /// </summary>
-        public static bool CreateADFSCertificate(MFAConfig config, string subject, bool issigning, int years)
+        public static bool CreateADFSCertificate(MFAConfig config, string subject, ADFSCertificatesKind kind, int years)
         {
             WebAdminClient manager = new WebAdminClient();
             manager.Initialize();
@@ -625,7 +651,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 IWebAdminServices client = manager.Open();
                 try
                 {
-                    return client.CreateADFSCertificate(GetServers(config), subject, issigning, years);
+                    return client.CreateADFSCertificate(GetServers(config), subject, kind, years);
                 }
                 finally
                 {
@@ -1236,12 +1262,29 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 {
                     MFAConfig config = null;
                     if (cfg == null)
-                        config = CFGReaderUtilities.ReadConfiguration();
+                        try
+                        {
+                            config = CFGReaderUtilities.ReadConfiguration();
+                        }
+                        catch (Exception e)
+                        {
+                            Log.WriteEntry(string.Format("Error retreiving security descriptors configuration : {0} ", e.Message), EventLogEntryType.Error, 22012);
+                            throw e;
+                        }
                     else
                         config = cfg;
                     if (config != null)
                     {
-                        SIDsParametersRecord rec = WebAdminManagerClient.GetSIDsInformations(config);
+                        SIDsParametersRecord rec = null;
+                        try
+                        {
+                            rec = WebAdminManagerClient.GetSIDsInformations(config);
+                        }
+                        catch (Exception e)
+                        {
+                            Log.WriteEntry(string.Format("Error retreiving security descriptors from MFA Service : {0} ", e.Message), EventLogEntryType.Error, 22012);
+                            throw e;
+                        }
                         ADFSAccountSID = rec.ADFSAccountSID;
                         ADFSAccountName = rec.ADFSAccountName;
                         ADFSServiceSID = rec.ADFSServiceAccountSID;
@@ -1253,11 +1296,14 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         ADFSSystemServiceAdministrationAllowed = rec.ADFSSystemServiceAdministrationAllowed;
                         Loaded = rec.Loaded;
                     }
+                    else
+                        Log.WriteEntry("Error retreiving security descriptors : Configuration is NULL", EventLogEntryType.Error, 22012);
                 }
             }
             catch (Exception e)
             {
                 Log.WriteEntry(string.Format("Error retreiving security descriptors : {0} ", e.Message), EventLogEntryType.Error, 2012);
+                throw e;
             }
         }
     }

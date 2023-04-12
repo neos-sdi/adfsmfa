@@ -349,6 +349,24 @@ namespace Neos.IdentityServer.MultiFactor.Cmdlets.Ressources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Self Signed certificate created.
+        /// </summary>
+        internal static string InfosSelfSignedGenerated {
+            get {
+                return ResourceManager.GetString("InfosSelfSignedGenerated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Self Signed certificate not generated.
+        /// </summary>
+        internal static string InfosSelfSignedNotGenerated {
+            get {
+                return ResourceManager.GetString("InfosSelfSignedNotGenerated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à You must restart &quot;MFA Notification Hub&quot; service and restart all open consoles and powershell sessions  !.
         /// </summary>
         internal static string InfosServerServicesRestarted {

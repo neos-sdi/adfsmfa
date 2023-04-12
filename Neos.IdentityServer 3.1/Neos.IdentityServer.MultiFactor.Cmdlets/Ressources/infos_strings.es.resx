@@ -276,4 +276,10 @@
   <data name="InfosConfigNotUpdated" xml:space="preserve">
     <value>Configuración MFA NO actualizada !</value>
   </data>
+  <data name="InfosSelfSignedGenerated" xml:space="preserve">
+    <value>Certificado autofirmado creado</value>
+  </data>
+  <data name="InfosSelfSignedNotGenerated" xml:space="preserve">
+    <value>Certificado autofirmado no generado</value>
+  </data>
 </root>

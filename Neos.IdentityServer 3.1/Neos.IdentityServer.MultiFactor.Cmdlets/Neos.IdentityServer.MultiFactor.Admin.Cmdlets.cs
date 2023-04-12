@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2022 @redhook62 (adfsmfa@gmail.com)                                                                                                                                        //                        
+// Copyright (c) 2023 redhook (adfsmfa@gmail.com)                                                                                                                                        //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -152,7 +152,7 @@ namespace MFA
     {
         string _identity = string.Empty;
         private PSRegistration[] _list = null;
-        private DataFilterObject _filter = new DataFilterObject();
+        private DataFilterObject _filter = new DataFilterObject { EnabledOnly = true };
         private DataPagingObject _paging = new DataPagingObject();
         private DataOrderObject _order = new DataOrderObject();
 
@@ -6750,6 +6750,102 @@ namespace MFA
     }
     #endregion
 
+    #region Create-MFASelfSignedCertificate
+    /// <summary>
+    /// <para type="synopsis">Create a Self Signed Certificate (PFX).</para>
+    /// <para type="description">Create a Self Signed Certificate (PFX).</para>
+    /// </summary>
+    /// <example>
+    ///   <para>Create-MFASelfSignedCertificate -Subject "myapp decrypt" -Kind Decrypting -Duration 5 -PFXFileName "c:\temp\myapp-decrypt.pfx"</para>
+    ///   <para>Create a new certificate for Users.</para>
+    /// </example>
+    [Cmdlet("Create", "MFASelfSignedCertificate", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    [AdministratorsRightsRequired, NotRemotable]
+    public sealed class InstallMFASelfSignedCertificate : MFACmdlet
+    {
+        /// <summary>
+        /// Subject property
+        /// <para type="description">Subject/Issuer Certificate property extension</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Data"), ValidateNotNullOrEmpty()]
+        public string Subject { get; set; }
+
+        /// <summary>
+        /// DnsName property
+        /// <para type="description">DnsName Certificate property extension (SSL, All)</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Data")]
+        public string DnsName { get; set; }
+
+        /// <summary>
+        /// Kind property
+        /// <para type="description">Kind for Certificate (SSL, Client, Signing, Decrypting, All)</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Data")]
+        public PSCertificatesKind Kind { get; set; } = PSCertificatesKind.All;
+
+        /// <summary>
+        /// Duration property
+        /// <para type="description">Duration for the new certificate (Years)</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Data")]
+        public int Duration { get; set; } = 10;
+
+        /// <summary>
+        /// PFXFileName property
+        /// <para type="description">PFX output filename with full path</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Data"), ValidateNotNullOrEmpty()]
+        public string PFXFileName { get; set; }
+
+        /// <summary>
+        /// Password property
+        /// <para type="description">PFX password protection (can be empty)</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Data")]
+        public string Password { get; set; } = "";
+
+        /// <summary>
+        /// BeginProcessing method implementation
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            base.BeginProcessing();
+            try
+            {
+                ManagementService.Initialize(this.Host, true);
+            }
+            catch (Exception ex)
+            {
+                this.ThrowTerminatingError(new ErrorRecord(ex, "3019", ErrorCategory.OperationStopped, this));
+            }
+        }
+
+        /// <summary>
+        /// ProcessRecord method override
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            try
+            {
+                if (ShouldProcess("Create-SelfSignedCertificate"))
+                {
+                    PSHost hh = GetHostForVerbose();
+                    ADFSServiceManager svc = ManagementService.ADFSManager;
+                    if (svc.CreateSelfSignedCertificate(this.Subject, this.DnsName, (CertificatesKind)this.Kind, this.Duration, this.PFXFileName, this.Password))
+                        this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosSelfSignedGenerated);
+                    else
+                        this.Host.UI.WriteLine(ConsoleColor.Red, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosSelfSignedNotGenerated);
+                }
+            }
+            catch (Exception ex)
+            {
+                this.ThrowTerminatingError(new ErrorRecord(ex, "3020", ErrorCategory.OperationStopped, this));
+            }
+        }
+    }
+    #endregion
+
     #region Install-MFACertificate
     /// <summary>
     /// <para type="synopsis">Install RSA Certificate.</para>
@@ -6889,7 +6985,7 @@ namespace MFA
                 {
                     PSHost hh = GetHostForVerbose();
                     ADFSServiceManager svc = ManagementService.ADFSManager;
-                    if (svc.RegisterNewADFSCertificate(hh, this.Subject, (this.Kind==PSADFSCertificateKind.Signing), this.Duration))
+                    if (svc.RegisterNewADFSCertificate(hh, this.Subject, (ADFSCertificatesKind)this.Kind, this.Duration))
                         this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosADFSCertificateChanged);
                 }
             }
@@ -7103,6 +7199,7 @@ namespace MFA
     ///   <para>Import-MFAUsersADDS -LDAPPath "dc=domain,dc=com" -DisableAll -SendMail -NewKey</para>
     ///   <para>Import-MFAUsersADDS -LDAPPath "dc=domain,dc=com" -Method Code -ModifiedSince ([DateTime]::UtcNow.AddHours(-4))</para>
     ///   <para>Import-MFAUsersADDS -LDAPPath "dc=domain,dc=com" -Method Code -ModifiedSince ([DateTime]::UtcNow.AddMinutes(-30))</para>
+    ///   <para>Import-MFAUsersADDS -LDAPPath "dc=domain,dc=com" -LDAPFilter "(memberof=CN=my Users,OU=Extranet,DC=domain,DC=com)" </para>
     ///   <para></para>
     ///   <para>NewKey generation of a new Key only if an update occurs, when adding a user, a key is always generated</para>
     ///   <para></para>
@@ -7118,6 +7215,12 @@ namespace MFA
         [Parameter(Mandatory = true, ParameterSetName = "Identity")]
         [ValidateNotNullOrEmpty()]
         public string LDAPPath { get; set; } = string.Empty;
+
+        /// <summary>
+        /// <para type="description">ADDS LDAP path to query (dc=domain,dc=com)</para>
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = "Identity")]
+        public string LDAPFilter { get; set; } = string.Empty;
 
         /// <summary>
         /// <para type="description">ADDS DNS domain or forest</para>
@@ -7234,6 +7337,7 @@ namespace MFA
                     imp.Parameters.ModifiedSince = this.ModifiedSince;
                     imp.Parameters.DomainName = this.DomainName;
                     imp.Parameters.LDAPPath = this.LDAPPath;
+                    imp.Parameters.LDAPFilter= this.LDAPFilter;
                     imp.Parameters.MailAttribute = this.MailAttributes;
                     imp.Parameters.PhoneAttribute = this.PhoneAttribute;
                     imp.Parameters.Method = (PreferredMethod)this.Method;

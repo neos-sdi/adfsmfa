@@ -1,5 +1,5 @@
 //******************************************************************************************************************************************************************************************//
-// Copyright (c) 2022 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2023 redhook (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -16,9 +16,6 @@
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
 using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.Deployment.WindowsInstaller;
 using System.ServiceProcess;
 using System.Diagnostics;
 using System.IO;
@@ -29,6 +26,8 @@ using Microsoft.Win32;
 using System.Linq;
 using System.Reflection;
 using Microsoft.ManagementConsole;
+using WixToolset.Dtf.WindowsInstaller;
+
 
 namespace Neos.IdentityServer.Deployment
 {
@@ -85,14 +84,23 @@ namespace Neos.IdentityServer.Deployment
         /// Doing that, because with Wix Custom actions runs in 32 bits, and hangs in 64 Bits...
         /// </summary>
         private static string GetInstallPath(Session session)
-        {         
+        {
             string baseDirectory = Path.GetPathRoot(Environment.GetFolderPath(Environment.SpecialFolder.System));
-            string programFiles = "Program Files";
-            string programFilesX86 = "Program Files (x86)";
+
+            string programFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+            string programFilesX86 = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
+            if (programFiles.ToLower().Equals(programFilesX86.ToLower())) // Wix problem run in 32 bits
+            {
+                string newprogramFiles = Environment.GetEnvironmentVariable("ProgramW6432");
+                if (!string.IsNullOrEmpty(newprogramFiles))
+                    programFiles = newprogramFiles;
+                else
+                    programFiles = Path.Combine(baseDirectory, "Program Files");
+            }
             if (Environment.Is64BitOperatingSystem)
-                return Path.Combine(baseDirectory, programFiles)+@"\MFA\";
+                return Path.Combine(programFiles, @"MFA\");
             else
-                return Path.Combine(baseDirectory, programFilesX86) + @"\MFA\";
+                return Path.Combine(programFilesX86, @"MFA\");                       
         }
 
         public static void ResetProgressBar(Session session, int totalStatements, string actionName, string actionDesc)
@@ -101,7 +109,6 @@ namespace Neos.IdentityServer.Deployment
             {
                 actionrecord.SetString(1, actionName);
                 actionrecord.SetString(2, actionDesc);
-               // actionrecord.SetString(3, "[0]");
                 session.Message(InstallMessage.ActionStart, actionrecord);
             }
             Application.DoEvents();
@@ -135,7 +142,7 @@ namespace Neos.IdentityServer.Deployment
             }
         }
 
-        [CustomAction]
+        [CustomAction("InstallService")]
         public static ActionResult InstallService(Session session)
         {
             const int iNumberItems = 5;
@@ -180,7 +187,7 @@ namespace Neos.IdentityServer.Deployment
             }
         }
 
-        [CustomAction]
+        [CustomAction("UnInstallService")]
         public static ActionResult UnInstallService(Session session)
         {
             const int iNumberItems = 5;

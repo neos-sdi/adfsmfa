@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2022 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2023 redhook (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -575,6 +575,11 @@ namespace MFA
         public bool UseSSL { get; set; }
 
         /// <summary>
+        /// <para type = "description" > Disable DN encoding in publickey serialization, username will be used instead. Usefull when you move your users in different ADDS Organization Units.</para>
+        /// </summary>
+        public bool WeakPublicKeyEncoding { get; set; }
+
+        /// <summary>
         /// implicit conversion 
         /// </summary>
         public static explicit operator PSADDSStore(FlatADDSStore addsconfig)
@@ -597,8 +602,9 @@ namespace MFA
                     ClientCertificateAttribute = addsconfig.ClientCertificateAttribute,
                     RSACertificateAttribute = addsconfig.RSACertificateAttribute,
                     MaxRows = addsconfig.MaxRows,
-                    UseSSL = addsconfig.UseSSL
-                };
+                    UseSSL = addsconfig.UseSSL,
+                    WeakPublicKeyEncoding = addsconfig.WeakPublicKeyEncoding
+    };
                 return psconfigadds;
             }
         }
@@ -627,8 +633,9 @@ namespace MFA
                     ClientCertificateAttribute = psconfig.ClientCertificateAttribute,
                     RSACertificateAttribute = psconfig.RSACertificateAttribute,
                     MaxRows = psconfig.MaxRows,
-                    UseSSL = psconfig.UseSSL
-            };
+                    UseSSL = psconfig.UseSSL,
+                    WeakPublicKeyEncoding = psconfig.WeakPublicKeyEncoding
+    };
                 return config;
             }
         }

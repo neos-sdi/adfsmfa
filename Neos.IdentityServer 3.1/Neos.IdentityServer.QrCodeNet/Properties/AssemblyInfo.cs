@@ -30,9 +30,9 @@ using System.Windows;
 [assembly: Guid("46f0d5b0-3954-4f7e-94dc-4d2757f22441")]
 
 [assembly: AssemblyVersion("3.0.0.0")]
-[assembly: AssemblyFileVersion("3.1.2207.0")]
+[assembly: AssemblyFileVersion("3.1.2304.0")]
 [assembly: AssemblyInformationalVersion("3.0.0.0")]
-[assembly: NeutralResourcesLanguageAttribute("en")]
+[assembly: NeutralResourcesLanguage("en")]
 
 /*
 [assembly: ThemeInfo(

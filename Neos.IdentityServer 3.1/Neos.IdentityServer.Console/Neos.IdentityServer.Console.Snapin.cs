@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2022 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2023 redhook (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -37,7 +37,7 @@ namespace Neos.IdentityServer.Console
     /// <summary>
     /// Provides the main entry point for the creation of a snap-in. 
     /// </summary>
-    [SnapInSettings("{9627F1F3-A6D2-4cf8-90A2-10F85A7A4EE7}", DisplayName = "MFA", Description = "You can use ADFS MFA to define and configure secure access to ADFS with second authentication factor like email, sms or TOTP application (Google Authenticator, Microsoft Authenticator).", Vendor="Neos-Sdi")]
+    [SnapInSettings("{9627F1F3-A6D2-4cf8-90A2-10F85A7A4EE7}", DisplayName = "MFA", Description = "You can use ADFS MFA to define and configure secure access to ADFS with second authentication factor like email, sms or TOTP application (Google Authenticator, Microsoft Authenticator).", Vendor="neos-sdi")]
     [SnapInAbout("Neos.IdentityServer.Console.NativeResources.dll", IconId = 100, VersionId=101, DescriptionId=102, DisplayNameId=103)]
     public class ADFSSnapIn : SnapIn
     {

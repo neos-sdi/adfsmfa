@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Neos.IdentityServer.MultiFactor.WebAuthN.Provider")]
-[assembly: AssemblyCopyright("Copyright © 2020 Neos-Sdi")]
+[assembly: AssemblyCopyright("Copyright © 2020 neos-sdi")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -34,6 +34,6 @@ using System.Runtime.InteropServices;
 // en utilisant '*', comme indiqué ci-dessous :
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("3.0.0.0")]
-[assembly: AssemblyFileVersion("3.1.2207.0")]
-[assembly: NeutralResourcesLanguageAttribute("en")]
+[assembly: AssemblyFileVersion("3.1.2304.0")]
+[assembly: NeutralResourcesLanguage("en")]
 

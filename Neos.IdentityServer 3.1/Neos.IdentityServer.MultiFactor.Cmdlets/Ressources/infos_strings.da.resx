@@ -276,4 +276,10 @@
   <data name="InfosConfigNotUpdated" xml:space="preserve">
     <value>MFA-konfiguration IKKE opdateret !</value>
   </data>
+  <data name="InfosSelfSignedGenerated" xml:space="preserve">
+    <value>Selvsigneret certifikat oprettet</value>
+  </data>
+  <data name="InfosSelfSignedNotGenerated" xml:space="preserve">
+    <value>Selvsigneret certifikat genereres ikke</value>
+  </data>
 </root>

@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2022 @redhook62 (adfsmfa@gmail.com)                                                                                                                                        //                        
+// Copyright (c) 2023 redhook (adfsmfa@gmail.com)                                                                                                                                        //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -36,7 +36,7 @@ namespace Neos.IdentityServer.MultiFactor
     {
         private static ReplayManager _manager = null;
         private static readonly object _lock = new object();
-        private EventLog _log;
+        private readonly EventLog _log;
 
         /// <summary>
         /// Constructor implmentation
@@ -153,10 +153,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public void WarmUp()
         {
-            if (_manager != null)
-            {
-                _manager.Start();
-            }
+            _manager?.Start();
         }
     }
     #endregion
@@ -169,7 +166,7 @@ namespace Neos.IdentityServer.MultiFactor
     public class WebThemeService : IWebThemeManager
     {
         private static WebThemeManager _manager = null;
-        private EventLog _log;
+        private readonly EventLog _log;
 
         /// <summary>
         /// Constructor implmentation
@@ -349,8 +346,8 @@ namespace Neos.IdentityServer.MultiFactor
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession, ConcurrencyMode = ConcurrencyMode.Multiple)]
     public class WebAdminService : IWebAdminServices
     {
-        private WebAdminManager _manager = null;
-        private EventLog _log;
+        private readonly WebAdminManager _manager = null;
+        private readonly EventLog _log;
 
         /// <summary>
         /// Constructor implmentation
@@ -374,8 +371,10 @@ namespace Neos.IdentityServer.MultiFactor
             catch (Exception e)
             {
                 _log.WriteEntry(string.Format("Error on WebAdminService Service GetSIDsInformations method : {0}.", e.Message), EventLogEntryType.Error, 2010);
-                SIDsParametersRecord rec = new SIDsParametersRecord();
-                rec.Loaded = false;
+                SIDsParametersRecord rec = new SIDsParametersRecord
+                {
+                    Loaded = false
+                };
                 return rec;
             }
         }
@@ -392,8 +391,10 @@ namespace Neos.IdentityServer.MultiFactor
             catch (Exception e)
             {
                 _log.WriteEntry(string.Format("Error on WebAdminService Service GetSIDsInformations method : {0}.", e.Message), EventLogEntryType.Error, 2010);
-                SIDsParametersRecord rec = new SIDsParametersRecord();
-                rec.Loaded = false;
+                SIDsParametersRecord rec = new SIDsParametersRecord
+                {
+                    Loaded = false
+                };
                 return rec;
             }
         }
@@ -481,6 +482,22 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
+        /// CreateSelfSignedCertificate method implementation
+        /// </summary>
+        public bool CreateSelfSignedCertificate(string subjectName, string dnsName, CertificatesKind kind, int years, string path, string pwd = "")
+        {
+            try
+            {
+                return _manager.CreateSelfSignedCertificate(subjectName, dnsName, kind, years, path, pwd);
+            }
+            catch (Exception e)
+            {
+                _log.WriteEntry(string.Format("Error on WebAdminService Service CreateRSACertificate method : {0}.", e.Message), EventLogEntryType.Error, 2010);
+                return false;
+            }
+        }
+
+        /// <summary>
         /// CreateRSACertificate method implementation
         /// </summary>
         public string CreateRSACertificate(Dictionary<string, bool> servers, string subject, int years)
@@ -515,11 +532,11 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// CreateADFSCertificate method implementation
         /// </summary>
-        public bool CreateADFSCertificate(Dictionary<string, bool> servers, string subject, bool issigning, int years)
+        public bool CreateADFSCertificate(Dictionary<string, bool> servers, string subject, ADFSCertificatesKind kind, int years)
         {
             try
             {
-                return (_manager.CreateADFSCertificate(servers, subject, issigning, years)!=null);
+                return (_manager.CreateADFSCertificate(servers, subject, kind, years)!=null);
             }
             catch (Exception e)
             {
@@ -825,7 +842,7 @@ namespace Neos.IdentityServer.MultiFactor
     public class NTService : INTService
     {
         private static NTServiceManager _manager = null;
-        private EventLog _log;
+        private readonly EventLog _log;
 
         /// <summary>
         /// Constructor implmentation

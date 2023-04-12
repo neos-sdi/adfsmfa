@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2022 @redhook62 (adfsmfa@gmail.com)                                                                                                                                        //                        
+// Copyright (c) 2023 redhook (adfsmfa@gmail.com)                                                                                                                                        //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -285,6 +285,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public string RSACertificateAttribute { get; set; }
         public int MaxRows { get; set; }
         public bool UseSSL { get; set; }
+        public bool WeakPublicKeyEncoding { get; set; }
+
         /// <summary>
         /// Update method implmentation
         /// </summary>
@@ -307,6 +309,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             RSACertificateAttribute = adds.RSACertificateAttribute;
             MaxRows = adds.MaxRows;
             UseSSL = adds.UseSSL;
+            WeakPublicKeyEncoding = adds.WeakPublicKeyEncoding;
         }
 
         /// <summary>
@@ -353,6 +356,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             RSACertificateAttribute = adds.RSACertificateAttribute;
             adds.MaxRows = MaxRows;
             adds.UseSSL = UseSSL;
+            adds.WeakPublicKeyEncoding = WeakPublicKeyEncoding;
             ManagementService.ADFSManager.WriteConfiguration(host);
         }
     }
@@ -1192,7 +1196,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public bool UseNickNames { get; set; }
         public string ForbiddenBrowsers { get; set; }
         public string InitiatedBrowsers { get; set; }
-        public string NoCounterBrowsers { get; set; }
+        public string NoCounterBrowsers { get; set; }       
 
         /// <summary>
         /// Kind  Property

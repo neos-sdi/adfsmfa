@@ -276,4 +276,10 @@
   <data name="InfosConfigNotUpdated" xml:space="preserve">
     <value>MFA 構成は更新されていません!</value>
   </data>
+  <data name="InfosSelfSignedGenerated" xml:space="preserve">
+    <value>自己署名証明書が作成されました</value>
+  </data>
+  <data name="InfosSelfSignedNotGenerated" xml:space="preserve">
+    <value>自己署名証明書が生成されない</value>
+  </data>
 </root>

@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2022 @redhook62 (adfsmfa@gmail.com)                                                                                                                                        //                        
+// Copyright (c) 2023 redhook (adfsmfa@gmail.com)                                                                                                                                        //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -171,7 +171,14 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 }
 
                 Trace.WriteLine("");
-                Trace.WriteLine(string.Format("Importing for AD : {0}", Parameters.LDAPPath));
+                Trace.WriteLine(string.Format("Importing from AD : {0}", Parameters.LDAPPath));
+                if (!string.IsNullOrEmpty(Parameters.LDAPFilter))
+                    Trace.WriteLine(string.Format("Filtering from AD : {0}", Parameters.LDAPFilter));
+                if (Parameters.NoRecurse)
+                    Trace.WriteLine(string.Format("No Recursion on ADDS Groups : {0}", Parameters.NoRecurse));
+                Trace.WriteLine("");
+                Trace.WriteLine("");
+
                 Trace.Indent();
                 Trace.WriteLine("Query users from AD");
                 MFAUserList lst = client.ImportMFAUsers(Parameters, DisableAll);

@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2022 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2023 redhook (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -544,6 +544,8 @@ namespace Neos.IdentityServer.MultiFactor.Data
                                 dsusr.PropertiesToLoad.Add("sAMAccountName");
                                 dsusr.PropertiesToLoad.Add("msDS-PrincipalName");
                                 dsusr.PropertiesToLoad.Add("whenCreated");
+                                dsusr.PropertiesToLoad.Add(ADHost.KeyAttribute);
+                                dsusr.PropertiesToLoad.Add(ADHost.PublicKeyCredentialAttribute);
                                 dsusr.PropertiesToLoad.Add(ADHost.MailAttribute);
                                 dsusr.PropertiesToLoad.Add(ADHost.PhoneAttribute);
                                 dsusr.PropertiesToLoad.Add(ADHost.MethodAttribute);
@@ -580,6 +582,11 @@ namespace Neos.IdentityServer.MultiFactor.Data
                                         {
                                             reg.ID = new Guid((byte[])DirEntry.Properties["objectGUID"].Value).ToString();
                                             reg.UPN = sr.Properties[ADDSClaimsUtilities.GetADDSUserAttribute()][0].ToString();
+
+                                            if (DirEntry.Properties[ADHost.KeyAttribute].Value != null)
+                                                reg.IsRegistered = true;
+                                            if (DirEntry.Properties[ADHost.PublicKeyCredentialAttribute].Count >0)
+                                                reg.IsRegistered = true;
                                             if (ADDSUtils.GetMultiValued(DirEntry.Properties[ADHost.MailAttribute], _mailismulti) != null)
                                             {
                                                 reg.MailAddress = ADDSUtils.GetMultiValued(DirEntry.Properties[ADHost.MailAttribute], _mailismulti);
@@ -593,7 +600,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                                             if (DirEntry.Properties[ADHost.MethodAttribute].Value != null)
                                             {
                                                 reg.PreferredMethod = (PreferredMethod)Enum.Parse(typeof(PreferredMethod), DirEntry.Properties[ADHost.MethodAttribute].Value.ToString(), true);
-                                                if (reg.PreferredMethod != PreferredMethod.Choose)
+                                                if (reg.PreferredMethod != PreferredMethod.None)
                                                     reg.IsRegistered = true;
                                             }
                                             if (DirEntry.Properties[ADHost.OverrideMethodAttribute].Value != null)
@@ -601,6 +608,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                                                 try
                                                 {
                                                     reg.OverrideMethod = DirEntry.Properties[ADHost.OverrideMethodAttribute].Value.ToString();
+                                                    reg.IsRegistered = true;
                                                 }
                                                 catch
                                                 {
@@ -614,6 +622,8 @@ namespace Neos.IdentityServer.MultiFactor.Data
                                                 try
                                                 {
                                                     reg.PIN = Convert.ToInt32(DirEntry.Properties[ADHost.PinAttribute].Value);
+                                                    if (reg.PIN > 0)
+                                                        reg.IsRegistered = true;
                                                 }
                                                 catch
                                                 {
@@ -712,6 +722,8 @@ namespace Neos.IdentityServer.MultiFactor.Data
                             dsusr.PropertiesToLoad.Add("userPrincipalName");
                             dsusr.PropertiesToLoad.Add("sAMAccountName");
                             dsusr.PropertiesToLoad.Add("msDS-PrincipalName");
+                            dsusr.PropertiesToLoad.Add(ADHost.KeyAttribute);
+                            dsusr.PropertiesToLoad.Add(ADHost.PublicKeyCredentialAttribute);
                             dsusr.PropertiesToLoad.Add(ADHost.MailAttribute);
                             dsusr.PropertiesToLoad.Add(ADHost.PhoneAttribute);
                             dsusr.PropertiesToLoad.Add(ADHost.MethodAttribute);
@@ -750,6 +762,12 @@ namespace Neos.IdentityServer.MultiFactor.Data
                                         {
                                             reg.ID = new Guid((byte[])DirEntry.Properties["objectGUID"].Value).ToString();
                                             reg.UPN = sr.Properties[ADDSClaimsUtilities.GetADDSUserAttribute()][0].ToString();
+
+                                            if (DirEntry.Properties[ADHost.KeyAttribute].Value != null)
+                                                reg.IsRegistered = true;
+                                            if (DirEntry.Properties[ADHost.PublicKeyCredentialAttribute].Count > 0)
+                                                reg.IsRegistered = true;
+
                                             if (ADDSUtils.GetMultiValued(DirEntry.Properties[ADHost.MailAttribute], _mailismulti) != null)
                                             {
                                                 reg.MailAddress = ADDSUtils.GetMultiValued(DirEntry.Properties[ADHost.MailAttribute], _mailismulti);
@@ -764,14 +782,19 @@ namespace Neos.IdentityServer.MultiFactor.Data
                                             if (DirEntry.Properties[ADHost.MethodAttribute].Value != null)
                                             {
                                                 reg.PreferredMethod = (PreferredMethod)Enum.Parse(typeof(PreferredMethod), DirEntry.Properties[ADHost.MethodAttribute].Value.ToString(), true);
-                                                if (reg.PreferredMethod != PreferredMethod.Choose)
+                                                if (reg.PreferredMethod != PreferredMethod.None)
                                                     reg.IsRegistered = true;
                                             }
+                                            else
+                                                reg.PreferredMethod = PreferredMethod.None;
+
                                             if (DirEntry.Properties[ADHost.OverrideMethodAttribute].Value != null)
                                             {
                                                 try
                                                 {
                                                     reg.OverrideMethod = DirEntry.Properties[ADHost.OverrideMethodAttribute].Value.ToString();
+                                                    if (!string.IsNullOrEmpty(reg.OverrideMethod))
+                                                        reg.IsRegistered = true;
                                                 }
                                                 catch
                                                 {
@@ -785,6 +808,8 @@ namespace Neos.IdentityServer.MultiFactor.Data
                                                 try
                                                 {
                                                     reg.PIN = Convert.ToInt32(DirEntry.Properties[ADHost.PinAttribute].Value);
+                                                    if (reg.PIN > 0)
+                                                        reg.IsRegistered = true;
                                                 }
                                                 catch
                                                 {
@@ -899,7 +924,6 @@ namespace Neos.IdentityServer.MultiFactor.Data
             qryldap += ")";
 
             int count = 0;
-
             try
             {
                 foreach (ADDSHostForest f in ADDSUtils.Forests)
@@ -917,6 +941,8 @@ namespace Neos.IdentityServer.MultiFactor.Data
                                     dsusr.PropertiesToLoad.Add("sAMAccountName");
                                     dsusr.PropertiesToLoad.Add("msDS-PrincipalName");
                                     dsusr.PropertiesToLoad.Add("whenCreated");
+                                    dsusr.PropertiesToLoad.Add(ADHost.KeyAttribute);
+                                    dsusr.PropertiesToLoad.Add(ADHost.PublicKeyCredentialAttribute);
                                     dsusr.PropertiesToLoad.Add(ADHost.MailAttribute);
                                     dsusr.PropertiesToLoad.Add(ADHost.PhoneAttribute);
                                     dsusr.PropertiesToLoad.Add(ADHost.MethodAttribute);
@@ -932,50 +958,27 @@ namespace Neos.IdentityServer.MultiFactor.Data
                                     {
                                         foreach (SearchResult sr in src)
                                         {
-                                            MFAUser reg = new MFAUser();
                                             using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr))
                                             {
                                                 bool IsRegistered = false;
                                                 if (DirEntry.Properties["objectGUID"].Value != null)
                                                 {
-
+                                                    string ID = new Guid((byte[])DirEntry.Properties["objectGUID"].Value).ToString();
+                                                    string UPN = sr.Properties[ADDSClaimsUtilities.GetADDSUserAttribute()][0].ToString();
+                                                    if (DirEntry.Properties[ADHost.KeyAttribute].Value != null)
+                                                        IsRegistered = true;
+                                                    if (DirEntry.Properties[ADHost.PublicKeyCredentialAttribute].Count > 0)
+                                                        IsRegistered = true;
                                                     if (ADDSUtils.GetMultiValued(DirEntry.Properties[ADHost.MailAttribute], _mailismulti) != null)
                                                         IsRegistered = true;
                                                     if (ADDSUtils.GetMultiValued(DirEntry.Properties[ADHost.PhoneAttribute], _phoneismulti) != null)
                                                         IsRegistered = true;
-
                                                     if (DirEntry.Properties[ADHost.MethodAttribute].Value != null)
-                                                    {
-                                                        PreferredMethod PreferredMethod = (PreferredMethod)Enum.Parse(typeof(PreferredMethod), DirEntry.Properties[ADHost.MethodAttribute].Value.ToString(), true);
-                                                        if (PreferredMethod != PreferredMethod.Choose)
-                                                            IsRegistered = true;
-                                                    }
+                                                       IsRegistered = true;
                                                     if (DirEntry.Properties[ADHost.OverrideMethodAttribute].Value != null)
-                                                    {
-                                                        try
-                                                        {
-                                                            reg.OverrideMethod = DirEntry.Properties[ADHost.OverrideMethodAttribute].Value.ToString();
-                                                        }
-                                                        catch
-                                                        {
-                                                            reg.OverrideMethod = string.Empty;
-                                                        }
-                                                    }
-                                                    else reg.OverrideMethod = string.Empty;
-
+                                                       IsRegistered = true;                                                        
                                                     if (DirEntry.Properties[ADHost.PinAttribute].Value != null)
-                                                    {
-                                                        try
-                                                        {
-                                                            reg.PIN = Convert.ToInt32(DirEntry.Properties[ADHost.PinAttribute].Value);
-                                                        }
-                                                        catch
-                                                        {
-                                                            reg.PIN = 0;
-                                                        }
-                                                    }
-                                                    else reg.PIN = 0;
-
+                                                        IsRegistered = true;                                                   
                                                     if (DirEntry.Properties[ADHost.TotpEnabledAttribute].Value != null)
                                                         IsRegistered = true;
                                                     if (IsRegistered)
@@ -1021,6 +1024,8 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         dsusr.PropertiesToLoad.Add("sAMAccountName");
                         dsusr.PropertiesToLoad.Add("msDS-PrincipalName");
                         dsusr.PropertiesToLoad.Add("whenCreated");
+                        dsusr.PropertiesToLoad.Add(ADHost.KeyAttribute);
+                        dsusr.PropertiesToLoad.Add(ADHost.PublicKeyCredentialAttribute);
                         dsusr.PropertiesToLoad.Add(ADHost.MailAttribute);
                         dsusr.PropertiesToLoad.Add(ADHost.PhoneAttribute);
                         dsusr.PropertiesToLoad.Add(ADHost.MethodAttribute);
@@ -1036,17 +1041,21 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         {
                             if (DirEntry.Properties["objectGUID"].Value != null)
                             {
+                                if (DirEntry.Properties[ADHost.KeyAttribute].Value != null)
+                                    return true;
+                                if (DirEntry.Properties[ADHost.PublicKeyCredentialAttribute] != null)
+                                    return true;
                                 if (ADDSUtils.GetMultiValued(DirEntry.Properties[ADHost.MailAttribute], _mailismulti) != null)
                                     return true;
                                 if (ADDSUtils.GetMultiValued(DirEntry.Properties[ADHost.PhoneAttribute], _phoneismulti) != null)
                                     return true;
                                 if (DirEntry.Properties[ADHost.MethodAttribute].Value != null)
                                     return true;
-                                if (DirEntry.Properties[ADHost.TotpEnabledAttribute].Value != null)
-                                    return true;
                                 if (DirEntry.Properties[ADHost.OverrideMethodAttribute].Value != null)
                                     return true;
                                 if (DirEntry.Properties[ADHost.PinAttribute].Value != null)
+                                    return true;                                
+                                if (DirEntry.Properties[ADHost.TotpEnabledAttribute].Value != null)
                                     return true;
                             }
                             return false;
@@ -1402,7 +1411,6 @@ namespace Neos.IdentityServer.MultiFactor.Data
                             WebAuthNPublicKeySerialization ser = new WebAuthNPublicKeySerialization(ADHost);
                             foreach (string s in xcoll)
                             {
-                                // WebAuthNPublicKeySerialization ser = new WebAuthNPublicKeySerialization(ADHost);
                                 MFAUserCredential usr = ser.DeserializeCredentials(s, user.Name);
                                 if (HexaEncoding.GetHexStringFromByteArray(usr.Descriptor.Id).Equals(credentialid))
                                 {
