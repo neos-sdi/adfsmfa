@@ -45,7 +45,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Metadata
         /// <summary>
         /// GetBLOB method implmentation
         /// </summary>
-        public override async Task<MetadataBLOBPayload> GetBLOB()
+        public override MetadataBLOBPayload GetBLOB()
         {
             bool needrawblob = false;
             MetadataBLOBPayload result = null;
@@ -65,7 +65,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Metadata
                 needrawblob = true;
             if (needrawblob)
             {
-                infos.BLOB = await GetRawBlob();
+                infos.BLOB = GetRawBlob();
                 if (string.IsNullOrEmpty(infos.BLOB))
                     return null;
                 result = DeserializeAndValidateBlob(infos);
@@ -77,10 +77,10 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Metadata
         /// <summary>
         /// GetRawBlob method implementation
         /// </summary>
-        protected override async Task<string> GetRawBlob()
+        protected override string GetRawBlob()
         {
             var url = _blobUrl;
-            return await DownloadStringAsync(url);
+            return DownloadStringAsync(url);
         }
 
         /// <summary>
@@ -99,17 +99,12 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Metadata
               var blobHeaderString = jwtParts.First();
               var blobHeader = JObject.Parse(Encoding.UTF8.GetString(Base64Url.Decode(blobHeaderString)));
 
-              var blobAlg = blobHeader["alg"]?.Value<string>();
+              var blobAlg = (blobHeader["alg"]?.Value<string>()) ?? throw new ArgumentNullException("No alg value was present in the BLOB header.");
 
-              if (blobAlg == null)
-                  throw new ArgumentNullException("No alg value was present in the BLOB header.");
+              if (!(blobHeader["x5c"] is JArray x5cArray))
+                 throw new Exception("No x5c array was present in the BLOB header.");
 
-              JArray x5cArray = blobHeader["x5c"] as JArray;
-
-              if (x5cArray == null)
-                  throw new Exception("No x5c array was present in the BLOB header.");
-
-              var keyStrings = x5cArray.Values<string>().ToList();
+              List<string> keyStrings = x5cArray.Values<string>().ToList();
 
               if (keyStrings.Count == 0)
                   throw new ArgumentException("No keys were present in the BLOB header.");
@@ -219,9 +214,9 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Metadata
         /// <summary>
         /// DownloadStringAsync method implementation
         /// </summary>
-        protected async Task<string> DownloadStringAsync(string url)
+        protected string DownloadStringAsync(string url)
         {
-            return await _httpClient.GetStringAsync(url);
+            return _httpClient.GetStringAsync(url).Result;
         }
 
         /// <summary>

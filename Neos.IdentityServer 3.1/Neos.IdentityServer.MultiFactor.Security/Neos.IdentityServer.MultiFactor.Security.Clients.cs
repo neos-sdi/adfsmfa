@@ -15,6 +15,7 @@
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
+// #define debugsid
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -663,86 +664,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 manager.UnInitialize();
             }
         }
-
-        #region WebAuthN Payloads
-        /// <summary>
-        /// HasBLOBPayloadCache method implementation
-        /// </summary>
-        public static bool HasBLOBPayloadCache()
-        {
-            WebAdminClient manager = new WebAdminClient();
-            manager.Initialize();
-            try
-            {
-                IWebAdminServices client = manager.Open();
-                try
-                {
-                    return client.HasBLOBPayloadCache();
-                }
-                finally
-                {
-                    manager.Close(client);
-                }
-            }
-            finally
-            {
-                manager.UnInitialize();
-            }
-
-        }
-
-        /// <summary>
-        /// GetBLOBPayloadCache method implementation
-        /// </summary>
-        public static BLOBPayloadInformations GetBLOBPayloadCache()
-        {
-            WebAdminClient manager = new WebAdminClient();
-            manager.Initialize();
-            try
-            {
-                IWebAdminServices client = manager.Open();
-                try
-                {
-                    return client.GetBLOBPayloadCache();
-                }
-                finally
-                {
-                    manager.Close(client);
-                }
-            }
-            finally
-            {
-                manager.UnInitialize();
-            }
-        }
-
-        /// <summary>
-        /// SetBLOBPayloadCache method implmentation
-        /// </summary>
-        public static void SetBLOBPayloadCache(BLOBPayloadInformations infos)
-        {
-            WebAdminClient manager = new WebAdminClient();
-            manager.Initialize();
-            try
-            {
-                IWebAdminServices client = manager.Open();
-                try
-                {
-                    client.SetBLOBPayloadCache(infos);
-                }
-                finally
-                {
-                    manager.Close(client);
-                }
-            }
-            finally
-            {
-                manager.UnInitialize();
-            }
-
-        }
-        #endregion
-
+      
         #region Firewall
         /// <summary>
         /// AddFirewallRules method implmentation
@@ -1258,46 +1180,95 @@ namespace Neos.IdentityServer.MultiFactor.Data
         {
             try
             {
+#if debugsid
+                Log.WriteEntry("Starting Retreive SIDs on Client Side", EventLogEntryType.Warning, 9001);
+#endif
                 if (!Loaded)
                 {
+#if debugsid
+                    Log.WriteEntry("Starting Loading Configuration on Client Side", EventLogEntryType.Warning, 9002);
+#endif
                     MFAConfig config = null;
-                    if (cfg == null)
-                        try
-                        {
-                            config = CFGReaderUtilities.ReadConfiguration();
-                        }
-                        catch (Exception e)
-                        {
-                            Log.WriteEntry(string.Format("Error retreiving security descriptors configuration : {0} ", e.Message), EventLogEntryType.Error, 22012);
-                            throw e;
-                        }
-                    else
-                        config = cfg;
+                    try
+                    {
+#if debugsid
+                        Log.WriteEntry("Loading Configuration on Client Side", EventLogEntryType.Warning, 9003);
+#endif
+                        config = CFGReaderUtilities.ReadConfiguration();
+#if debugsid
+                        Log.WriteEntry("Configuration correctly loaded on Client Side", EventLogEntryType.SuccessAudit, 9004);
+#endif
+                    }
+                    catch (Exception e)
+                    {
+                        Log.WriteEntry(string.Format("Error retreiving security descriptors configuration : {0} ", e.Message), EventLogEntryType.Error, 2012);
+                        throw e;
+                    }
                     if (config != null)
                     {
+#if debugsid
+                        Log.WriteEntry("Starting Loading SIDs on Client Side", EventLogEntryType.Warning, 9005);
+#endif
                         SIDsParametersRecord rec = null;
                         try
                         {
+#if debugsid
+                            Log.WriteEntry("Calling MFA Service from Client Side", EventLogEntryType.Warning, 9006);
+#endif
                             rec = WebAdminManagerClient.GetSIDsInformations(config);
+#if debugsid
+                            Log.WriteEntry("SIDs returned from MFA Service on Client Side", EventLogEntryType.Warning, 9007);
+#endif
                         }
                         catch (Exception e)
                         {
-                            Log.WriteEntry(string.Format("Error retreiving security descriptors from MFA Service : {0} ", e.Message), EventLogEntryType.Error, 22012);
+                            Log.WriteEntry(string.Format("Error retreiving security descriptors from MFA Service : {0} ", e.Message), EventLogEntryType.Error, 2012);
                             throw e;
                         }
+#if debugsid
+                        Log.WriteEntry(string.Format("Loading ADFS Account SID : {0}", rec.ADFSAccountSID), EventLogEntryType.SuccessAudit, 9100);
+#endif
                         ADFSAccountSID = rec.ADFSAccountSID;
+#if debugsid
+                        Log.WriteEntry(string.Format("Loading ADFS Account Name : {0}", rec.ADFSAccountName), EventLogEntryType.SuccessAudit, 9101);
+#endif
                         ADFSAccountName = rec.ADFSAccountName;
+#if debugsid
+                        Log.WriteEntry(string.Format("Loading ADFS Service Account SID : {0}", rec.ADFSServiceAccountSID), EventLogEntryType.SuccessAudit, 9102);
+#endif
                         ADFSServiceSID = rec.ADFSServiceAccountSID;
+#if debugsid
+                        Log.WriteEntry(string.Format("Loading ADFS Service Account Name : {0}", rec.ADFSServiceAccountName), EventLogEntryType.SuccessAudit, 9103);
+#endif
                         ADFSServiceName = rec.ADFSServiceAccountName;
+#if debugsid
+                        Log.WriteEntry(string.Format("Loading ADFS Administration Group SID : {0}", rec.ADFSAdministrationGroupSID), EventLogEntryType.SuccessAudit, 9104);
+#endif
                         ADFSAdminGroupSID = rec.ADFSAdministrationGroupSID;
+#if debugsid
+                        Log.WriteEntry(string.Format("Loading ADFS Administration Group Name : {0}", rec.ADFSAdministrationGroupName), EventLogEntryType.SuccessAudit, 9105);
+#endif
                         ADFSAdminGroupName = rec.ADFSAdministrationGroupName;
+#if debugsid
+                        Log.WriteEntry(string.Format("Loading ADFS ADFSDelegateServiceAdministrationAllowed Property : {0}", rec.ADFSDelegateServiceAdministrationAllowed), EventLogEntryType.SuccessAudit, 9106);
+#endif
                         ADFSDelegateServiceAdministrationAllowed = rec.ADFSDelegateServiceAdministrationAllowed;
+#if debugsid
+                        Log.WriteEntry(string.Format("Loading ADFS ADFSLocalAdminServiceAdministrationAllowed Property : {0}", rec.ADFSLocalAdminServiceAdministrationAllowed), EventLogEntryType.SuccessAudit, 9107);
+#endif
                         ADFSLocalAdminServiceAdministrationAllowed = rec.ADFSLocalAdminServiceAdministrationAllowed;
+#if debugsid
+                        Log.WriteEntry(string.Format("Loading ADFS ADFSSystemServiceAdministrationAllowed Property : {0}", rec.ADFSSystemServiceAdministrationAllowed), EventLogEntryType.SuccessAudit, 9108);
+#endif
                         ADFSSystemServiceAdministrationAllowed = rec.ADFSSystemServiceAdministrationAllowed;
+#if debugsid
+                        Log.WriteEntry(string.Format("SIDs Loaded : {0}", rec.Loaded), EventLogEntryType.Warning, 9109);
+#endif
                         Loaded = rec.Loaded;
                     }
                     else
-                        Log.WriteEntry("Error retreiving security descriptors : Configuration is NULL", EventLogEntryType.Error, 22012);
+                        Log.WriteEntry("Error retreiving security descriptors : Configuration is NULL", EventLogEntryType.Error, 2012);
+
                 }
             }
             catch (Exception e)
@@ -1307,5 +1278,5 @@ namespace Neos.IdentityServer.MultiFactor.Data
             }
         }
     }
-    #endregion
+#endregion
 }

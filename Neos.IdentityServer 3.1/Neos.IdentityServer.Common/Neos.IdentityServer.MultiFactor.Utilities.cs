@@ -979,7 +979,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             switch (kind)
             {
-                case KeysDataManagerEventKind.add:
+                case KeysDataManagerEventKind.Add:
                     KeysManager.NewKey(user);
                     break;
                 case KeysDataManagerEventKind.Get:
@@ -1934,7 +1934,7 @@ namespace Neos.IdentityServer.MultiFactor
     {
         internal static PasswordPolicyResults GetPasswordPolicyForUser(MFAConfig cfg, AuthenticationContext context)
         {
-            PasswordPolicyResults result = null;
+            PasswordPolicyResults result;
             if (!cfg.KeysConfig.UsePasswordPolicy)
                 return null;
             if (cfg.KeysConfig.UsePSOPasswordPolicy)
@@ -2040,9 +2040,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             try
             {
-                PasswordPolicyResults result = GetPSOMaxPassordAge(cfg, dns, user);
-                if (result == null)
-                    result = GetDDPMaxPasswordAge(cfg, dns, user);
+                PasswordPolicyResults result = GetPSOMaxPassordAge(cfg, dns, user) ?? GetDDPMaxPasswordAge(cfg, dns, user);
                 return result;
             }
             catch (Exception)
@@ -2154,8 +2152,8 @@ namespace Neos.IdentityServer.MultiFactor
     public partial class TOTP
     {
         private int _secondsToGo;
-        private int _digits;
-        private int _duration;
+        private readonly int _digits;
+        private readonly int _duration;
         private string _identity;
         private byte[] _secret;
         private Int64 _timestamp;
@@ -2163,7 +2161,7 @@ namespace Neos.IdentityServer.MultiFactor
         private int _offset;
         private int _oneTimePassword;
         private DateTime _datetime;
-        private HashMode _mode = HashMode.SHA1;
+        private readonly HashMode _mode = HashMode.SHA1;
 
         /// <summary>
         /// Constructor
@@ -2457,6 +2455,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Encode method implmentation
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0059:Assignation inutile d'une valeur", Justification = "No")]
         public static string Encode(byte[] data)
         {
             int i = 0, index = 0, digit = 0;
@@ -2547,8 +2546,8 @@ namespace Neos.IdentityServer.MultiFactor
         internal static void Initialize(MFAConfig cfg)
         {
             Trace.TraceInformation("KeysManager.Initialize()");
-            KeysRepositoryService KeysStorage = null;
-            BaseKeysManagerParams KeysManagerParams = null;
+            KeysRepositoryService KeysStorage;
+            BaseKeysManagerParams KeysManagerParams;
             switch (cfg.KeysConfig.KeyFormat)
             {
                 case SecretKeyFormat.RNG:
@@ -3055,7 +3054,7 @@ namespace Neos.IdentityServer.MultiFactor
                     return;
                 if (string.IsNullOrEmpty(user.MailAddress))
                     return;
-                MailProvider mail = config.MailProvider;
+                MailProvider mail = mailprov;
                 string htmlres = string.Empty;
                 if (mail.MailNotifications != null)
                 {
@@ -3232,9 +3231,25 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public static string GetQRCodeString(string UPN, string QRString, MFAConfig config)
         {
-            string Content = string.Empty;
-            if (RuntimeAuthProvider.GetProvider(PreferredMethod.Code) is ITOTPProviderParameters prv)
-                Content = string.Format("otpauth://totp/{0}:{1}?secret={2}&issuer={3}&algorithm={4}&digits={5}&period={6}", config.QRIssuer, HttpUtility.UrlEncode(UPN), QRString, config.QRIssuer, config.OTPProvider.Algorithm, prv.Digits.ToString(), prv.Duration.ToString());
+            string Content;
+            IExternalProvider prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Code); 
+            if (string.IsNullOrEmpty(UPN))
+                throw new ArgumentException("QR: Invalid UserName !");
+            if (string.IsNullOrEmpty(QRString))
+                throw new ArgumentException("QR: Invalid User Key !");
+            if (string.IsNullOrEmpty(config.QRIssuer))
+                throw new ArgumentException("QR: Invalid Issuer !");
+            if (string.IsNullOrEmpty(config.OTPProvider.Algorithm.ToString()))
+                throw new ArgumentException("QR: Invalid Algorithm !");
+            if (prov is ITOTPProviderParameters prv)
+            {
+                if (string.IsNullOrEmpty(prv.Digits.ToString()))
+                    throw new ArgumentException("QR: number of digits !");
+                if (string.IsNullOrEmpty(prv.Duration.ToString()))
+                    throw new ArgumentException("QR: Invalid duration !");
+            }
+            if (prov is ITOTPProviderParameters prv2)
+                Content = string.Format("otpauth://totp/{0}:{1}?secret={2}&issuer={3}&algorithm={4}&digits={5}&period={6}", config.QRIssuer, HttpUtility.UrlEncode(UPN), QRString, config.QRIssuer, config.OTPProvider.Algorithm, prv2.Digits.ToString(), prv2.Duration.ToString());
             else
                 Content = string.Format("otpauth://totp/{0}:{1}?secret={2}&issuer={3}&algorithm={4}", config.QRIssuer, HttpUtility.UrlEncode(UPN), QRString, config.QRIssuer, config.OTPProvider.Algorithm);
 
@@ -3256,8 +3271,24 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public static string GetQRCodeValue(string UPN, string QRString, MFAConfig config)
         {
-            if (RuntimeAuthProvider.GetProvider(PreferredMethod.Code) is ITOTPProviderParameters prv)
-                return string.Format("otpauth://totp/{0}:{1}?secret={2}&issuer={3}&algorithm={4}&digits={5}&period={6}", config.QRIssuer, HttpUtility.UrlEncode(UPN), QRString, config.QRIssuer, config.OTPProvider.Algorithm, prv.Digits.ToString(), prv.Duration.ToString());
+            IExternalProvider prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Code);
+            if (string.IsNullOrEmpty(UPN))
+                throw new ArgumentException("QR: Invalid UserName !");
+            if (string.IsNullOrEmpty(QRString))
+                throw new ArgumentException("QR: Invalid User Key !");
+            if (string.IsNullOrEmpty(config.QRIssuer))
+                throw new ArgumentException("QR: Invalid Issuer !");
+            if (string.IsNullOrEmpty(config.OTPProvider.Algorithm.ToString()))
+                throw new ArgumentException("QR: Invalid Algorithm !");
+            if (prov is ITOTPProviderParameters prv)
+            {
+                if (string.IsNullOrEmpty(prv.Digits.ToString()))
+                    throw new ArgumentException("QR: number of digits !");
+                if (string.IsNullOrEmpty(prv.Duration.ToString()))
+                    throw new ArgumentException("QR: Invalid duration !");
+            }
+            if (prov is ITOTPProviderParameters prv2)
+                return string.Format("otpauth://totp/{0}:{1}?secret={2}&issuer={3}&algorithm={4}&digits={5}&period={6}", config.QRIssuer, HttpUtility.UrlEncode(UPN), QRString, config.QRIssuer, config.OTPProvider.Algorithm, prv2.Digits.ToString(), prv2.Duration.ToString());
             else
                 return string.Format("otpauth://totp/{0}:{1}?secret={2}&issuer={3}&algorithm={4}", config.QRIssuer, HttpUtility.UrlEncode(UPN), QRString, config.QRIssuer, config.OTPProvider.Algorithm);
         }
@@ -3267,9 +3298,26 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public static Stream GetQRCodeStream(string UPN, string QRString, MFAConfig config)
         {
-            string Content = string.Empty;
-            if (RuntimeAuthProvider.GetProvider(PreferredMethod.Code) is ITOTPProviderParameters prv)
-                Content = string.Format("otpauth://totp/{0}:{1}?secret={2}&issuer={3}&algorithm={4}&digits={5}&period={6}", config.QRIssuer, HttpUtility.UrlEncode(UPN), QRString, config.QRIssuer, config.OTPProvider.Algorithm, prv.Digits.ToString(), prv.Duration.ToString());
+            string Content;
+            IExternalProvider prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Code);
+            if (string.IsNullOrEmpty(UPN))
+                throw new ArgumentException("QR: Invalid UserName !");
+            if (string.IsNullOrEmpty(QRString))
+                throw new ArgumentException("QR: Invalid User Key !");
+            if (string.IsNullOrEmpty(config.QRIssuer))
+                throw new ArgumentException("QR: Invalid Issuer !");
+            if (string.IsNullOrEmpty(config.OTPProvider.Algorithm.ToString()))
+                throw new ArgumentException("QR: Invalid Algorithm !");
+            if (prov is ITOTPProviderParameters prv)
+            {
+                if (string.IsNullOrEmpty(prv.Digits.ToString()))
+                    throw new ArgumentException("QR: number of digits !");
+                if (string.IsNullOrEmpty(prv.Duration.ToString()))
+                    throw new ArgumentException("QR: Invalid duration !");
+            }
+
+            if (prov is ITOTPProviderParameters prv2)
+                Content = string.Format("otpauth://totp/{0}:{1}?secret={2}&issuer={3}&algorithm={4}&digits={5}&period={6}", config.QRIssuer, HttpUtility.UrlEncode(UPN), QRString, config.QRIssuer, config.OTPProvider.Algorithm, prv2.Digits.ToString(), prv2.Duration.ToString());
             else
                 Content = string.Format("otpauth://totp/{0}:{1}?secret={2}&issuer={3}&algorithm={4}", config.QRIssuer, HttpUtility.UrlEncode(UPN), QRString, config.QRIssuer, config.OTPProvider.Algorithm);
 
@@ -3304,7 +3352,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         internal static MFAConfig ReadConfiguration(PSHost Host = null)
         {
-            MFAConfig config = null;
+            MFAConfig config;
             try
             {
                 config = ReadConfigurationFromCache();
@@ -3359,10 +3407,8 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 finally
                 {
-                    if (SPRunSpace != null)
-                        SPRunSpace.Close();
-                    if (SPPowerShell != null)
-                        SPPowerShell.Dispose();
+                    SPRunSpace?.Close();
+                    SPPowerShell?.Dispose();
                 }
 
                 FileStream stm = new FileStream(pth, FileMode.Open, FileAccess.Read);
@@ -3483,10 +3529,8 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 finally
                 {
-                    if (SPRunSpace != null)
-                        SPRunSpace.Close();
-                    if (SPPowerShell != null)
-                        SPPowerShell.Dispose();
+                    SPRunSpace?.Close();
+                    SPPowerShell?.Dispose();
                 }
 
                 FileStream stm = new FileStream(pth, FileMode.Open, FileAccess.Read);
@@ -3573,10 +3617,8 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 finally
                 {
-                    if (SPRunSpace != null)
-                        SPRunSpace.Close();
-                    if (SPPowerShell != null)
-                        SPPowerShell.Dispose();
+                    SPRunSpace?.Close();
+                    SPPowerShell?.Dispose();
                 }
             }
             catch (Exception ex)
@@ -3666,10 +3708,8 @@ namespace Neos.IdentityServer.MultiFactor
             }
             finally
             {
-                if (SPRunSpace != null)
-                    SPRunSpace.Close();
-                if (SPPowerShell != null)
-                    SPPowerShell.Dispose();
+                SPRunSpace?.Close();
+                SPPowerShell?.Dispose();
             }
             return true;
         }
@@ -4263,7 +4303,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// FindNextWizardToPlay method implementation
         /// </summary>
-        public static PreferredMethod FindNextWizardToPlay(AuthenticationContext usercontext, MFAConfig config, ref bool isrequired)
+        public static PreferredMethod FindNextWizardToPlay(AuthenticationContext usercontext, ref bool isrequired)
         {
             PreferredMethod current = usercontext.EnrollPageID;
             int v = (int)current;

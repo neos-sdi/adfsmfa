@@ -50,6 +50,10 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         /// <summary>
         /// Initializes the metadata service.
         /// </summary>
-        Task Initialize();
+        void Initialize();
+        /// <summary>
+        /// NeedToReload the metadata service.
+        /// </summary>
+        bool NeedToReload { get; set; }
     }
 }

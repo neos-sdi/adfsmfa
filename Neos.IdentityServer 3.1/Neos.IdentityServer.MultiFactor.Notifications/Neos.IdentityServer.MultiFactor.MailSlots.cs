@@ -83,14 +83,6 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
-        /// Destructor implementation
-        /// </summary>
-        ~BaseMailSlotServer()
-        {
-            Dispose(true);
-        }
-
-        /// <summary>
         /// CreateMailSlot() method implmentation
         /// </summary>
         protected virtual void CreateMailSlot()
@@ -108,8 +100,16 @@ namespace Neos.IdentityServer.MultiFactor
         {
             if (_mailslot != null)
             {
-                _mailslot.Close();
-                _mailslot = null;
+                try
+                {
+                    if (!_mailslot.IsClosed)
+                        _mailslot.Close();
+                }
+                catch { }
+                finally
+                {
+                    _mailslot = null;
+                }
             }
             if (_securityattr != null)
                 _securityattr = null;
@@ -191,7 +191,8 @@ namespace Neos.IdentityServer.MultiFactor
         public virtual void Stop()
         {
             _isstarted = false;
-            _canceltokensource.Cancel(false);
+            if (!_canceltokensource.IsCancellationRequested)
+                _canceltokensource.Cancel(false);
             CloseMailSlot();
         }
 
@@ -301,7 +302,6 @@ namespace Neos.IdentityServer.MultiFactor
         public void Dispose()
         {
             Dispose(true);
-            GC.SuppressFinalize(this);
         }
 
         /// <summary>
@@ -311,9 +311,14 @@ namespace Neos.IdentityServer.MultiFactor
         {
             if (disposing)
             {
-                if (!_canceltokensource.IsCancellationRequested)
-                    _canceltokensource.Cancel();
-                CloseMailSlot();
+                _isstarted = false;
+                try
+                {
+                    if (!_canceltokensource.IsCancellationRequested)
+                        _canceltokensource.Cancel(false);
+                    CloseMailSlot();
+                }
+                catch { }
             }
         }
     }
@@ -665,38 +670,50 @@ namespace Neos.IdentityServer.MultiFactor
     #region MailSlotClient
     public abstract class BaseMailSlotClient<T> : IDisposable
     {
-        private SafeMailslotHandle _mailslot = null;
-        private string _appname = string.Empty;
-       // private string _machinename = string.Empty;
+        private string _appname = string.Empty;      
         private int _processid = 0;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public BaseMailSlotClient()
         {
             Process process = Process.GetCurrentProcess();
-           // MachineName = Environment.MachineName;
             ProcessID = process.Id;
         }
 
         /// <summary>
-        /// CreateMailSlot method implementation
+        /// Dispose method
         /// </summary>
-        public virtual void CreateMailSlot()
+        public void Dispose()
         {
-            _mailslot = NativeMethod.CreateFile(MailSlotName, FileDesiredAccess.GENERIC_WRITE, FileShareMode.FILE_SHARE_READ, IntPtr.Zero, FileCreationDisposition.OPEN_EXISTING, 0, IntPtr.Zero);
-            if (_mailslot.IsInvalid)
-                throw new Win32Exception(Marshal.GetLastWin32Error());
+         
         }
 
         /// <summary>
         /// CreateMailSlot method implementation
         /// </summary>
-        public virtual void CloseMailSlot()
+        internal virtual SafeMailslotHandle CreateMailSlot()
         {
-            if (_mailslot != null)
+            SafeMailslotHandle mailslot;
+            try
             {
-                _mailslot.Close();
-                _mailslot = null;
+                mailslot = NativeMethod.CreateFile(MailSlotName, FileDesiredAccess.GENERIC_WRITE, FileShareMode.FILE_SHARE_READ, IntPtr.Zero, FileCreationDisposition.OPEN_EXISTING, 0, IntPtr.Zero);
             }
+            catch
+            {
+                // mailslot server no exists
+                return null;
+            }
+            return mailslot;
+        }
+
+        /// <summary>
+        /// CreateMailSlot method implementation
+        /// </summary>
+        internal virtual void CloseMailSlot(SafeMailslotHandle mailslot)
+        {
+            mailslot?.Close();
         }
 
         /// <summary>
@@ -735,12 +752,19 @@ namespace Neos.IdentityServer.MultiFactor
             int cbMessageBytes;
             byte[] bMessage = GetMessage(message);
             cbMessageBytes = bMessage.Length;
+            SafeMailslotHandle mailslot = null;
             try
             {
-                CreateMailSlot();
-                bool succeeded = NativeMethod.WriteFile(_mailslot, bMessage, cbMessageBytes, out int cbBytesWritten, IntPtr.Zero);
-                if (!succeeded || cbMessageBytes != cbBytesWritten)
-                    throw new Win32Exception(Marshal.GetLastWin32Error());
+                mailslot = CreateMailSlot();
+                if (mailslot != null) 
+                {
+                    if (!mailslot.IsInvalid)
+                    {
+                        bool succeeded = NativeMethod.WriteFile(mailslot, bMessage, cbMessageBytes, out int cbBytesWritten, IntPtr.Zero);
+                        if (!succeeded || cbMessageBytes != cbBytesWritten)
+                            throw new Win32Exception(Marshal.GetLastWin32Error());
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -748,27 +772,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             finally
             {
-                CloseMailSlot();
-            }
-        }
-
-        /// <summary>
-        /// Dispose implmentation
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Dispose method implementation
-        /// </summary>
-        internal virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                CloseMailSlot();
+                CloseMailSlot(mailslot);
             }
         }
     }

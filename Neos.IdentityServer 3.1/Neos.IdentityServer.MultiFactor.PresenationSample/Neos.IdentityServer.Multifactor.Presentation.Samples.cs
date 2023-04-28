@@ -339,7 +339,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                 if ((Provider.Config.LimitEnrollmentToDefaultProvider) && (Provider.Config.DefaultProviderMethod != PreferredMethod.Choose))
                     m = Utilities.FindDefaultWizardToPlay(usercontext, Provider.Config, ref IsRequired);
                 else
-                    m = Utilities.FindNextWizardToPlay(usercontext, Provider.Config, ref IsRequired);
+                    m = Utilities.FindNextWizardToPlay(usercontext, ref IsRequired);
                 if (m != PreferredMethod.None)
                     usercontext.EnrollPageStatus = EnrollPageStatus.NewStep;
                 else
@@ -533,7 +533,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                 if ((Provider.Config.LimitEnrollmentToDefaultProvider) && (Provider.Config.DefaultProviderMethod != PreferredMethod.Choose))
                     m = Utilities.FindDefaultWizardToPlay(usercontext, Provider.Config, ref IsRequired);
                 else
-                    m = Utilities.FindNextWizardToPlay(usercontext, Provider.Config, ref IsRequired);
+                    m = Utilities.FindNextWizardToPlay(usercontext, ref IsRequired);
                 if (m != PreferredMethod.None)
                     usercontext.EnrollPageStatus = EnrollPageStatus.NewStep;
                 else
@@ -801,7 +801,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
             result += "<br/>";
             if (Provider.Config.UserFeatures.CanEnrollDevices())
             {
-                IExternalProvider prov = null;
+                IExternalProvider prov;
                 bool WantPin = false;
                 bool SuperPin = false;
                 if (RuntimePresentation.IsUIElementRequired(usercontext, RequiredMethodElements.OTPLinkRequired))
@@ -1326,7 +1326,6 @@ namespace Neos.IdentityServer.MultiFactor.Samples
         /// </summary>
         public override string GetFormPreRenderHtmlSendCodeRequest(AuthenticationContext usercontext)
         {
-            string dt = DateTime.Now.AddMilliseconds(Provider.Config.DeliveryWindow).ToString("R");
             string result = "<script type='text/javascript'>" + CR;
 
             result += "function OnRefreshPost(frm)" + CR;
@@ -1411,7 +1410,6 @@ namespace Neos.IdentityServer.MultiFactor.Samples
         /// </summary>
         public override string GetFormPreRenderHtmlSendBiometricRequest(AuthenticationContext usercontext)
         {
-            string dt = DateTime.Now.AddMilliseconds(Provider.Config.DeliveryWindow).ToString("R");
             string result = "<script type='text/javascript'>" + CR;
 
             result += "function OnRefreshPost(response)" + CR;
@@ -2853,7 +2851,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
         private string GetPartHtmlSelectMethod(AuthenticationContext usercontext)
         {
             MFAUser reg = RuntimePresentation.GetUserProperties(Provider.Config, usercontext.UPN);
-            PreferredMethod method = PreferredMethod.None;
+            PreferredMethod method;
             if (reg == null)
                 method = usercontext.PreferredMethod;
             else

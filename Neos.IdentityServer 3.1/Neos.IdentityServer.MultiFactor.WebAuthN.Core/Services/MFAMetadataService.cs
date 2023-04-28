@@ -57,15 +57,17 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         public uint Timeout { get; set; }
         public int TimestampDriftTolerance { get; set; }
 
+        public bool NeedToReload { get; set; }
+
         #region Initialization
         /// <summary>
         /// InitializeRepository method implmentation
         /// </summary>
-        protected virtual async Task InitializeRepository(IMetadataRepository repository)
+        protected virtual void InitializeRepository(IMetadataRepository repository)
         {
             try
             {
-                var blob = await repository.GetBLOB();
+                var blob = repository.GetBLOB();
                 foreach (var entry in blob.Entries)
                 {
                     if (!string.IsNullOrEmpty(entry.AaGuid))
@@ -73,7 +75,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                         if (_entries.TryAdd(Guid.Parse(entry.AaGuid), entry))
                         {
                             //Load if it doesn't already exist
-                            await LoadEntryStatement(repository, blob, entry);
+                            LoadEntryStatement(repository, blob, entry);
                         }
                     }
                 }
@@ -88,11 +90,16 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         /// <summary>
         /// Initialize method implementation
         /// </summary>
-        public virtual async Task Initialize()
+        public virtual void Initialize()
         {
             foreach (var repository in _repositories)
             {
-                await InitializeRepository(repository);
+                InitializeRepository(repository);
+                if (repository.NeedToReload)
+                {
+                    NeedToReload = true;
+                    repository.NeedToReload = false;
+                }
             }
             for (int i = _repositories.Count-1; i >=0; i--)
             {
@@ -156,13 +163,13 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         /// <summary>
         /// LoadEntryStatement method implmentation
         /// </summary>
-        protected virtual async Task LoadEntryStatement(IMetadataRepository repository, MetadataBLOBPayload blob, MetadataBLOBPayloadEntry entry)
+        protected virtual void LoadEntryStatement(IMetadataRepository repository, MetadataBLOBPayload blob, MetadataBLOBPayloadEntry entry)
         {
             try
             {
                 if (entry.AaGuid != null)
                 {
-                    var statement = await repository.GetMetadataStatement(blob, entry);
+                    var statement = repository.GetMetadataStatement(blob, entry);
 
                     if (!string.IsNullOrWhiteSpace(statement.AaGuid))
                     {

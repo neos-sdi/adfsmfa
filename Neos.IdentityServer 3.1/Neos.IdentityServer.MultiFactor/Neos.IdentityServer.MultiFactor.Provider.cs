@@ -65,7 +65,6 @@ namespace Neos.IdentityServer.MultiFactor
 		/// </summary>
         public IAdapterPresentation BeginAuthentication(Claim identityClaim, HttpListenerRequest request, IAuthenticationContext context)
         {      
-            DateTime st = DateTime.Now;
             try
             {
                 AuthenticationContext usercontext = new AuthenticationContext(context)
@@ -175,7 +174,6 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public bool IsAvailableForUser(Claim identityClaim, IAuthenticationContext context)
         {
-            DateTime st = DateTime.Now;
             ResourcesLocale Resources = new ResourcesLocale(context.Lcid);
             try
             {
@@ -495,13 +493,12 @@ namespace Neos.IdentityServer.MultiFactor
         /// TryPreset method implementation
         /// </summary>
         private IAdapterPresentation TryPreset(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, HttpListenerRequest request, out Claim[] claims)
-        {
-            ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
+        {           
             claims = null;
-            IAdapterPresentation result = null;
+            IAdapterPresentation result;
 
             string userlanguage = proofData.Properties["userlanguage"]?.ToString();
-            string[] userlanguages = null;
+            string[] userlanguages;
             if (string.IsNullOrEmpty(userlanguage))
             {
                 userlanguages = request.UserLanguages;
@@ -671,7 +668,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
-            IAdapterPresentation result = null;
+            IAdapterPresentation result;
             usercontext.KeyChanged = false;
             try
             {
@@ -1106,9 +1103,8 @@ namespace Neos.IdentityServer.MultiFactor
         private IAdapterPresentation TryActivation(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, HttpListenerRequest request, out Claim[] claims)
         {
 #region Invitation
-            ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
-            IAdapterPresentation result = null;
+            IAdapterPresentation result;
             usercontext.KeyChanged = false;
             try
             {
@@ -1133,7 +1129,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
 #region Select Options
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
-            IAdapterPresentation result = null;
+            IAdapterPresentation result;
             try
             {
                 usercontext.KeyChanged = false;
@@ -1210,7 +1206,7 @@ namespace Neos.IdentityServer.MultiFactor
 #region Choose method
             ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
             claims = null;
-            IAdapterPresentation result = null;
+            IAdapterPresentation result;
             usercontext.KeyChanged = false;
             try
             {
@@ -1408,7 +1404,6 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private IAdapterPresentation TryPause(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, HttpListenerRequest request, out Claim[] claims)
         {
-            ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
             try
             {
                 claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
@@ -1498,7 +1493,7 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 Bitmap bmp = new Bitmap(fullname);
                 if ((bmp.Height != 60) || (bmp.Width != 60))
-                    Log.WriteEntry("Invalid Custome Authenticator Image ! required size is 60x60 px", EventLogEntryType.Warning, 1000);
+                    Log.WriteEntry("Invalid Custom Authenticator Image ! required size is 60x60 px", EventLogEntryType.Warning, 1000);
                 return bmp.ToByteArray(ImageFormat.Png);
             }
             else
@@ -1588,8 +1583,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
 #region Locking
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
-            IAdapterPresentation result = null;
-            ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
+            IAdapterPresentation result;
             try
             {
                 ProviderPageMode lnk = usercontext.TargetUIMode;
@@ -1621,7 +1615,7 @@ namespace Neos.IdentityServer.MultiFactor
             ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
             usercontext.DirectLogin = false;
-            IAdapterPresentation result = null;
+            IAdapterPresentation result;
             int WebAuthNSelect = 0;
             try
             {
@@ -1829,17 +1823,17 @@ namespace Neos.IdentityServer.MultiFactor
 #region Invitation Request
             ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
-            IAdapterPresentation result = null;
+            IAdapterPresentation result;
             try
             {
-                usercontext.Notification = (int)PostInscriptionRequest(usercontext, (MFAUser)usercontext);
+                usercontext.Notification = (int)PostInscriptionRequest(usercontext);
                 if (usercontext.Notification == (int)AuthenticationResponseKind.Error)
                 {
                     usercontext.UIMode = ProviderPageMode.Locking;
                     return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorSendingToastInformation"), ProviderPageMode.DefinitiveError);
                 }
 
-                usercontext.Notification = (int)this.SetInscriptionResult(usercontext, (MFAUser)usercontext);
+                usercontext.Notification = (int)this.SetInscriptionResult(usercontext);
                 if (usercontext.Notification == (int)AuthenticationResponseKind.EmailForInscription)
                 {
                     // Store Account as disabled and reload it
@@ -1880,7 +1874,7 @@ namespace Neos.IdentityServer.MultiFactor
 #region Sendkey Request
             ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
-            IAdapterPresentation result = null;
+            IAdapterPresentation result;
             try
             {
                 usercontext.Notification = (int)this.PostSecretKeyRequest(usercontext);
@@ -1917,7 +1911,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
 #region Show QR Code
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
-            IAdapterPresentation result = null;
+            IAdapterPresentation result;
             try
             {
                 usercontext.KeyChanged = false;
@@ -1944,7 +1938,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private IAdapterPresentation TryEnrollOTP(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, HttpListenerRequest request, out Claim[] claims)
         {
-            string error = string.Empty;
+            string error;
             ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
 
@@ -2023,7 +2017,7 @@ namespace Neos.IdentityServer.MultiFactor
                         {
                             try
                             {
-                                ValidateUserKey(usercontext, context, proofData, Resources, true);
+                                ValidateUserKey(usercontext, proofData, Resources, true);
                                 if (usercontext.WizContext==WizardContextMode.DirectWizards)
                                     RuntimeRepository.SetMFAUser(Config, (MFAUser)usercontext, usercontext.KeyStatus != SecretKeyStatus.Success);
                                 else if (usercontext.WizContext == WizardContextMode.Registration)
@@ -2086,7 +2080,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private IAdapterPresentation TryEnrollEmail(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, HttpListenerRequest request, out Claim[] claims)
         {
-            string error = string.Empty;
+            string error;
             ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
 
@@ -2130,7 +2124,7 @@ namespace Neos.IdentityServer.MultiFactor
                         try
                         {
                             usercontext.WizPageID = 1; // Goto Donut
-                            ValidateUserEmail(usercontext, context, proofData, Resources, true);
+                            ValidateUserEmail(usercontext, proofData, Resources, true);
                             SetProviderOverrideOption(usercontext, context, proofData, PreferredMethod.Email);
                             ValidateProviderManagementUrl(usercontext, context, proofData, PreferredMethod.Email);
                             if (!usercontext.NotificationSent)
@@ -2149,7 +2143,7 @@ namespace Neos.IdentityServer.MultiFactor
                     case 3: // Code Validation Donut
                         try
                         {
-                            ValidateUserEmail(usercontext, context, proofData, Resources, true);
+                            ValidateUserEmail(usercontext, proofData, Resources, true);
                             AuthenticationResponseKind kd = prov.GetOverrideMethod(usercontext);
                             
                             if (prov.SetSelectedAuthenticationMethod(usercontext, kd, true))
@@ -2219,7 +2213,7 @@ namespace Neos.IdentityServer.MultiFactor
                         {
                             try
                             {
-                                ValidateUserEmail(usercontext, context, proofData, Resources, true);
+                                ValidateUserEmail(usercontext, proofData, Resources, true);
                                 if (usercontext.WizContext == WizardContextMode.DirectWizards)
                                     RuntimeRepository.SetMFAUser(Config, (MFAUser)usercontext, false);
                                 else if (usercontext.WizContext == WizardContextMode.Registration)
@@ -2286,7 +2280,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private IAdapterPresentation TryEnrollPhone(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, HttpListenerRequest request, out Claim[] claims)
         {
-            string error = string.Empty;
+            string error;
             ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
 
@@ -2331,7 +2325,7 @@ namespace Neos.IdentityServer.MultiFactor
                         try
                         {
                             usercontext.WizPageID = 1; // Goto Donut
-                            ValidateUserPhone(usercontext, context, proofData, Resources, true);
+                            ValidateUserPhone(usercontext, proofData, Resources, true);
                             SetProviderOverrideOption(usercontext, context, proofData, PreferredMethod.External);
                             ValidateProviderManagementUrl(usercontext, context, proofData, PreferredMethod.External);
                             if (!usercontext.NotificationSent) 
@@ -2350,7 +2344,7 @@ namespace Neos.IdentityServer.MultiFactor
                     case 3: // Code Validation Donut
                         try
                         {
-                            ValidateUserPhone(usercontext, context, proofData, Resources, true);
+                            ValidateUserPhone(usercontext, proofData, Resources, true);
 
                             AuthenticationResponseKind kd = prov.GetOverrideMethod(usercontext);
                             if (prov.SetSelectedAuthenticationMethod(usercontext, kd, true))
@@ -2419,7 +2413,7 @@ namespace Neos.IdentityServer.MultiFactor
                         {
                             try
                             {
-                                ValidateUserPhone(usercontext, context, proofData, Resources, true);
+                                ValidateUserPhone(usercontext, proofData, Resources, true);
                                 if (usercontext.WizContext==WizardContextMode.DirectWizards)
                                    RuntimeRepository.SetMFAUser(Config, (MFAUser)usercontext, false);
                                 else if (usercontext.WizContext == WizardContextMode.Registration)
@@ -2486,7 +2480,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private IAdapterPresentation TryEnrollBio(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, HttpListenerRequest request, out Claim[] claims)
         {
-            string error = string.Empty;
+            string error;
             ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
 
@@ -2748,7 +2742,7 @@ namespace Neos.IdentityServer.MultiFactor
                             usercontext.WizPageID = 2;
                             if (usercontext.PinCode <= 0)
                                 usercontext.PinCode = Convert.ToInt32(Config.DefaultPin);
-                            ValidateUserPin(usercontext, context, proofData, Resources, true);
+                            ValidateUserPin(usercontext, proofData, Resources, true);
                             return new AdapterPresentation(this, context);
                         }
                         catch (Exception ex)
@@ -2785,7 +2779,7 @@ namespace Neos.IdentityServer.MultiFactor
                             try
                             {
                                // ValidatePINCode(totp2.ToString(), Resources, true);
-                                ValidateUserPin(usercontext, context, proofData, Resources, true);
+                                ValidateUserPin(usercontext, proofData, Resources, true);
                                 if (usercontext.WizContext == WizardContextMode.DirectWizards)
                                     RuntimeRepository.SetMFAUser(Config, (MFAUser)usercontext, false);
                                 else if (usercontext.WizContext == WizardContextMode.Registration)
@@ -2855,22 +2849,20 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private void ValidateUserOptions(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, ResourcesLocale Resources, bool checkempty = false)
         {
-            ValidateUserKey(usercontext, context, proofData, Resources, checkempty);
-            ValidateUserEmail(usercontext, context, proofData, Resources, checkempty);
-            ValidateUserPhone(usercontext, context, proofData, Resources, checkempty);
-            ValidateUserPin(usercontext, context, proofData, Resources, checkempty);
+            ValidateUserKey(usercontext, proofData, Resources, checkempty);
+            ValidateUserEmail(usercontext, proofData, Resources, checkempty);
+            ValidateUserPhone(usercontext, proofData, Resources, checkempty);
+            ValidateUserPin(usercontext, proofData, Resources, checkempty);
         }
 
         /// <summary>
         /// ValidateUserKey method implementation
         /// </summary>
-        private void ValidateUserKey(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, ResourcesLocale Resources, bool checkempty = false)
+        private void ValidateUserKey(AuthenticationContext usercontext, IProofData proofData, ResourcesLocale Resources, bool checkempty = false)
         {
             IExternalProvider prov = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.Code);
             if ((prov.Enabled) && (prov.IsRequired) && (prov.IsUIElementRequired(usercontext, RequiredMethodElements.KeyParameterRequired)))
             {
-                string displaykey = string.Empty;
-
                 if (usercontext.KeyStatus != SecretKeyStatus.Success)
                     throw new Exception(Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorInvalidKey"));
             }
@@ -2879,12 +2871,12 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// ValidateUserEmail method implementation
         /// </summary>
-        private void ValidateUserEmail(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, ResourcesLocale Resources, bool checkempty = false)
+        private void ValidateUserEmail(AuthenticationContext usercontext, IProofData proofData, ResourcesLocale Resources, bool checkempty = false)
         {
             IExternalProvider prov = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.Email);
             if ((prov.Enabled) && (prov.IsUIElementRequired(usercontext, RequiredMethodElements.EmailParameterRequired)))
             {
-                string email = string.Empty;
+                string email;
                 if (proofData.Properties.ContainsKey("email"))
                 {
                     email = proofData.Properties["email"].ToString();
@@ -2902,7 +2894,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// ValidateUserPhone method implementation
         /// </summary>
-        private void ValidateUserPhone(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, ResourcesLocale Resources, bool checkempty = false)
+        private void ValidateUserPhone(AuthenticationContext usercontext, IProofData proofData, ResourcesLocale Resources, bool checkempty = false)
         {
             string phone = string.Empty;
             IExternalProvider prov = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.External);
@@ -2936,11 +2928,11 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// ValidateUserPin method implementation
         /// </summary>
-        private void ValidateUserPin(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, ResourcesLocale Resources, bool checkempty = false)
+        private void ValidateUserPin(AuthenticationContext usercontext, IProofData proofData, ResourcesLocale Resources, bool checkempty = false)
         {
             if (RuntimeAuthProvider.IsPinCodeRequired(usercontext))
             {
-                string strpin = string.Empty;
+                string strpin;
                 if (proofData.Properties.ContainsKey("pincode"))
                 {
                     strpin = proofData.Properties["pincode"].ToString();
@@ -3270,7 +3262,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// PostInscriptionRequest method implementation
         /// </summary>
-        private int PostInscriptionRequest(AuthenticationContext usercontext, MFAUser registration)
+        private int PostInscriptionRequest(AuthenticationContext usercontext)
         {
             try
             {
@@ -3290,7 +3282,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// SetInscriptionResult method implementation
         /// </summary>
-        public int SetInscriptionResult(AuthenticationContext usercontext, MFAUser registration)
+        public int SetInscriptionResult(AuthenticationContext usercontext)
         {
             try
             {

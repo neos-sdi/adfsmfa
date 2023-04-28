@@ -69,17 +69,27 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Metadata
         }
 
         /// <summary>
+        /// NeedToReload property implementation
+        /// </summary>
+        public bool NeedToReload
+        {
+            get;
+            set;
+        }
+
+
+        /// <summary>
         /// GetMetadataStatement method implementation
         /// </summary>
-        public Task<MetadataStatement> GetMetadataStatement(MetadataBLOBPayload blob, MetadataBLOBPayloadEntry entry)
+        public MetadataStatement GetMetadataStatement(MetadataBLOBPayload blob, MetadataBLOBPayloadEntry entry)
         {
-            return Task.FromResult<MetadataStatement>(entry.MetadataStatement);
+            return entry.MetadataStatement;
         }
 
         /// <summary>
         /// GetBLOB method implementation
         /// </summary>
-        public async Task<MetadataBLOBPayload> GetBLOB()
+        public MetadataBLOBPayload GetBLOB()
         {
             var req = new
             {
@@ -87,8 +97,8 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Metadata
             };
 
             var content = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync(_getEndpointsUrl, content);
-            var result = Newtonsoft.Json.JsonConvert.DeserializeObject<MDSGetEndpointResponse>(await response.Content.ReadAsStringAsync());
+            var response = _httpClient.PostAsync(_getEndpointsUrl, content).Result;
+            var result = Newtonsoft.Json.JsonConvert.DeserializeObject<MDSGetEndpointResponse>(response.Content.ReadAsStringAsync().Result);
             var conformanceEndpoints = new List<string>(result.Result);
 
             var combinedBlob = new MetadataBLOBPayload
@@ -101,13 +111,12 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Metadata
 
             foreach (var BLOBUrl in conformanceEndpoints)
             {
-                var rawBlob = await DownloadStringAsync(BLOBUrl);
+                var rawBlob = DownloadStringAsync(BLOBUrl);
 
-                MetadataBLOBPayload blob = null;
-
+                MetadataBLOBPayload blob;
                 try
                 {
-                    blob = await DeserializeAndValidateBlob(rawBlob);
+                    blob = DeserializeAndValidateBlob(rawBlob);
                 }
                 catch
                 {
@@ -134,17 +143,17 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Metadata
         /// <summary>
         /// DownloadStringAsync method implementation
         /// </summary>
-        protected async Task<string> DownloadStringAsync(string url)
+        protected string DownloadStringAsync(string url)
         {
-            return await _httpClient.GetStringAsync(url);
+            return _httpClient.GetStringAsync(url).Result;
         }
 
         /// <summary>
         /// DownloadDataAsync method implementation
         /// </summary>
-        protected async Task<byte[]> DownloadDataAsync(string url)
+        protected byte[] DownloadDataAsync(string url)
         {
-            return await _httpClient.GetByteArrayAsync(url);
+            return _httpClient.GetByteArrayAsync(url).Result;
         }
         #endregion
 
@@ -168,7 +177,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Metadata
         /// <summary>
         /// DeserializeAndValidateBlob method implementation 
         /// </summary>
-        protected async Task<MetadataBLOBPayload> DeserializeAndValidateBlob(string rawBLOBJwt)
+        protected MetadataBLOBPayload DeserializeAndValidateBlob(string rawBLOBJwt)
         {
             if (string.IsNullOrWhiteSpace(rawBLOBJwt))
                 throw new ArgumentNullException(nameof(rawBLOBJwt));
@@ -181,16 +190,8 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Metadata
             var blobHeader = jwtParts.First();
             var tokenHeader = JObject.Parse(System.Text.Encoding.UTF8.GetString(Base64Url.Decode(blobHeader)));
 
-            var blobAlg = tokenHeader["alg"]?.Value<string>();
-
-            if (blobAlg == null)
-                throw new ArgumentNullException("No alg value was present in the BLOB header.");
-
-            var x5cArray = tokenHeader["x5c"] as JArray;
-
-            if (x5cArray == null)
-                throw new ArgumentException("No x5c array was present in the BLOB header.");
-
+            var blobAlg = (tokenHeader["alg"]?.Value<string>()) ?? throw new ArgumentNullException("No alg value was present in the BLOB header.");
+            var x5cArray = tokenHeader["x5c"] as JArray ?? throw new ArgumentException("No x5c array was present in the BLOB header.");
             var rootCert = GetX509Certificate(ROOT_CERT);
             var blobCertStrings = x5cArray.Values<string>().ToList();
             var blobCertificates = new List<X509Certificate2>();
@@ -250,7 +251,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Metadata
                     if (element.Certificate.Issuer != element.Certificate.Subject)
                     {
                         var cdp = CryptoUtils.CDPFromCertificateExts(element.Certificate.Extensions);
-                        var crlFile = await DownloadDataAsync(cdp);
+                        var crlFile = DownloadDataAsync(cdp);
                         if (true == CryptoUtils.IsCertInCRL(crlFile, element.Certificate))
                             throw new VerificationException(string.Format("Cert {0} found in CRL {1}", element.Certificate.Subject, cdp));
                     }

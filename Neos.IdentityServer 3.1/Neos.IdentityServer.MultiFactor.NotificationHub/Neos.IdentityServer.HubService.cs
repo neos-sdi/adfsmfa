@@ -33,12 +33,12 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
 {
     public partial class MFANOTIFHUB : ServiceBase
     {
-        private MailSlotServerManager _mailslotsmgr = new MailSlotServerManager();
-        private ReplayServer<ReplayService> _svchost = new ReplayServer<ReplayService>();
-        private WebThemesServer<WebThemeService> _svcthemeshost = new WebThemesServer<WebThemeService>();
-        private WebAdminServer<WebAdminService> _svcadminhost = new WebAdminServer<WebAdminService>();
-        private NTServiceServer<NTService> _svcnthost = new NTServiceServer<NTService>();
-        private CleanUpManager _cleanup = new CleanUpManager();
+        private readonly MailSlotServerManager _mailslotsmgr = new MailSlotServerManager();
+        private readonly ReplayServer<ReplayService> _svchost = new ReplayServer<ReplayService>();
+        private readonly WebThemesServer<WebThemeService> _svcthemeshost = new WebThemesServer<WebThemeService>();
+        private readonly WebAdminServer<WebAdminService> _svcadminhost = new WebAdminServer<WebAdminService>();
+        private readonly NTServiceServer<NTService> _svcnthost = new NTServiceServer<NTService>();
+        private readonly CleanUpManager _cleanup = new CleanUpManager();
 
         #region Service override methods
         /// <summary>
@@ -367,7 +367,6 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
         /// </summary>
         private bool InitLocalNodeType()
         {
-            string nodetype = string.Empty;
             Runspace SPRunSpace = null;
             PowerShell SPPowerShell = null;
             try
@@ -390,10 +389,8 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
             }
             finally
             {
-                if (SPRunSpace != null)
-                    SPRunSpace.Close();
-                if (SPPowerShell != null)
-                    SPPowerShell.Dispose();
+                SPRunSpace?.Close();
+                SPPowerShell?.Dispose();
             }
             return true;
         }
