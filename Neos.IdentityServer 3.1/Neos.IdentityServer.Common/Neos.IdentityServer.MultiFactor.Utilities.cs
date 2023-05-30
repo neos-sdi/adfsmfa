@@ -36,12 +36,15 @@ using System.Management.Automation.Host;
 using System.Management.Automation.Runspaces;
 using System.Net;
 using System.Net.Mail;
+using System.Net.Mime;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Web.UI.HtmlControls;
 using System.Windows.Threading;
+using System.Xml.Linq;
 
 
 namespace Neos.IdentityServer.MultiFactor
@@ -2744,26 +2747,40 @@ namespace Neos.IdentityServer.MultiFactor
             if (string.IsNullOrEmpty(to))
                 return;
             string htmlres = string.Empty;
+            string textres = string.Empty;
             try
             {
                 if (mail.MailOTPContent != null)
                 {
                     int ctry = culture.LCID;
-                    string tmp = mail.MailOTPContent.Where(c => c.LCID.Equals(ctry) || c.ParentLCID.Equals(ctry) && c.Enabled).Select(s => s.FileName).FirstOrDefault();
-                    if (!string.IsNullOrEmpty(tmp))
+                    string htmlfile = mail.MailOTPContent.Where(c => c.LCID.Equals(ctry) || c.ParentLCID.Equals(ctry) && c.Enabled).Select(s => s.FileName).FirstOrDefault();
+                    if (!string.IsNullOrEmpty(htmlfile))
                     {
-                        if (File.Exists(tmp))
+                        if (File.Exists(htmlfile))
                         {
-                            FileStream fileStream = new FileStream(tmp, FileMode.Open, FileAccess.Read);
+                            FileStream fileStream = new FileStream(htmlfile, FileMode.Open, FileAccess.Read);
 
                             using (StreamReader reader = new StreamReader(fileStream))
                             {
                                 htmlres = reader.ReadToEnd();
                             }
                         }
+                        string textfile = Path.GetFileNameWithoutExtension(htmlfile) + ".txt";
+                        if (!string.IsNullOrEmpty(textfile))
+                        {
+                            if (File.Exists(textfile))
+                            {
+                                FileStream fileStream = new FileStream(textfile, FileMode.Open, FileAccess.Read);
+
+                                using (StreamReader reader = new StreamReader(fileStream))
+                                {
+                                    textres = reader.ReadToEnd();
+                                }
+                            }
+                        }
                     }
                 }
-                if (string.IsNullOrEmpty(htmlres))
+                if (string.IsNullOrEmpty(htmlres)) // Templates not exported
                 {
                     lock (lck)
                     {
@@ -2771,7 +2788,10 @@ namespace Neos.IdentityServer.MultiFactor
                         htmlres = Resources.GetString(ResourcesLocaleKind.CommonMail, "MailOTPContent");
                     }
                 }
+                string text = string.Empty;
                 string html = StripEmailContent(htmlres);
+                if (!string.IsNullOrEmpty(textres))
+                    text = StripEmailContent(textres);
                 string name = string.Empty;
                 if (upn.IndexOf('@') >= 0)
                     name = upn.Remove(2, upn.IndexOf('@') - 2).Insert(2, "*********");
@@ -2792,12 +2812,12 @@ namespace Neos.IdentityServer.MultiFactor
 
                     MailAddress mailfrom = Utilities.MakeMailAddress(mail.From);
                     MailAddress mailto = Utilities.MakeMailAddress(to);
-                    MailMessage Message = new MailMessage(mailfrom, mailto)
-                    {
-                        BodyEncoding = UTF8Encoding.UTF8,
-                        IsBodyHtml = true,
-                        Body = string.Format(html, mail.Company, name, code, mailto.Address, inlineLogo.ContentId)
-                    };
+                    MailMessage Message = new MailMessage(mailfrom, mailto);
+
+                    string htmlbody = string.Format(html, mail.Company, name, code, mailto.Address, inlineLogo.ContentId);
+                    string textbody = string.Empty;
+                    if (!string.IsNullOrEmpty(text))
+                        textbody = string.Format(text, mail.Company, name, code, mailto.Address, "");
 
                     if (mail.DeliveryNotifications)
                         Message.DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure | DeliveryNotificationOptions.Delay;
@@ -2815,9 +2835,14 @@ namespace Neos.IdentityServer.MultiFactor
                             Message.Subject = Resources.GetString(ResourcesLocaleKind.CommonMail, "MailOTPTitle");
                         }
                     }
-                    var view = AlternateView.CreateAlternateViewFromString(Message.Body, null, "text/html");
+                    var view = AlternateView.CreateAlternateViewFromString(htmlbody, Encoding.UTF8, MediaTypeNames.Text.Html);
                     view.LinkedResources.Add(inlineLogo);
                     Message.AlternateViews.Add(view);
+                    if (!string.IsNullOrEmpty(textbody))
+                    {
+                        var txtview = AlternateView.CreateAlternateViewFromString(textbody, Encoding.ASCII, MediaTypeNames.Text.Plain);
+                        Message.AlternateViews.Add(txtview);
+                    }
                     SendMail(Message, mail);
                 }
             }
@@ -2841,21 +2866,35 @@ namespace Neos.IdentityServer.MultiFactor
             if (string.IsNullOrEmpty(to))
                 return;
             string htmlres = string.Empty;
+            string textres = string.Empty;
             try
             {
                 if (mail.MailAdminContent != null)
                 {
                     int ctry = culture.LCID;
-                    string tmp = mail.MailAdminContent.Where(c => c.LCID.Equals(ctry) || c.ParentLCID.Equals(ctry) && c.Enabled).Select(s => s.FileName).FirstOrDefault();
-                    if (!string.IsNullOrEmpty(tmp))
+                    string htmlfile = mail.MailAdminContent.Where(c => c.LCID.Equals(ctry) || c.ParentLCID.Equals(ctry) && c.Enabled).Select(s => s.FileName).FirstOrDefault();
+                    if (!string.IsNullOrEmpty(htmlfile))
                     {
-                        if (File.Exists(tmp))
+                        if (File.Exists(htmlfile))
                         {
-                            FileStream fileStream = new FileStream(tmp, FileMode.Open, FileAccess.Read);
+                            FileStream fileStream = new FileStream(htmlfile, FileMode.Open, FileAccess.Read);
 
                             using (StreamReader reader = new StreamReader(fileStream))
                             {
                                 htmlres = reader.ReadToEnd();
+                            }
+                        }
+                        string textfile = Path.GetFileNameWithoutExtension(htmlfile) + ".txt";
+                        if (!string.IsNullOrEmpty(textfile))
+                        {
+                            if (File.Exists(textfile))
+                            {
+                                FileStream fileStream = new FileStream(textfile, FileMode.Open, FileAccess.Read);
+
+                                using (StreamReader reader = new StreamReader(fileStream))
+                                {
+                                    textres = reader.ReadToEnd();
+                                }
                             }
                         }
                     }
@@ -2870,6 +2909,10 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 string sendermail = GetUserBusinessEmail(user.UPN);
                 string html = StripEmailContent(htmlres);
+                string text = string.Empty;
+                if (!string.IsNullOrEmpty(textres))
+                    text = StripEmailContent(textres);
+
                 if (!File.Exists(SystemUtilities.SystemRootDir + Path.DirectorySeparatorChar + "Logo.png"))
                 {
                     var bmp = new Bitmap(1, 1);
@@ -2893,9 +2936,11 @@ namespace Neos.IdentityServer.MultiFactor
                         MailAddress mailcc = Utilities.MakeMailAddress(sendermail);
                         Message.CC.Add(mailcc);
                     }
-                    Message.BodyEncoding = UTF8Encoding.UTF8;
-                    Message.IsBodyHtml = true;
-                    Message.Body = string.Format(htmlres, mail.Company, user.UPN, user.MailAddress, user.PhoneNumber, user.PreferredMethod, inlineLogo.ContentId);
+
+                    string htmlbody = string.Format(html, mail.Company, user.UPN, user.MailAddress, user.PhoneNumber, user.PreferredMethod, inlineLogo.ContentId);
+                    string textbody = string.Empty;
+                    if (!string.IsNullOrEmpty(text))
+                        textbody = string.Format(text, mail.Company, user.UPN, user.MailAddress, user.PhoneNumber, user.PreferredMethod, "");
 
                     if (mail.DeliveryNotifications)
                         Message.DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure | DeliveryNotificationOptions.Delay;
@@ -2913,9 +2958,14 @@ namespace Neos.IdentityServer.MultiFactor
                             Message.Subject = string.Format(Resources.GetString(ResourcesLocaleKind.CommonMail, "MailAdminTitle"), user.UPN);
                         }
                     }
-                    var view = AlternateView.CreateAlternateViewFromString(Message.Body, null, "text/html");
+                    var view = AlternateView.CreateAlternateViewFromString(htmlbody, Encoding.UTF8, MediaTypeNames.Text.Html);
                     view.LinkedResources.Add(inlineLogo);
                     Message.AlternateViews.Add(view);
+                    if (!string.IsNullOrEmpty(textbody))
+                    {
+                        var txtview = AlternateView.CreateAlternateViewFromString(textbody, Encoding.ASCII, MediaTypeNames.Text.Plain);
+                        Message.AlternateViews.Add(txtview);
+                    }
                     SendMail(Message, mail);
                 }
             }
@@ -2941,21 +2991,35 @@ namespace Neos.IdentityServer.MultiFactor
             if (string.IsNullOrEmpty(to))
                 return;
             string htmlres = string.Empty;
+            string textres = string.Empty;
             try
             {
                 if (mail.MailKeyContent != null)
                 {
                     int ctry = culture.LCID;
-                    string tmp = mail.MailKeyContent.Where(c => c.LCID.Equals(ctry) || c.ParentLCID.Equals(ctry) && c.Enabled).Select(s => s.FileName).FirstOrDefault();
-                    if (!string.IsNullOrEmpty(tmp))
+                    string htmlfile = mail.MailKeyContent.Where(c => c.LCID.Equals(ctry) || c.ParentLCID.Equals(ctry) && c.Enabled).Select(s => s.FileName).FirstOrDefault();
+                    if (!string.IsNullOrEmpty(htmlfile))
                     {
-                        if (File.Exists(tmp))
+                        if (File.Exists(htmlfile))
                         {
-                            FileStream fileStream = new FileStream(tmp, FileMode.Open, FileAccess.Read);
+                            FileStream fileStream = new FileStream(htmlfile, FileMode.Open, FileAccess.Read);
 
                             using (StreamReader reader = new StreamReader(fileStream))
                             {
                                 htmlres = reader.ReadToEnd();
+                            }
+                        }
+                        string textfile = Path.GetFileNameWithoutExtension(htmlfile) + ".txt";
+                        if (!string.IsNullOrEmpty(textfile))
+                        {
+                            if (File.Exists(textfile))
+                            {
+                                FileStream fileStream = new FileStream(textfile, FileMode.Open, FileAccess.Read);
+
+                                using (StreamReader reader = new StreamReader(fileStream))
+                                {
+                                    textres = reader.ReadToEnd();
+                                }
                             }
                         }
                     }
@@ -2971,6 +3035,10 @@ namespace Neos.IdentityServer.MultiFactor
 
                 string sendermail = GetUserBusinessEmail(upn);
                 string html = StripEmailContent(htmlres);
+                string text = string.Empty;
+                if (!string.IsNullOrEmpty(textres))
+                    text = StripEmailContent(textres);
+
                 if (!File.Exists(SystemUtilities.SystemRootDir + Path.DirectorySeparatorChar + "Logo.png"))
                 {
                     var bmp = new Bitmap(1, 1);
@@ -2998,8 +3066,6 @@ namespace Neos.IdentityServer.MultiFactor
                             MailAddress mailcc = Utilities.MakeMailAddress(sendermail);
                             Message.CC.Add(mailcc);
                         }
-                        Message.BodyEncoding = UTF8Encoding.UTF8;
-                        Message.IsBodyHtml = true;
 
                         if (mail.DeliveryNotifications)
                             Message.DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure | DeliveryNotificationOptions.Delay;
@@ -3017,14 +3083,26 @@ namespace Neos.IdentityServer.MultiFactor
                                 Message.Subject = Resources.GetString(ResourcesLocaleKind.CommonMail, "MailKeyTitle");
                             }
                         }
+
                         Message.Priority = MailPriority.High;
                         IEnumerable<string> xkey = key.Split(40);
                         string skey = "<br>"+string.Join("<br>", xkey);
-                        string body = string.Format(html, mail.Company, upn, skey, inlineKey.ContentId, to, inlineLogo.ContentId);
-                        var view = AlternateView.CreateAlternateViewFromString(body, null, "text/html");
+                        string htmlbody = string.Format(html, mail.Company, upn, skey, inlineKey.ContentId, to, inlineLogo.ContentId);
+                        string textbody = string.Empty; 
+                        if (!string.IsNullOrEmpty(text))
+                        {
+                            textbody = string.Format(text, mail.Company, upn, key, "", to, "");
+                        }
+
+                        var view = AlternateView.CreateAlternateViewFromString(htmlbody, Encoding.UTF8, MediaTypeNames.Text.Html);
                         view.LinkedResources.Add(inlineKey);
                         view.LinkedResources.Add(inlineLogo);
                         Message.AlternateViews.Add(view);
+                        if (!string.IsNullOrEmpty(textbody))
+                        {
+                            var txtview = AlternateView.CreateAlternateViewFromString(textbody, Encoding.ASCII, MediaTypeNames.Text.Plain);
+                            Message.AlternateViews.Add(txtview);
+                        }
                         SendMail(Message, mail);
                     }
                 }
@@ -3056,19 +3134,33 @@ namespace Neos.IdentityServer.MultiFactor
                     return;
                 MailProvider mail = mailprov;
                 string htmlres = string.Empty;
+                string textres = string.Empty;
                 if (mail.MailNotifications != null)
                 {
                     int ctry = culture.LCID;
-                    string tmp = mail.MailNotifications.Where(c => c.LCID.Equals(ctry) || c.ParentLCID.Equals(ctry) && c.Enabled).Select(s => s.FileName).FirstOrDefault();
-                    if (!string.IsNullOrEmpty(tmp))
+                    string htmlfile = mail.MailNotifications.Where(c => c.LCID.Equals(ctry) || c.ParentLCID.Equals(ctry) && c.Enabled).Select(s => s.FileName).FirstOrDefault();
+                    if (!string.IsNullOrEmpty(htmlfile))
                     {
-                        if (File.Exists(tmp))
+                        if (File.Exists(htmlfile))
                         {
-                            FileStream fileStream = new FileStream(tmp, FileMode.Open, FileAccess.Read);
+                            FileStream fileStream = new FileStream(htmlfile, FileMode.Open, FileAccess.Read);
 
                             using (StreamReader reader = new StreamReader(fileStream))
                             {
                                 htmlres = reader.ReadToEnd();
+                            }
+                        }
+                        string textfile = Path.GetFileNameWithoutExtension(htmlfile) + ".txt";
+                        if (!string.IsNullOrEmpty(textfile))
+                        {
+                            if (File.Exists(textfile))
+                            {
+                                FileStream fileStream = new FileStream(textfile, FileMode.Open, FileAccess.Read);
+
+                                using (StreamReader reader = new StreamReader(fileStream))
+                                {
+                                    textres = reader.ReadToEnd();
+                                }
                             }
                         }
                     }
@@ -3094,15 +3186,16 @@ namespace Neos.IdentityServer.MultiFactor
                         ContentId = Guid.NewGuid().ToString()
                     };
                     string html = StripEmailContent(htmlres);
+                    string text = string.Empty;
                     MailAddress mailfrom = Utilities.MakeMailAddress(mail.From);
                     MailAddress mailuser = Utilities.MakeMailAddress(user.MailAddress);
 
-                    MailMessage Message = new MailMessage(mailfrom, mailuser)
-                    {
-                        BodyEncoding = UTF8Encoding.UTF8,
-                        IsBodyHtml = true,
-                        Body = string.Format(html, user.UPN, mail.Company, mailuser.Address, inlineLogo.ContentId)
-                    };
+                    MailMessage Message = new MailMessage(mailfrom, mailuser);
+
+                    string htmlbody = string.Format(html, user.UPN, mail.Company, mailuser.Address, inlineLogo.ContentId);
+                    string textbody = string.Empty;
+                    if (!string.IsNullOrEmpty(text))
+                        textbody = string.Format(html, user.UPN, mail.Company, mailuser.Address, "");
 
                     if (mail.DeliveryNotifications)
                         Message.DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure | DeliveryNotificationOptions.Delay;
@@ -3120,9 +3213,14 @@ namespace Neos.IdentityServer.MultiFactor
                             Message.Subject = string.Format(Resources.GetString(ResourcesLocaleKind.CommonMail, "MailNotificationsTitle"), user.UPN);
                         }
                     }
-                    var view = AlternateView.CreateAlternateViewFromString(Message.Body, null, "text/html");
+                    var view = AlternateView.CreateAlternateViewFromString(htmlbody, Encoding.UTF8, MediaTypeNames.Text.Html);
                     view.LinkedResources.Add(inlineLogo);
                     Message.AlternateViews.Add(view);
+                    if (!string.IsNullOrEmpty(textbody))
+                    {
+                        var txtview = AlternateView.CreateAlternateViewFromString(textbody, Encoding.ASCII, MediaTypeNames.Text.Plain);
+                        Message.AlternateViews.Add(txtview);
+                    }
                     SendMail(Message, mail);
                 }
             }

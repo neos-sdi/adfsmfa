@@ -1,5 +1,5 @@
 ﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
-  <Package Name="MFA Provider for ADFS 2022/2019/2016/2012 R2" Language="1033" Version="3.1.2305.0" Manufacturer="neos-sdi" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" ProductCode="a23dd485-5365-4d82-8309-103494000001">
+  <Package Name="MFA Provider for ADFS 2022/2019/2016/2012 R2" Language="1033" Version="3.1.2306.0" Manufacturer="neos-sdi" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" ProductCode="a23dd485-5365-4d82-8309-103494000001">
 
     <SummaryInformation Description="Multi-Factor Authentication for ADFS 2022/2019/2016/2012R2" />
 
@@ -770,7 +770,6 @@
       <Component Id="GACDeployment514" Guid="E7173CAB-E43F-4A07-1962-01800000650E" Directory="PSUK" DiskId="1" Bitness="always64">
         <File KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.Cmdlets.uk.resources.dll" Name="Neos.IdentityServer.MultiFactor.Cmdlets.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.Cmdlets.TargetDir)uk\Neos.IdentityServer.MultiFactor.Cmdlets.resources.dll" Vital="no" />
       </Component>
-
     </ComponentGroup>
   </Fragment>
 
