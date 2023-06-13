@@ -152,9 +152,9 @@ namespace MFA
     {
         string _identity = string.Empty;
         private PSRegistration[] _list = null;
-        private DataFilterObject _filter = new DataFilterObject { EnabledOnly = true };
-        private DataPagingObject _paging = new DataPagingObject();
-        private DataOrderObject _order = new DataOrderObject();
+        private readonly DataFilterObject _filter = new DataFilterObject { EnabledOnly = true };
+        private readonly DataPagingObject _paging = new DataPagingObject();
+        private readonly DataOrderObject _order = new DataOrderObject();
 
         /// <summary>
         /// <para type="description">identity of the user to selected (upn).</para>
@@ -262,14 +262,14 @@ namespace MFA
                             if (_filter.FilterField == DataFilterField.UserName)
                                 return new PSDataFieldMixedParameters(_filter, _order, this.Host);
                             else
-                                return new PSDataFieldCryptedParameters(_filter, _order, this.Host);
+                                return new PSDataFieldCryptedParameters(_filter, _order);
                         }
                         else
-                            return new PSDataFieldParameters(_filter, _order, this.Host);
+                            return new PSDataFieldParameters(_filter, _order);
                     case DataRepositoryKind.Custom:
-                        return new PSDataFieldParameters(_filter, _order, this.Host);
+                        return new PSDataFieldParameters(_filter, _order);
                     default:
-                        return new PSDataFieldParameters(_filter, _order, this.Host);
+                        return new PSDataFieldParameters(_filter, _order);
                 }
             }
             catch
@@ -306,10 +306,7 @@ namespace MFA
                 try
                 {
                     ManagementService.Initialize(this.Host);
-                    PSRegistration ret = (PSRegistration)ManagementService.GetUserRegistration(Identity);
-
-                    if (ret == null)
-                        throw new Exception(string.Format(errors_strings.ErrorUserNotFound, this.Identity));
+                    PSRegistration ret = (PSRegistration)ManagementService.GetUserRegistration(Identity)??throw new Exception(string.Format(errors_strings.ErrorUserNotFound, this.Identity));
                     _list = new PSRegistration[] { ret };
                 }
                 catch (Exception ex)
@@ -369,21 +366,18 @@ namespace MFA
     /// </summary>
     public class PSDataFieldParameters
     {
-        private DataFilterObject FilterObject;
-        private DataOrderObject OrderObject;
-        private readonly PSHost Host;
+        private readonly DataFilterObject FilterObject;
+        private readonly DataOrderObject OrderObject;
 
         /// <summary>
         /// PSDataFieldParameters constructor
         /// </summary>
         /// <param name="filter"></param>
         /// <param name="order"></param>
-        /// <param name="host"></param>
-        public PSDataFieldParameters(DataFilterObject filter, DataOrderObject order, PSHost host)
+        public PSDataFieldParameters(DataFilterObject filter, DataOrderObject order)
         {
             this.FilterObject = filter;
             this.OrderObject = order;
-            this.Host = host;
         }
 
         /// <summary>
@@ -443,8 +437,8 @@ namespace MFA
     /// </summary>
     public class PSDataFieldMixedParameters
     {
-        private DataFilterObject FilterObject;
-        private DataOrderObject OrderObject;
+        private readonly DataFilterObject FilterObject;
+        private readonly DataOrderObject OrderObject;
         private readonly PSHost Host;
 
         /// <summary>
@@ -537,21 +531,18 @@ namespace MFA
     /// </summary>
     public class PSDataFieldCryptedParameters
     {
-        private DataFilterObject FilterObject;
-        private DataOrderObject OrderObject;
-        private readonly PSHost Host;
+        private readonly DataFilterObject FilterObject;
+        private readonly DataOrderObject OrderObject;
 
         /// <summary>
         /// PSDataFieldCryptedParameters constructor
         /// </summary>
         /// <param name="filter"></param>
         /// <param name="order"></param>
-        /// <param name="host"></param>
-        public PSDataFieldCryptedParameters(DataFilterObject filter, DataOrderObject order, PSHost host)
+        public PSDataFieldCryptedParameters(DataFilterObject filter, DataOrderObject order)
         {
             this.FilterObject = filter;
             this.OrderObject = order;
-            this.Host = host;
         }
 
         /// <summary>
@@ -709,9 +700,7 @@ namespace MFA
                 try
                 {
                     ManagementService.Initialize(this.Host, true);
-                    PSRegistration res = (PSRegistration)ManagementService.GetUserRegistration(Identity);
-                    if (res == null)
-                        throw new Exception(string.Format(errors_strings.ErrorUserNotFound, Identity));
+                    PSRegistration res = (PSRegistration)ManagementService.GetUserRegistration(Identity)??throw new Exception(string.Format(errors_strings.ErrorUserNotFound, Identity));
                     Data = new PSRegistration[] { res };
                 }
                 catch (Exception ex)
@@ -1015,10 +1004,7 @@ namespace MFA
                 try
                 {
                     ManagementService.Initialize(this.Host, true);
-                    PSRegistration res = (PSRegistration)ManagementService.GetUserRegistration(Identity);
-
-                    if (res == null)
-                        throw new Exception(string.Format(errors_strings.ErrorUserNotFound, this.Identity));
+                    PSRegistration res = (PSRegistration)ManagementService.GetUserRegistration(Identity)??throw new Exception(string.Format(errors_strings.ErrorUserNotFound, this.Identity));
                     Data = new PSRegistration[] { res };
                 }
                 catch (Exception ex)
@@ -1120,10 +1106,7 @@ namespace MFA
                 try
                 {
                     ManagementService.Initialize(this.Host, true);
-                    PSRegistration res = (PSRegistration)ManagementService.GetUserRegistration(Identity);
-
-                    if (res == null)
-                        throw new Exception(string.Format(errors_strings.ErrorUserNotFound, this.Identity));
+                    PSRegistration res = (PSRegistration)ManagementService.GetUserRegistration(Identity)??throw new Exception(string.Format(errors_strings.ErrorUserNotFound, this.Identity));
                     Data = new PSRegistration[] { res };
                 }
                 catch (Exception ex)
@@ -1226,9 +1209,7 @@ namespace MFA
                 try
                 {
                     ManagementService.Initialize(this.Host, true);
-                    PSRegistration res = (PSRegistration)ManagementService.GetUserRegistration(Identity);
-                    if (res == null)
-                        throw new Exception(string.Format(errors_strings.ErrorUserNotFound, this.Identity));
+                    PSRegistration res = (PSRegistration)ManagementService.GetUserRegistration(Identity)??throw new Exception(string.Format(errors_strings.ErrorUserNotFound, this.Identity));
                     Data = new PSRegistration[] { res };
                 }
                 catch (Exception ex)
@@ -2713,6 +2694,7 @@ namespace MFA
         /// <summary>
         /// ProcessRecord method override
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0038:Utiliser les critères spéciaux", Justification = "<En attente>")]
         protected override void ProcessRecord()
         {
             if (ShouldProcess("Set MFA Store Configuration"))
@@ -2725,19 +2707,25 @@ namespace MFA
                         {
                             case PSStoreMode.ADDS:
                                 if (Config is PSADDSStore)
+                                {
                                     ((FlatADDSStore)((PSADDSStore)Config)).Update(this.Host);
+                                }
                                 else
                                     throw new Exception("Invalid DataStore Type !");
                                 break;
                             case PSStoreMode.SQL:
                                 if (Config is PSSQLStore)
+                                {
                                     ((FlatSQLStore)((PSSQLStore)Config)).Update(this.Host);
+                                }
                                 else
                                     throw new Exception("Invalid DataStore Type !");
                                 break;
                             case PSStoreMode.Custom:
                                 if (Config is PSCustomStore)
+                                {
                                     ((FlatCustomStore)((PSCustomStore)Config)).Update(this.Host);
+                                }
                                 else
                                     throw new Exception("Invalid DataStore Type !");
                                 break;
@@ -3727,6 +3715,7 @@ namespace MFA
         /// <summary>
         /// ProcessRecord method override
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0038:Utiliser les critères spéciaux", Justification = "No")]
         protected override void ProcessRecord()
         {
             const string error = "Invalid Provider Type !";
@@ -3740,20 +3729,25 @@ namespace MFA
                         {
                             case PSProviderType.Code:
                                 if (Config is PSTOTPProvider)
+                                {
                                     ((FlatTOTPProvider)((PSTOTPProvider)Config)).Update(this.Host);
+                                }
                                 else
                                     throw new Exception(error);
                                 break;
                             case PSProviderType.Email:
                                 if (Config is PSMailProvider)
+                                {
                                     ((FlatMailProvider)((PSMailProvider)Config)).Update(this.Host);
+                                }
                                 else
                                     throw new Exception(error);
-
                                 break;
                             case PSProviderType.External:
                                 if (Config is PSExternalProvider)
+                                {
                                     ((FlatExternalProvider)((PSExternalProvider)Config)).Update(this.Host);
+                                }
                                 else
                                     throw new Exception(error);
 
@@ -5409,6 +5403,7 @@ namespace MFA
         /// <summary>
         /// ProcessRecord method override
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0038:Utiliser les critères spéciaux", Justification = "No")]
         protected override void ProcessRecord()
         {
             const string error = "Invalid Security Type !";
@@ -5422,19 +5417,25 @@ namespace MFA
                         {
                             case PSSecurityMode.RNG:
                                 if (Config is PSRNGSecurity)
+                                {
                                     ((FlatRNGSecurity)((PSRNGSecurity)Config)).Update(this.Host);
+                                }
                                 else
                                     throw new Exception(error);
                                 break;
                             case PSSecurityMode.RSA:
                                 if (Config is PSRSASecurity)
+                                {
                                     ((FlatRSASecurity)((PSRSASecurity)Config)).Update(this.Host);
+                                }
                                 else
                                     throw new Exception(error);
                                 break;
                             case PSSecurityMode.AES:
                                 if (Config is PSAESSecurity)
+                                {
                                     ((FlatAESSecurity)((PSAESSecurity)Config)).Update(this.Host);
+                                }
                                 else
                                     throw new Exception(error);
                                 break;
@@ -6347,7 +6348,6 @@ namespace MFA
         private string _username;
         private string _password;
         private SQLEncryptedDatabaseDynamicParameters Dyn;
-        private PSSQLStore _config;
 
         /// <summary>
         /// <para type="description">SQL ServerName, you must include Instance if needed eg : server\instance.</para>
@@ -6427,7 +6427,6 @@ namespace MFA
                 ManagementService.Initialize(this.Host, true);
                 FlatSQLStore cf = new FlatSQLStore();
                 cf.Load(this.Host);
-                _config = (PSSQLStore)cf;
             }
             catch (Exception ex)
             {
@@ -6488,8 +6487,6 @@ namespace MFA
     [PrimaryServerRequired, AdministratorsRightsRequired, NotRemotable, AdministrationPin]
     public sealed class UpgradeMFADatabase : MFACmdlet
     {
-        private PSSQLStore _config;
-
         /// <summary>
         /// <para type="description">SQL ServerName, you must include Instance if needed eg : server\instance.</para>
         /// </summary>
@@ -6515,7 +6512,6 @@ namespace MFA
                 ManagementService.Initialize(this.Host, true);
                 FlatSQLStore cf = new FlatSQLStore();
                 cf.Load(this.Host);
-                _config = (PSSQLStore)cf;
             }
             catch (Exception ex)
             {
@@ -6553,15 +6549,15 @@ namespace MFA
     /// </summary>
     /// <example>
     ///   <para>Register-MFASystemMasterKey</para>
-    ///   <para>Register a new sytem master key for MFA System Enryption.</para>
+    ///   <para>Register a new system master key for MFA System Encryption.</para>
     /// </example>
     /// <example>
-    ///   <para>Register-MFASystemAESCngKey -Deploy</para>
-    ///   <para>Deploy current encryption RSA key on the farm.</para>
+    ///   <para>Register-MFASystemMasterKey -Deploy</para>
+    ///   <para>Deploy current system master key for MFA System Encryption.</para>
     /// </example>
     /// <example>
-    ///   <para>Register-MFASystemAESCngKey -Delete</para>
-    ///   <para>Delete encryption RSA Key from the farm.</para>
+    ///   <para>Register-MFASystemMasterKey -Delete</para>
+    ///   <para>Delete current system master key for MFA System Encryption.</para>
     /// </example>
     [Cmdlet(VerbsLifecycle.Register, "MFASystemMasterKey", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
     [PrimaryServerRequired, ConfigurationRightsRequired, NotRemotable, AdministrationPin]

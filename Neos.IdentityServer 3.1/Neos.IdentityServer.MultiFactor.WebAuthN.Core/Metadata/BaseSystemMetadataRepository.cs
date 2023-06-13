@@ -16,10 +16,13 @@
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Win32;
 using Neos.IdentityServer.MultiFactor.Data;
 using System;
+using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using Neos.IdentityServer.MultiFactor;
 
 
 namespace Neos.IdentityServer.MultiFactor.WebAuthN.Metadata
@@ -56,19 +59,28 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Metadata
         }
 
         /// <summary>
+        /// NeedToReload property implementation
+        /// </summary>
+        public bool NeedToReload
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// GetBLOB method implementation
         /// </summary>
-        public abstract Task<MetadataBLOBPayload> GetBLOB();
+        public abstract MetadataBLOBPayload GetBLOB();
 
         /// <summary>
         /// GetMetadataStatement method implementation
         /// </summary>
-        public virtual Task<MetadataStatement> GetMetadataStatement(MetadataBLOBPayload blob, MetadataBLOBPayloadEntry entry)
+        public virtual MetadataStatement GetMetadataStatement(MetadataBLOBPayload blob, MetadataBLOBPayloadEntry entry)
         {
-            return Task.FromResult<MetadataStatement>(entry.MetadataStatement);
+            return entry.MetadataStatement;
         }
 
-        protected abstract Task<string> GetRawBlob();
+        protected abstract string GetRawBlob();
 
         protected abstract MetadataBLOBPayload DeserializeAndValidateBlob(BLOBPayloadInformations infos);
 
@@ -112,7 +124,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Metadata
         /// </summary>
         protected virtual bool HasBLOBPayloadCache()
         {
-            return WebAdminManagerClient.HasBLOBPayloadCache();
+            return File.Exists(SystemUtilities.PayloadCacheFile);
         }
 
         /// <summary>
@@ -120,7 +132,14 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Metadata
         /// </summary>
         protected virtual BLOBPayloadInformations GetBLOBPayloadCache()
         {
-            return WebAdminManagerClient.GetBLOBPayloadCache();
+            BLOBPayloadInformations infos = new BLOBPayloadInformations();
+            RegistryKey ek = Registry.LocalMachine.OpenSubKey("Software\\MFA", false);
+            infos.Number = Convert.ToInt32(ek.GetValue("BlobNumber", 0, RegistryValueOptions.None));
+            infos.NextUpdate = Convert.ToDateTime(ek.GetValue("BlobNextUpdate", "1970-01-01", RegistryValueOptions.None));
+            infos.CanDownload = Convert.ToBoolean(ek.GetValue("BlobDownload", 1, RegistryValueOptions.None));
+            infos.BLOB = File.ReadAllText(SystemUtilities.PayloadCacheFile);
+            return infos;
+
         }
 
         /// <summary>
@@ -128,7 +147,13 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Metadata
         /// </summary>
         protected virtual void SetBLOBPayloadCache(BLOBPayloadInformations infos)
         {
-            WebAdminManagerClient.SetBLOBPayloadCache(infos);
+            RegistryKey ek = Registry.LocalMachine.OpenSubKey("Software\\MFA", true);
+            ek.SetValue("BlobNumber", Convert.ToString(infos.Number), RegistryValueKind.String);
+            ek.SetValue("BlobNextUpdate", infos.NextUpdate.ToString("yyyy-MM-dd"), RegistryValueKind.String);
+            ek.SetValue("BlobDownload", Convert.ToInt32(infos.CanDownload), RegistryValueKind.DWord);
+            File.WriteAllText(SystemUtilities.PayloadCacheFile, infos.BLOB);
+            NeedToReload = true;
+
         }
     }
 }

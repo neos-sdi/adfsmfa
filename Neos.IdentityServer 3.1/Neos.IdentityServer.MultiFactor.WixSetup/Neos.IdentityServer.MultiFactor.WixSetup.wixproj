@@ -181,8 +181,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="WixToolset.NetFx.wixext" Version="4.0.0-rc.3" />
-    <PackageReference Include="WixToolset.UI.wixext" Version="4.0.0-rc.3" />
+    <PackageReference Include="WixToolset.NetFx.wixext" Version="4.0.0" />
+    <PackageReference Include="WixToolset.UI.wixext" Version="4.0.0" />
   </ItemGroup>
   <Import Project="$(WixCATargetsPath)" Condition=" '$(WixCATargetsPath)' != '' " />
   <Import Project="$(MSBuildExtensionsPath)\FireGiant\HeatWave\FireGiant.HeatWave.DesignTime.targets" Condition=" '$(WixCATargetsPath)' == '' AND Exists('$(MSBuildExtensionsPath)\FireGiant\HeatWave\FireGiant.HeatWave.DesignTime.targets') " />

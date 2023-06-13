@@ -43,11 +43,11 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Metadata
         /// <summary>
         /// GetBLOB method implmentation
         /// </summary>
-        public override Task<MetadataBLOBPayload> GetBLOB()
+        public override MetadataBLOBPayload GetBLOB()
         {
             bool needrawblob = false;
-            MetadataBLOBPayload result = null;
-            BLOBPayloadInformations infos = new BLOBPayloadInformations();
+            MetadataBLOBPayload result;
+            BLOBPayloadInformations infos;
             if (HasBLOBPayloadCache())
             {
                 infos = GetBLOBPayloadCache();
@@ -67,13 +67,13 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Metadata
                     return null;
                 SetBLOBPayloadCache(infos);
             }
-            return Task.FromResult(result);
+            return result;
         }
 
         /// <summary>
         /// GetRawBlob method implementation
         /// </summary>
-        protected override Task<string> GetRawBlob()
+        protected override string GetRawBlob()
         {
             return null;
         }
@@ -81,9 +81,9 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Metadata
         /// <summary>
         /// GetMetadataStatement method implementation
         /// </summary>
-        public override Task<MetadataStatement> GetMetadataStatement(MetadataBLOBPayload blob, MetadataBLOBPayloadEntry entry)
+        public override MetadataStatement GetMetadataStatement(MetadataBLOBPayload blob, MetadataBLOBPayloadEntry entry)
        {
-            return Task.FromResult<MetadataStatement>(entry.MetadataStatement);
+            return entry.MetadataStatement;
         }
 
         /// <summary>
@@ -102,16 +102,8 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Metadata
             var blobHeaderString = jwtParts.First();
             var blobHeader = JObject.Parse(Encoding.UTF8.GetString(Base64Url.Decode(blobHeaderString)));
 
-            var blobAlg = blobHeader["alg"]?.Value<string>();
-
-            if (blobAlg == null)
-                throw new ArgumentNullException("No alg value was present in the BLOB header.");
-
-            JArray x5cArray = blobHeader["x5c"] as JArray;
-
-            if (x5cArray == null)
-                throw new Exception("No x5c array was present in the BLOB header.");
-
+            var blobAlg = (blobHeader["alg"]?.Value<string>()) ?? throw new ArgumentNullException("No alg value was present in the BLOB header.");
+            JArray x5cArray = blobHeader["x5c"] as JArray ?? throw new Exception("No x5c array was present in the BLOB header.");
             var keyStrings = x5cArray.Values<string>().ToList();
 
             if (keyStrings.Count == 0)

@@ -15,6 +15,7 @@
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
+// #define debugsid
 using Microsoft.Win32;
 using Neos.IdentityServer.MultiFactor.Data;
 using System;
@@ -68,8 +69,14 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 try
                 {
+#if debugsid
+                    Log.WriteEntry("SID Initialize Loading on Server", EventLogEntryType.Warning, 9200);
+#endif
                     if (!File.Exists(SystemUtilities.SystemCacheFile))
                     {
+#if debugsid
+                        Log.WriteEntry("SID Initialize Loading without cache on Server", EventLogEntryType.Warning, 9201);
+#endif
                         rec.Loaded = GetADFSAccounts(ref rec);
                         ADFSAccountSID = rec.ADFSAccountSID;
                         ADFSAccountName = rec.ADFSAccountName;
@@ -80,14 +87,26 @@ namespace Neos.IdentityServer.MultiFactor
                         ADFSDelegateServiceAdministrationAllowed = rec.ADFSDelegateServiceAdministrationAllowed;
                         ADFSLocalAdminServiceAdministrationAllowed = rec.ADFSLocalAdminServiceAdministrationAllowed;
                         ADFSSystemServiceAdministrationAllowed = rec.ADFSSystemServiceAdministrationAllowed;
+#if debugsid
+                        Log.WriteEntry("SID Initialize SIDs are correctly loaded on Server", EventLogEntryType.Warning, 9202);
+#endif
                         WriteToCache(rec);
+#if debugsid
+                        Log.WriteEntry("SID Initialize System cache file correctly saved on Server", EventLogEntryType.Warning, 9203);
+#endif
                         Loaded = true;
                     }
                     else
                     {
+#if debugsid
+                        Log.WriteEntry("SID Initialize Loading with cache on Server", EventLogEntryType.Warning, 9204);
+#endif
                         SIDsParametersRecord data = LoadFromCache();
                         if (data != null)
                         {
+#if debugsid
+                            Log.WriteEntry("SID Initialize SIDs cache file correctly Loaded on Server", EventLogEntryType.Warning, 9205);
+#endif
                             rec.ADFSAccountSID = data.ADFSAccountSID;
                             rec.ADFSAccountName = data.ADFSAccountName;
                             rec.ADFSServiceAccountSID = data.ADFSServiceAccountSID;
@@ -108,23 +127,40 @@ namespace Neos.IdentityServer.MultiFactor
                             ADFSDelegateServiceAdministrationAllowed = data.ADFSDelegateServiceAdministrationAllowed;
                             ADFSLocalAdminServiceAdministrationAllowed = data.ADFSLocalAdminServiceAdministrationAllowed;
                             ADFSSystemServiceAdministrationAllowed = data.ADFSSystemServiceAdministrationAllowed;
+#if debugsid
+                            Log.WriteEntry("SID Initialize SIDs correctly retreived on Server", EventLogEntryType.Warning, 9206);
+#endif
                             Loaded = true;
                         }
                         else
+                        {
+#if debugsid
+                            Log.WriteEntry("SID Initialize SIDs Not loaded on Server", EventLogEntryType.Error, 9207);
+#endif
                             Loaded = false;
+                        }
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+#if debugsid
+                    Log.WriteEntry(string.Format("SID Initialize SIDs ERROR on Server {0}", ex.Message), EventLogEntryType.Error, 9208);
+#endif
                     Loaded = false;
                 }
             }
             else
             {
+#if debugsid
+                Log.WriteEntry("SID Initialize SIDs are loaded on Server", EventLogEntryType.Warning, 9209);
+#endif
                 try
                 {
                     if (!File.Exists(SystemUtilities.SystemCacheFile))
                     {
+#if debugsid
+                        Log.WriteEntry("SID Initialize SIDs loaded creating the file cache on Server", EventLogEntryType.Warning, 9210);
+#endif
                         rec.Loaded = GetADFSAccounts(ref rec);
                         ADFSAccountSID = rec.ADFSAccountSID;
                         ADFSAccountName = rec.ADFSAccountName;
@@ -136,10 +172,16 @@ namespace Neos.IdentityServer.MultiFactor
                         ADFSLocalAdminServiceAdministrationAllowed = rec.ADFSLocalAdminServiceAdministrationAllowed;
                         ADFSSystemServiceAdministrationAllowed = rec.ADFSSystemServiceAdministrationAllowed;
                         WriteToCache(rec);
+#if debugsid
+                        Log.WriteEntry("SID Initialize System cache file correctly saved on Server", EventLogEntryType.Warning, 9211);
+#endif
                         Loaded = true;
                     }
                     else
                     {
+#if debugsid
+                        Log.WriteEntry("SID Initialize SIDs loaded reading memory values on Server", EventLogEntryType.Warning, 9212);
+#endif
                         rec.ADFSAccountSID = ADFSAccountSID;
                         rec.ADFSAccountName = ADFSAccountName;
                         rec.ADFSServiceAccountSID = ADFSServiceSID;
@@ -152,11 +194,25 @@ namespace Neos.IdentityServer.MultiFactor
                         rec.Loaded = true;
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+#if debugsid
+                    Log.WriteEntry(string.Format("SID Initialize SIDs ERROR on Server {0}", ex.Message), EventLogEntryType.Error, 9213);
+#endif
                     Loaded = true;
                 }
             }
+#if debugsid
+            Log.WriteEntry(string.Format("SID Initialize ADFSAccountSID : {0}", ADFSAccountSID), EventLogEntryType.SuccessAudit, 9301);
+            Log.WriteEntry(string.Format("SID Initialize ADFSAccountName : {0}", ADFSAccountName), EventLogEntryType.SuccessAudit, 9302);
+            Log.WriteEntry(string.Format("SID Initialize ADFSAccountSID : {0}", ADFSServiceSID), EventLogEntryType.SuccessAudit, 9303);
+            Log.WriteEntry(string.Format("SID Initialize ADFSServiceName : {0}", ADFSServiceName), EventLogEntryType.SuccessAudit, 9304);
+            Log.WriteEntry(string.Format("SID Initialize ADFSAdminGroupSID : {0}", ADFSAdminGroupSID), EventLogEntryType.SuccessAudit, 9305);
+            Log.WriteEntry(string.Format("SID Initialize ADFSAdminGroupName : {0}", ADFSAdminGroupName), EventLogEntryType.SuccessAudit, 9306);
+            Log.WriteEntry(string.Format("SID Initialize ADFSDelegateServiceAdministrationAllowed : {0}", ADFSDelegateServiceAdministrationAllowed), EventLogEntryType.SuccessAudit, 9307);
+            Log.WriteEntry(string.Format("SID Initialize ADFSLocalAdminServiceAdministrationAllowed : {0}", ADFSLocalAdminServiceAdministrationAllowed), EventLogEntryType.SuccessAudit, 9308);
+            Log.WriteEntry(string.Format("SID Initialize ADFSSystemServiceAdministrationAllowed : {0}", ADFSSystemServiceAdministrationAllowed), EventLogEntryType.SuccessAudit, 9309);
+#endif
             return rec;
         }
 
@@ -180,6 +236,17 @@ namespace Neos.IdentityServer.MultiFactor
             rec.ADFSSystemServiceAdministrationAllowed = ADFSSystemServiceAdministrationAllowed;
             rec.ADFSDomainAdminServiceAdministrationAllowed = ADFSDomainAdminServiceAdministrationAllowed;
             rec.Loaded = true;
+#if debugsid
+            Log.WriteEntry(string.Format("SID GetSIDs ADFSAccountSID : {0}", ADFSAccountSID), EventLogEntryType.SuccessAudit, 9301);
+            Log.WriteEntry(string.Format("SID GetSIDs ADFSAccountName : {0}", ADFSAccountName), EventLogEntryType.SuccessAudit, 9302);
+            Log.WriteEntry(string.Format("SID GetSIDs ADFSAccountSID : {0}", ADFSServiceSID), EventLogEntryType.SuccessAudit, 9303);
+            Log.WriteEntry(string.Format("SID GetSIDs ADFSServiceName : {0}", ADFSServiceName), EventLogEntryType.SuccessAudit, 9304);
+            Log.WriteEntry(string.Format("SID GetSIDs ADFSAdminGroupSID : {0}", ADFSAdminGroupSID), EventLogEntryType.SuccessAudit, 9305);
+            Log.WriteEntry(string.Format("SID GetSIDs ADFSAdminGroupName : {0}", ADFSAdminGroupName), EventLogEntryType.SuccessAudit, 9306);
+            Log.WriteEntry(string.Format("SID GetSIDs ADFSDelegateServiceAdministrationAllowed : {0}", ADFSDelegateServiceAdministrationAllowed), EventLogEntryType.SuccessAudit, 9307);
+            Log.WriteEntry(string.Format("SID GetSIDs ADFSLocalAdminServiceAdministrationAllowed : {0}", ADFSLocalAdminServiceAdministrationAllowed), EventLogEntryType.SuccessAudit, 9308);
+            Log.WriteEntry(string.Format("SID GetSIDs ADFSSystemServiceAdministrationAllowed : {0}", ADFSSystemServiceAdministrationAllowed), EventLogEntryType.SuccessAudit, 9309);
+#endif
             return rec;
         }
 
@@ -200,6 +267,18 @@ namespace Neos.IdentityServer.MultiFactor
             ADFSSystemServiceAdministrationAllowed = rec.ADFSSystemServiceAdministrationAllowed;
             ADFSDomainAdminServiceAdministrationAllowed = rec.ADFSDomainAdminServiceAdministrationAllowed;
             WriteToCache(rec);
+#if debugsid
+            Log.WriteEntry(string.Format("SID Assign ADFSAccountSID : {0}", ADFSAccountSID), EventLogEntryType.SuccessAudit, 9301);
+            Log.WriteEntry(string.Format("SID Assign ADFSAccountName : {0}", ADFSAccountName), EventLogEntryType.SuccessAudit, 9302);
+            Log.WriteEntry(string.Format("SID Assign ADFSAccountSID : {0}", ADFSServiceSID), EventLogEntryType.SuccessAudit, 9303);
+            Log.WriteEntry(string.Format("SID Assign ADFSServiceName : {0}", ADFSServiceName), EventLogEntryType.SuccessAudit, 9304);
+            Log.WriteEntry(string.Format("SID Assign ADFSAdminGroupSID : {0}", ADFSAdminGroupSID), EventLogEntryType.SuccessAudit, 9305);
+            Log.WriteEntry(string.Format("SID Assign ADFSAdminGroupName : {0}", ADFSAdminGroupName), EventLogEntryType.SuccessAudit, 9306);
+            Log.WriteEntry(string.Format("SID Assign ADFSDelegateServiceAdministrationAllowed : {0}", ADFSDelegateServiceAdministrationAllowed), EventLogEntryType.SuccessAudit, 9307);
+            Log.WriteEntry(string.Format("SID Assign ADFSLocalAdminServiceAdministrationAllowed : {0}", ADFSLocalAdminServiceAdministrationAllowed), EventLogEntryType.SuccessAudit, 9308);
+            Log.WriteEntry(string.Format("SID Assign ADFSSystemServiceAdministrationAllowed : {0}", ADFSSystemServiceAdministrationAllowed), EventLogEntryType.SuccessAudit, 9309);
+#endif
+
             Loaded = rec.Loaded;
         }
 

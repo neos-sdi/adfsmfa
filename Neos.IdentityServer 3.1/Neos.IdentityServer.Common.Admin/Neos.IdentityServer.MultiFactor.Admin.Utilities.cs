@@ -39,8 +39,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     /// </summary>
     internal static class ManagementService
     {
-        private static string EventLogSource = "ADFS MFA Administration";
-        private static string EventLogGroup = "Application";
+        private static readonly string EventLogSource = "ADFS MFA Administration";
+        private static readonly string EventLogGroup = "Application";
         
 
         /// <summary>
@@ -835,21 +835,17 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 exportcmd.Parameters.Add(PParam);
                 pipeline.Commands.Add(exportcmd);
                 Collection<PSObject> PSOutput = pipeline.Invoke();
-                if (Host != null)
-                    Host.UI.WriteVerboseLine(DateTime.Now.ToLongTimeString() + " MFA Threat Detection : Registered");
+                Host?.UI.WriteVerboseLine(DateTime.Now.ToLongTimeString() + " MFA Threat Detection : Registered");
                 return true;
             }
             catch (Exception ex)
             {
-                if (Host != null)
-                    Host.UI.WriteErrorLine(DateTime.Now.ToLongTimeString() + " MFA Threat Detection Error : " +ex.Message);
+                Host?.UI.WriteErrorLine(DateTime.Now.ToLongTimeString() + " MFA Threat Detection Error : " +ex.Message);
             }
             finally
             {
-                if (SPRunSpace != null)
-                    SPRunSpace.Close();
-                if (SPPowerShell != null)
-                    SPPowerShell.Dispose();
+                SPRunSpace?.Close();
+                SPPowerShell?.Dispose();
             }
             return false;
         }
@@ -879,15 +875,12 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             }
             catch (Exception ex)
             {
-                if (Host != null)
-                    Host.UI.WriteErrorLine(DateTime.Now.ToLongTimeString() + " MFA Threat Detection Error : " + ex.Message);
+                Host?.UI.WriteErrorLine(DateTime.Now.ToLongTimeString() + " MFA Threat Detection Error : " + ex.Message);
             }
             finally
             {
-                if (SPRunSpace != null)
-                    SPRunSpace.Close();
-                if (SPPowerShell != null)
-                    SPPowerShell.Dispose();
+                SPRunSpace?.Close();
+                SPPowerShell?.Dispose();
             }
             return false;
         }
@@ -914,21 +907,17 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 exportcmd.Parameters.Add(PParam);
                 pipeline.Commands.Add(exportcmd);
                 Collection<PSObject> PSOutput = pipeline.Invoke();
-                if (Host != null)
-                    Host.UI.WriteVerboseLine(DateTime.Now.ToLongTimeString() + " MFA Threat Detection Data : Updated !");
+                Host?.UI.WriteVerboseLine(DateTime.Now.ToLongTimeString() + " MFA Threat Detection Data : Updated !");
                 return true;
             }
             catch (Exception ex)
             {
-                if (Host != null)
-                    Host.UI.WriteErrorLine(DateTime.Now.ToLongTimeString() + " MFA Threat Detection Data Error : " + ex.Message);
+                Host?.UI.WriteErrorLine(DateTime.Now.ToLongTimeString() + " MFA Threat Detection Data Error : " + ex.Message);
             }
             finally
             {
-                if (SPRunSpace != null)
-                    SPRunSpace.Close();
-                if (SPPowerShell != null)
-                    SPPowerShell.Dispose();
+                SPRunSpace?.Close();
+                SPPowerShell?.Dispose();
             }
             return false;
         }

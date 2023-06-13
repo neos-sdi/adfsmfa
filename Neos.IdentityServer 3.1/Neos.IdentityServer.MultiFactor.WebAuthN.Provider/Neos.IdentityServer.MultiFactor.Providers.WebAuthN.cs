@@ -37,7 +37,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         private ForceWizardMode _forceenrollment = ForceWizardMode.Disabled;
         private IWebAuthN _webathn;
 
-        private MFAMetadataService _metadataservice;
+        private readonly MFAMetadataService _metadataservice;
 
         public MFAConfig Config { get; set; }
         public bool DirectLogin { get; private set; }
@@ -75,8 +75,16 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                     new MDSMetadataRepository()
                 });
             }
-            var result = Task.Factory.StartNew(_metadataservice.Initialize);
-            result.Wait(15000);
+            _metadataservice.Initialize();
+            if (_metadataservice.NeedToReload)
+            {
+                using (MailSlotClient mailslot = new MailSlotClient("BDC"))
+                {
+                    mailslot.Text = Environment.MachineName;
+                    mailslot.SendNotification(NotificationsKind.ConfigurationReload);
+                }
+                _metadataservice.NeedToReload = false;
+            }
         }
 
         /// <summary>
@@ -166,7 +174,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
             get
             {
                 string independent = "Biometrics Multi-Factor Provider";
-                ResourcesLocale Resources = null;
+                ResourcesLocale Resources;
                 if (CultureInfo.DefaultThreadCurrentUICulture != null)
                     Resources = new ResourcesLocale(CultureInfo.DefaultThreadCurrentUICulture.LCID);
                 else
@@ -499,7 +507,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         {
             if (!IsInitialized)
                 throw new Exception("Provider not initialized !");
-            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+
             AvailableAuthenticationMethod result = GetSelectedAuthenticationMethod(ctx);
             ctx.PinRequired = result.RequiredPin;
             ctx.IsRemote = result.IsRemote;
@@ -553,8 +561,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         /// </summary>
         public override int SetAuthenticationResult(AuthenticationContext ctx, string result)
         {
-            string error = string.Empty;
-            return (int)SetAuthenticationResult(ctx, result, out error);
+            return (int)SetAuthenticationResult(ctx, result, out string error);
         }
 
         /// <summary>
@@ -807,9 +814,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                 List<MFAPublicKeyCredentialDescriptor> existingCredentials = new List<MFAPublicKeyCredentialDescriptor>();
                 if (!string.IsNullOrEmpty(ctx.UPN))
                 {
-                    var user = RuntimeRepository.GetUser(Config, ctx.UPN);
-                    if (user == null)
-                        throw new ArgumentException("Username was not registered");
+                    var user = RuntimeRepository.GetUser(Config, ctx.UPN) ?? throw new ArgumentException("Username was not registered");
                     existingCredentials = RuntimeRepository.GetCredentialsByUser(Config, user).Select(c => c.Descriptor).ToList();
                 }
 
@@ -862,12 +867,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                         AuthenticatorAssertionRawResponse clientResponse = JsonConvert.DeserializeObject<AuthenticatorAssertionRawResponse>(jsonResponse);
                         isDeserialized = true;
 
-                        MFAUserCredential creds = RuntimeRepository.GetCredentialById(Config, user, clientResponse.Id);
-                        if (creds == null)
-                        {
-                            throw new Exception("Unknown credentials");
-                        }
-
+                        MFAUserCredential creds = RuntimeRepository.GetCredentialById(Config, user, clientResponse.Id) ?? throw new Exception("Unknown credentials");
                         AuthenticatorData authData = new AuthenticatorData(clientResponse.Response.AuthenticatorData);
                         bool isnocount = Utilities.IsNoCounterDevice(this.Config.WebAuthNProvider.Configuration, ctx);
                         uint authCounter = 0;

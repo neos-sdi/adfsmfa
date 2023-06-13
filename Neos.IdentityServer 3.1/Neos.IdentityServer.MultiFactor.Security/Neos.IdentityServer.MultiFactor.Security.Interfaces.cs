@@ -254,15 +254,6 @@ namespace Neos.IdentityServer.MultiFactor
 
         [OperationContract]
         RegistryVersion GetRegistryInformations();
-
-        [OperationContract]
-        bool HasBLOBPayloadCache();
-
-        [OperationContract]
-        BLOBPayloadInformations GetBLOBPayloadCache();
-
-        [OperationContract]
-        void SetBLOBPayloadCache(BLOBPayloadInformations infos);
     }
 
     [ServiceContract(Namespace = "http://adfsmfa.org", Name = "NTService")]

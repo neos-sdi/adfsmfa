@@ -117,6 +117,10 @@
       <Project>{9b735255-31a8-4ff5-a918-fc47d4a95f38}</Project>
       <Name>Neos.IdentityServer.MultiFactor.DataTypes</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Neos.IdentityServer.MultiFactor.Notifications\Neos.IdentityServer.MultiFactor.Notifications.csproj">
+      <Project>{8a7bc531-d51b-4cd3-a904-3c96746cf847}</Project>
+      <Name>Neos.IdentityServer.MultiFactor.Notifications</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Neos.IdentityServer.MultiFactor.Security\Neos.IdentityServer.MultiFactor.Security.csproj">
       <Project>{9ec6d40a-4366-4066-bdfc-8af65bce7ead}</Project>
       <Name>Neos.IdentityServer.MultiFactor.Security</Name>

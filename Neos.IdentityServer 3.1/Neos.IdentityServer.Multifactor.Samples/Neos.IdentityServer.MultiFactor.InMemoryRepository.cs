@@ -107,7 +107,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                 else
                     usr.OverrideMethod = reg.OverrideMethod;
                 if (resetkey)
-                    this.OnKeyDataEvent(reg.UPN, KeysDataManagerEventKind.add);
+                    this.OnKeyDataEvent(reg.UPN, KeysDataManagerEventKind.Add);
                 List<MFAUser> _lst = _mfausers.GetData();
                 _lst.Where(s => s.UPN.ToLower().Equals(reg.UPN.ToLower())).ToList().ForEach(s =>
                       {
@@ -147,7 +147,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                     reg.Enabled = false;
                 reg.IsRegistered = true;
                 if (resetkey)
-                    this.OnKeyDataEvent(reg.UPN, KeysDataManagerEventKind.add);
+                    this.OnKeyDataEvent(reg.UPN, KeysDataManagerEventKind.Add);
                 List<MFAUser> _lst = _mfausers.GetData();
                 _lst.Add(reg);
                 _mfausers.SetData(_lst);

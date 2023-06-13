@@ -164,7 +164,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             {
                 int res = sql.ExecuteNonQuery();
                 if (resetkey)
-                    this.OnKeyDataEvent(reg.UPN, KeysDataManagerEventKind.add);
+                    this.OnKeyDataEvent(reg.UPN, KeysDataManagerEventKind.Add);
             }
             catch (Exception ex)
             {
@@ -242,7 +242,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             {
                 int res = sql.ExecuteNonQuery();
                 if (resetkey)
-                    this.OnKeyDataEvent(reg.UPN, KeysDataManagerEventKind.add);
+                    this.OnKeyDataEvent(reg.UPN, KeysDataManagerEventKind.Add);
             }
             catch (Exception ex)
             {

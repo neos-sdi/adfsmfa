@@ -2128,7 +2128,7 @@ namespace Neos.IdentityServer.MultiFactor
     public enum KeysDataManagerEventKind
     {
         Get,
-        add,
+        Add,
         Remove
     }
 

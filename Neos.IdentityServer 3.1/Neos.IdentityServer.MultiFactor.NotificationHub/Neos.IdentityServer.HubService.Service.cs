@@ -784,6 +784,7 @@ namespace Neos.IdentityServer.MultiFactor
         #endregion
 
         #region WebAuthN Payloads
+        /*
         /// <summary>
         /// HasBLOBPayload method implementation
         /// </summary>
@@ -830,6 +831,7 @@ namespace Neos.IdentityServer.MultiFactor
                 _log.WriteEntry(string.Format("Error on WebAdminService Service SetBLOBPayload method : {0}.", e.Message), EventLogEntryType.Error, 2010);
             }
         }
+        */
         #endregion
     }
     #endregion

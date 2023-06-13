@@ -228,7 +228,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                             };
                         }
                         if (resetkey)
-                            this.OnKeyDataEvent(reg.UPN, KeysDataManagerEventKind.add);
+                            this.OnKeyDataEvent(reg.UPN, KeysDataManagerEventKind.Add);
                     }
                 }
             }
@@ -296,7 +296,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                                 DirEntry.CommitChanges();
                             };
                             if (resetkey)
-                                this.OnKeyDataEvent(reg.UPN, KeysDataManagerEventKind.add);
+                                this.OnKeyDataEvent(reg.UPN, KeysDataManagerEventKind.Add);
                         }
                     }
                 }

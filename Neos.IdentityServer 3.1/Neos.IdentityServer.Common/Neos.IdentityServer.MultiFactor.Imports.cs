@@ -393,7 +393,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         {
             switch (kind)
             {
-                case KeysDataManagerEventKind.add:
+                case KeysDataManagerEventKind.Add:
                     KeysManager.NewKey(user);
                     break;
                 case KeysDataManagerEventKind.Get:

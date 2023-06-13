@@ -19,9 +19,10 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
     public interface IMetadataRepository
     {
         bool IsInitialized { get; set; }
+        bool NeedToReload { get; set; }
 
-        Task<MetadataBLOBPayload> GetBLOB();
+        MetadataBLOBPayload GetBLOB();
 
-        Task<MetadataStatement> GetMetadataStatement(MetadataBLOBPayload blob, MetadataBLOBPayloadEntry entry);
+        MetadataStatement GetMetadataStatement(MetadataBLOBPayload blob, MetadataBLOBPayloadEntry entry);
     }
 }
