@@ -265,7 +265,7 @@ Klicken Sie auf "Zurück", um den Vorgang erneut zu starten.</value>
   </data>
   <data name="HtmlLabelVERIFYOTPSuccess" xml:space="preserve">
     <value>Verifizierung erfolgreich ! &lt;br&gt;
-Sie können ab jetzt Multi-Faktor-Authentifizierung verwenden.</value>
+Sie können ab jetzt die Multi-Faktor-Authentifizierung verwenden.</value>
   </data>
   <data name="HtmlLabelWRManageBiometrics" xml:space="preserve">
     <value>Verwalten der Biometriegeräte. Wählen Sie Hinzufügen, Ersetzen oder Löschen einzelner Geräte.</value>
