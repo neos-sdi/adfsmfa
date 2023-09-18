@@ -184,7 +184,7 @@
     <value>Sie müssen einen geheimen Code ({0} Ziffern) eingeben, um Ihre Identität zu überprüfen. Achten Sie darauf, nicht die Codes Ihrer Bankkarte, Ihres Telefons oder Ihr Geburtsdatum zu verwenden.</value>
   </data>
   <data name="HtmlLabelWRQRCode" xml:space="preserve">
-    <value>Scannen Sie den QR-Code mit einer Authentifizierungs-App für die Registrierung Ihres Kontos</value>
+    <value>Scannen Sie den QR-Code mit einer Authentifizierungs-App um die Registrierung abzuschließen</value>
   </data>
   <data name="HtmlLabelWVERIFYOTP" xml:space="preserve">
     <value>Weiter</value>
@@ -233,7 +233,7 @@ Klicken Sie auf "Weiter"</value>
     <value>Anmelden</value>
   </data>
   <data name="HtmlUIMDisableMFA" xml:space="preserve">
-    <value>Multi-Factor-Authentifizierung deaktivieren</value>
+    <value>Multi-Faktor-Authentifizierung deaktivieren</value>
   </data>
   <data name="HtmlUIMGotoInscription" xml:space="preserve">
     <value>Registrierungsanfrage</value>
@@ -261,11 +261,11 @@ Klicken Sie auf "Weiter"</value>
   </data>
   <data name="HtmlLabelVERIFYOTPError" xml:space="preserve">
     <value>Verifizierung fehlgeschlagen ! &lt;br&gt;
-Um es erneut zu versuchen, wählen Sie "Zurück"</value>
+Klicken Sie auf "Zurück", um den Vorgang erneut zu starten.</value>
   </data>
   <data name="HtmlLabelVERIFYOTPSuccess" xml:space="preserve">
     <value>Verifizierung erfolgreich ! &lt;br&gt;
-Sie können von jetzt an Multi-Factor-Authentifizierung verwenden.</value>
+Sie können ab jetzt Multi-Faktor-Authentifizierung verwenden.</value>
   </data>
   <data name="HtmlLabelWRManageBiometrics" xml:space="preserve">
     <value>Verwalten der Biometriegeräte. Wählen Sie Hinzufügen, Ersetzen oder Löschen einzelner Geräte.</value>
@@ -292,7 +292,7 @@ Sie können von jetzt an Multi-Factor-Authentifizierung verwenden.</value>
     <value>Name des Geräts eingeben</value>
   </data>
   <data name="HtmlUIMNickNamesMessage" xml:space="preserve">
-    <value>Geben Sie den Namen Ihres biometrischen Geräts ein oder lassen Sie das Vakuum und wählen Sie "Weiter"</value>
+    <value>Geben Sie den Namen Ihres biometrischen Geräts ein oder lassen Sie das Feld leer und wählen Sie "Weiter"</value>
   </data>
   <data name="HtmlUIMRegisterDevice" xml:space="preserve">
     <value>Gerät registrieren</value>
@@ -310,9 +310,9 @@ Sie können von jetzt an Multi-Factor-Authentifizierung verwenden.</value>
     <value>Angemeldet bleiben</value>
   </data>
   <data name="HtmlUIMPauseDescriptionToday" xml:space="preserve">
-    <value>Dadurch können Sie die MFA heute nicht mehr anfordern.</value>
+    <value>Heute nicht mehr nach dem zweiten Faktor fragen.</value>
   </data>
   <data name="HtmlUIMPauseDescription" xml:space="preserve">
-    <value>Auf diese Weise können Sie {0} Tage lang nicht mehr nach dem MFA fragen.</value>
+    <value>Innerhalb der nächsten {0} Tage nicht mehr nach dem zweiten Faktor fragen.</value>
   </data>
 </root>
