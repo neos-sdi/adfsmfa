@@ -486,12 +486,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
         /// </summary>
         public override bool IsAvailable(AuthenticationContext ctx)
         {
-            if (LockUserOnDefaultProvider)
-            {
-                if (ctx.PreferredMethod != this.Kind)
-                    return false;
-            }
-            return true;
+            return this.Enabled;
         }
 
         /// <summary>
@@ -499,11 +494,8 @@ namespace Neos.IdentityServer.MultiFactor.Samples
         /// </summary>
         public override bool IsAvailableForUser(AuthenticationContext ctx)
         {
-            if (LockUserOnDefaultProvider)
-            {
-                if (ctx.PreferredMethod != this.Kind)
-                    return false;
-            }
+            if (!this.IsAvailable(ctx))
+                return false;
             return true;
         }
 

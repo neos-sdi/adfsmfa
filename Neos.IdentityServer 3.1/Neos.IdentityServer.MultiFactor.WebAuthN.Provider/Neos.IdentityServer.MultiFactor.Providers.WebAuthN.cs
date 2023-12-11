@@ -354,12 +354,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         /// </summary>
         public override bool IsAvailable(AuthenticationContext ctx)
         {
-            if (LockUserOnDefaultProvider)
-            {
-                if (ctx.PreferredMethod != this.Kind)
-                    return false;
-            }
-            return true;
+            return this.Enabled;
         }
 
         /// <summary>
@@ -369,11 +364,8 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         {
             try
             {
-                if (LockUserOnDefaultProvider)
-                {
-                    if (ctx.PreferredMethod != this.Kind)
-                        return false;
-                }
+                if (!this.IsAvailable(ctx))
+                    return false;
                 List<WebAuthNCredentialInformation> wcreds = GetUserStoredCredentials(ctx);
                 return (wcreds.Count > 0);
             }

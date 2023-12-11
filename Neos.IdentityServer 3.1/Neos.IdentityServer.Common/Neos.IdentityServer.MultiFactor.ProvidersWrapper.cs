@@ -810,12 +810,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// </summary>
         public override bool IsAvailable(AuthenticationContext ctx)
         {
-            if (LockUserOnDefaultProvider)
-            {
-                if (ctx.PreferredMethod != this.Kind)
-                    return false;
-            }
-            return true;
+            return this.Enabled;
         }
 
         /// <summary>
@@ -823,11 +818,8 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// </summary>
         public override bool IsAvailableForUser(AuthenticationContext ctx)
         {
-            if (LockUserOnDefaultProvider)
-            {
-                if (ctx.PreferredMethod != this.Kind)
-                    return false;
-            }
+            if (!this.IsAvailable(ctx))
+                return false;
             return (ctx.KeyStatus == SecretKeyStatus.Success);
         }
 
@@ -1304,12 +1296,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// </summary>
         public override bool IsAvailable(AuthenticationContext ctx)
         {
-            if (LockUserOnDefaultProvider)
-            {
-                if (ctx.PreferredMethod != this.Kind)
-                    return false;
-            }
-            return (this._sasprovider != null);
+            return ((this._sasprovider != null) && (this.Enabled));
         }
 
 
@@ -1318,12 +1305,9 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// </summary>
         public override bool IsAvailableForUser(AuthenticationContext ctx)
         {
-            if (LockUserOnDefaultProvider)
-            {
-                if (ctx.PreferredMethod != this.Kind)
-                    return false;
-            }
-            return Utilities.ValidatePhoneNumber(ctx.PhoneNumber, true);
+            if (!this.IsAvailable(ctx))
+                return false;
+            return (this._sasprovider != null) && (Utilities.ValidatePhoneNumber(ctx.PhoneNumber, true));
         }
 
         /// <summary>
@@ -1783,12 +1767,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// </summary>
         public override bool IsAvailable(AuthenticationContext ctx)
         {
-            if (LockUserOnDefaultProvider)
-            {
-                if (ctx.PreferredMethod != this.Kind)
-                    return false;
-            }
-            return true;
+            return this.Enabled;
         }
 
         /// <summary>
@@ -1796,11 +1775,8 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// </summary>
         public override bool IsAvailableForUser(AuthenticationContext ctx)
         {
-            if (LockUserOnDefaultProvider)
-            {
-                if (ctx.PreferredMethod != this.Kind)
-                    return false;
-            }
+            if (!this.IsAvailable(ctx))
+                return false;
             return Utilities.ValidateEmail(ctx.MailAddress, true);
         }
 

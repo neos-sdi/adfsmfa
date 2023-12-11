@@ -1393,7 +1393,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                         result += "<input id=\"##OPTIONS##\" type=\"checkbox\" name=\"##OPTIONS##\" /> " + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMAccessOptions");
                     result += "<br/><br/>";
                 }
-                if (!prov.LockUserOnDefaultProvider)
+                if ((RuntimePresentation.GetActiveProvidersCount() > 1) && (!prov.LockUserOnDefaultProvider))
                     result += "<a class=\"actionLink\" href=\"#\" id=\"nocode\" name=\"nocode\" onclick=\"return SetLinkTitle(refreshForm, '3')\" style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMNoCode") + "</a>";
                 result += "<input id=\"##SELECTEDLINK##\" type=\"hidden\" name=\"##SELECTEDLINK##\" value=\"0\"/>";
             }
@@ -1528,7 +1528,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                         result += "<input id=\"##OPTIONS##\" type=\"checkbox\" name=\"##OPTIONS##\" /> " + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMAccessOptions");
                     result += "<br/>";
                 }
-                if (!prov.LockUserOnDefaultProvider)
+                if ((RuntimePresentation.GetActiveProvidersCount() > 1) && (!prov.LockUserOnDefaultProvider))
                     result += "<a class=\"actionLink\" href=\"#\" id=\"nocode\" name=\"nocode\" onclick=\"return SetLinkTitle(refreshbiometricForm, '3')\"; style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMNoCode") + "</a>";
                 result += "<input id=\"##SELECTEDLINK##\" type=\"hidden\" name=\"##SELECTEDLINK##\" value=\"0\"/>";
             }

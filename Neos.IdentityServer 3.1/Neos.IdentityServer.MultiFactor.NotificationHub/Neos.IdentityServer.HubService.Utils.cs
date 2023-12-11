@@ -141,10 +141,14 @@ namespace Neos.IdentityServer.MultiFactor
                         }
                     }
                 }
+#if debugsid
                 catch (Exception ex)
                 {
-#if debugsid
+
                     Log.WriteEntry(string.Format("SID Initialize SIDs ERROR on Server {0}", ex.Message), EventLogEntryType.Error, 9208);
+#else
+                catch (Exception)
+                {
 #endif
                     Loaded = false;
                 }
@@ -194,10 +198,14 @@ namespace Neos.IdentityServer.MultiFactor
                         rec.Loaded = true;
                     }
                 }
+#if debugsid
                 catch (Exception ex)
                 {
-#if debugsid
+
                     Log.WriteEntry(string.Format("SID Initialize SIDs ERROR on Server {0}", ex.Message), EventLogEntryType.Error, 9213);
+#else
+                catch (Exception)
+                { 
 #endif
                     Loaded = true;
                 }
@@ -897,7 +905,7 @@ namespace Neos.IdentityServer.MultiFactor
             public bool SystemServiceAdministrationAllowed = false;
             public bool LocalAdminsServiceAdministrationAllowed = false;
         }
-        #endregion
+#endregion
     }
-    #endregion
+#endregion
 }

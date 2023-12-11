@@ -230,13 +230,13 @@ namespace Neos.IdentityServer.MultiFactor
             IExternalProvider prov1 = RuntimePresentation.GetProvider(PreferredMethod.Code);
             if ((prov1 != null) && (prov1.Enabled) && prov1.IsUIElementRequired(usercontext, RequiredMethodElements.OTPLinkRequired))
             {
-                if (!prov1.LockUserOnDefaultProvider || ((prov1.LockUserOnDefaultProvider) && (usercontext.PreferredMethod==PreferredMethod.Code)))
+                if (prov1.IsAvailable(usercontext))
                     result += "<a class=\"actionLink\" href=\"#\" id=\"enrollopt\" name=\"enrollopt\" onclick=\"fnlinkclicked(OptionsForm, 3)\" style=\"cursor: pointer;\">" + prov1.GetWizardLinkLabel(usercontext) + "</a>";
             }
             IExternalProvider prov4 = RuntimePresentation.GetProvider(PreferredMethod.Biometrics);
             if ((prov4 != null) && (prov4.Enabled) && prov4.IsUIElementRequired(usercontext, RequiredMethodElements.BiometricParameterRequired))
             {
-                if (!prov4.LockUserOnDefaultProvider || ((prov4.LockUserOnDefaultProvider) && (usercontext.PreferredMethod == PreferredMethod.Biometrics)))
+                if (prov4.IsAvailable(usercontext))
                 {
                     if (!usercontext.BioNotSupported)
                         result += "<a class=\"actionLink\" href=\"#\" id=\"enrollbio\" name=\"enrollbio\" onclick=\"fnlinkclicked(OptionsForm, 6)\" style=\"cursor: pointer;\">" + prov4.GetWizardLinkLabel(usercontext) + "</a>";
@@ -247,20 +247,20 @@ namespace Neos.IdentityServer.MultiFactor
                 IExternalProvider prov2 = RuntimePresentation.GetProvider(PreferredMethod.Email);
                 if ((prov2 != null) && (prov2.Enabled) && prov2.IsUIElementRequired(usercontext, RequiredMethodElements.EmailLinkRequired))
                 {
-                    if (!prov2.LockUserOnDefaultProvider || ((prov2.LockUserOnDefaultProvider) && (usercontext.PreferredMethod == PreferredMethod.Email)))
+                    if (prov2.IsAvailable(usercontext))
                         result += "<a class=\"actionLink\" href=\"#\" id=\"enrollemail\" name=\"enrollemail\" onclick=\"fnlinkclicked(OptionsForm, 4)\" style=\"cursor: pointer;\">" + prov2.GetWizardLinkLabel(usercontext) + "</a>";
                 }
                 IExternalProvider prov3 = RuntimePresentation.GetProvider(PreferredMethod.External);
                 if ((prov3 != null) && (prov3.Enabled) && (prov3.IsUIElementRequired(usercontext, RequiredMethodElements.PhoneLinkRequired) || prov3.IsUIElementRequired(usercontext, RequiredMethodElements.ExternalLinkRaquired) ))
                 {
-                    if (!prov3.LockUserOnDefaultProvider || ((prov3.LockUserOnDefaultProvider) && (usercontext.PreferredMethod == PreferredMethod.External)))
+                    if (prov3.IsAvailable(usercontext))
                         result += "<a class=\"actionLink\" href=\"#\" id=\"enrollphone\" name=\"enrollphone\" onclick=\"fnlinkclicked(OptionsForm, 5)\" style=\"cursor: pointer;\">" + prov3.GetWizardLinkLabel(usercontext) + "</a>";
                 }
                 IExternalProvider prov5 = RuntimePresentation.GetProvider(PreferredMethod.Azure);
                 if (prov5 != null)
                 {
                     if (!string.IsNullOrEmpty(prov5.GetAccountManagementUrl(usercontext)))
-                        if (!prov5.LockUserOnDefaultProvider || ((prov5.LockUserOnDefaultProvider) && (usercontext.PreferredMethod == PreferredMethod.Azure)))
+                        if (prov5.IsAvailable(usercontext))
                             result += "<a class=\"actionLink\" href=\"" + prov5.GetAccountManagementUrl(usercontext) + "\" id=\"enrollazure\" name=\"enrollazure\" target=\"_blank\" style=\"cursor: pointer;\">" + prov5.GetUIAccountManagementLabel(usercontext) + "</a>";
                 }
             }
@@ -827,7 +827,7 @@ namespace Neos.IdentityServer.MultiFactor
                     if (prov.PinRequired)
                         WantPin = true;
                     if (Provider.HasStrictAccessToOptions(prov))
-                        if (!prov.LockUserOnDefaultProvider || ((prov.LockUserOnDefaultProvider) && (usercontext.PreferredMethod == PreferredMethod.Code)))
+                        if (prov.IsAvailable(usercontext))
                             result += "<a class=\"actionLink\" href=\"#\" id=\"enrollopt\" name=\"enrollopt\" onclick=\"return SetLinkTitle(selectoptionsForm, '3')\" style=\"cursor: pointer;\">" + prov.GetWizardLinkLabel(usercontext) + "</a>";
                 }
                 if (RuntimePresentation.IsUIElementRequired(usercontext, RequiredMethodElements.BiometricLinkRequired))
@@ -840,7 +840,7 @@ namespace Neos.IdentityServer.MultiFactor
                         if (((IWebAuthNProvider)prov).PinRequirements != WebAuthNPinRequirements.Null)
                             SuperPin = true;
                         if (Provider.HasStrictAccessToOptions(prov))
-                            if (!prov.LockUserOnDefaultProvider || ((prov.LockUserOnDefaultProvider) && (usercontext.PreferredMethod == PreferredMethod.Biometrics)))
+                            if (prov.IsAvailable(usercontext))
                                 result += "<a class=\"actionLink\" href=\"#\" id=\"enrollbio\" name=\"enrollbio\" onclick=\"return SetLinkTitle(selectoptionsForm, '4')\" style=\"cursor: pointer;\">" + prov.GetWizardLinkLabel(usercontext) + "</a>";
                     }
                 }
@@ -852,7 +852,7 @@ namespace Neos.IdentityServer.MultiFactor
                         if (prov.PinRequired)
                             WantPin = true;
                         if (Provider.HasStrictAccessToOptions(prov))
-                            if (!prov.LockUserOnDefaultProvider || ((prov.LockUserOnDefaultProvider) && (usercontext.PreferredMethod == PreferredMethod.Email)))
+                            if (prov.IsAvailable(usercontext))
                                 result += "<a class=\"actionLink\" href=\"#\" id=\"enrollemail\" name=\"enrollemail\" onclick=\"return SetLinkTitle(selectoptionsForm, '5')\" style=\"cursor: pointer;\">" + prov.GetWizardLinkLabel(usercontext) + "</a>";
                     }
                     if (RuntimePresentation.IsUIElementRequired(usercontext, RequiredMethodElements.PhoneLinkRequired) || RuntimePresentation.IsUIElementRequired(usercontext, RequiredMethodElements.ExternalLinkRaquired))
@@ -861,7 +861,7 @@ namespace Neos.IdentityServer.MultiFactor
                         if (prov.PinRequired)
                             WantPin = true;
                         if (Provider.HasStrictAccessToOptions(prov))
-                            if (!prov.LockUserOnDefaultProvider || ((prov.LockUserOnDefaultProvider) && (usercontext.PreferredMethod == PreferredMethod.External)))
+                            if (prov.IsAvailable(usercontext))
                                 result += "<a class=\"actionLink\" href=\"#\" id=\"enrollphone\" name=\"enrollphone\" onclick=\"return SetLinkTitle(selectoptionsForm, '6')\" style=\"cursor: pointer;\">" + prov.GetWizardLinkLabel(usercontext) + "</a>";
                     }
                     if (RuntimePresentation.IsUIElementRequired(usercontext, RequiredMethodElements.AzureInputRequired))
@@ -874,7 +874,7 @@ namespace Neos.IdentityServer.MultiFactor
                             if (Provider.HasStrictAccessToOptions(prov))
                             {
                                 if (!string.IsNullOrEmpty(prov.GetAccountManagementUrl(usercontext)))
-                                    if (!prov.LockUserOnDefaultProvider || ((prov.LockUserOnDefaultProvider) && (usercontext.PreferredMethod == PreferredMethod.Azure)))
+                                    if (prov.IsAvailable(usercontext))
                                         result += "<a class=\"actionLink\" href=\"" + prov.GetAccountManagementUrl(usercontext) + "\" id=\"enrollazure\" name=\"enrollazure\" target=\"_blank\" style=\"cursor: pointer;\">" + prov.GetUIAccountManagementLabel(usercontext) + "</a>";
                             }
                         }
@@ -1409,8 +1409,8 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "<br/><br/>";
                 }
 
-                if (!prov.LockUserOnDefaultProvider)
-                   result += "<a class=\"actionLink\" href=\"#\" id=\"nocode\" name=\"nocode\" onclick=\"return SetLinkTitle(refreshForm, '3')\" style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMNoCode") + "</a>";
+                if ((RuntimePresentation.GetActiveProvidersCount() > 1) && (!prov.LockUserOnDefaultProvider))
+                        result += "<a class=\"actionLink\" href=\"#\" id=\"nocode\" name=\"nocode\" onclick=\"return SetLinkTitle(refreshForm, '3')\" style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMNoCode") + "</a>";
                 result += "<input id=\"##SELECTEDLINK##\" type=\"hidden\" name=\"##SELECTEDLINK##\" value=\"0\"/>";
             }
             result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";
@@ -1544,8 +1544,8 @@ namespace Neos.IdentityServer.MultiFactor
                         result += "<input id=\"##OPTIONS##\" type=\"checkbox\" name=\"##OPTIONS##\" /> " + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMAccessOptions");
                     result += "<br/>";
                 }
-                if (!prov.LockUserOnDefaultProvider)
-                    result += "<a class=\"actionLink\" href=\"#\" id=\"nocode\" name=\"nocode\" onclick=\"return SetLinkTitle(refreshbiometricForm, '3')\"; style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMNoCode") + "</a>";
+                if ((RuntimePresentation.GetActiveProvidersCount() > 1) && (!prov.LockUserOnDefaultProvider))
+                        result += "<a class=\"actionLink\" href=\"#\" id=\"nocode\" name=\"nocode\" onclick=\"return SetLinkTitle(refreshbiometricForm, '3')\"; style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMNoCode") + "</a>";
                 result += "<input id=\"##SELECTEDLINK##\" type=\"hidden\" name=\"##SELECTEDLINK##\" value=\"0\"/>";
             }          
 
