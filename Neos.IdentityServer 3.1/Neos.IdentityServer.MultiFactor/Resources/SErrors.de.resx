@@ -118,22 +118,22 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ErrorAccountActivate" xml:space="preserve">
-    <value>Der Zugriff auf diese Anwendung erfordert Multi-Faktor-Authentifizierung. &lt;br&gt;&lt;br&gt;Klicken Sie auf "Aktivieren" um diese einzurichten oder auf "Weiter" um diesen Schritt vorerst zu überspringen.</value>
+    <value>Der Zugriff auf diese Anwendung erfordert eine Multi-Faktor-Authentifizierung. &lt;br&gt;&lt;br&gt;Klicken Sie auf "Aktivieren" um diese einzurichten oder auf "Weiter" um diesen Schritt vorerst zu überspringen.</value>
   </data>
   <data name="ErrorAccountAdminAuthorized" xml:space="preserve">
-    <value>Zugriff verweigert, da die Multi-Faktor-Authentifizierung nicht zeitgerecht aktiviert wurde. Wenden Sie sich an die Systemadministration.</value>
+    <value>Zugriff verweigert, da die Multi-Faktor-Authentifizierung nicht zeitgerecht aktiviert wurde. Wenden Sie sich an Ihren Systemadministrator.</value>
   </data>
   <data name="ErrorAccountAdminNotEnabled" xml:space="preserve">
-    <value>Zugriff verweigert, da die Multi-Faktor-Authentifizierung nicht zeitgerecht aktiviert wurde. &lt;br&gt;&lt;br&gt;Wenden Sie sich an die Systemadministration.</value>
+    <value>Zugriff verweigert, da die Multi-Faktor-Authentifizierung nicht zeitgerecht aktiviert wurde. &lt;br&gt;&lt;br&gt;Wenden Sie sich an Ihren Systemadministrator.</value>
   </data>
   <data name="ErrorAccountAuthorized" xml:space="preserve">
-    <value>Der Zugriff auf diese Anwendung erfordert eine zusätzliche Authentifizierung. &lt;br&gt;&lt;br&gt;Klicken Sie auf "Registrierung", um fortzufahren.</value>
+    <value>Der Zugriff auf diese Anwendung erfordert einen zweiten Faktor. &lt;br&gt;&lt;br&gt;Klicken Sie auf "Registrierung", um fortzufahren.</value>
   </data>
   <data name="ErrorAccountNoAccess" xml:space="preserve">
-    <value>Zugriff verweigert ! Wenden Sie sich an die Systemadministration</value>
+    <value>Zugriff verweigert ! Wenden Sie sich an Ihren Systemadministrator</value>
   </data>
   <data name="ErrorAccountNotEnabled" xml:space="preserve">
-    <value>Der Zugriff auf diese Anwendung erfordert Multi-Faktor-Authentifizierung, die noch aktiviert werden muss. &lt;br&gt;&lt;br&gt; Klicken Sie auf "Registrierungsanfrage".</value>
+    <value>Der Zugriff auf diese Anwendung erfordert eine Multi-Faktor-Authentifizierung, die noch aktiviert werden muss. &lt;br&gt;&lt;br&gt; Klicken Sie auf "Registrierungsanfrage".</value>
   </data>
   <data name="ErrorAuthenticating" xml:space="preserve">
     <value>Anmeldefehler ! 
@@ -178,13 +178,13 @@
     <value>Fehler bei der Anmeldung ! Die einmalige Anmeldeinformation wurde bereits verwendet</value>
   </data>
   <data name="ErrorSendingToastInformation" xml:space="preserve">
-    <value>Versand der Anmelde-Anforderung fehlgeschlagen !</value>
+    <value>Versand der Anmeldeanforderung fehlgeschlagen !</value>
   </data>
   <data name="ErrorValidationTimeWindowElapsed" xml:space="preserve">
     <value>Validierungszeitfenster verstrichen.</value>
   </data>
   <data name="ErrorSendingToastInformationRetry" xml:space="preserve">
-    <value>Fehler beim Senden der Identifikationsanforderung ! bitte versuchen Sie es erneut.</value>
+    <value>Fehler beim Senden der Identifikationsanforderung ! Bitte versuchen Sie es erneut.</value>
   </data>
   <data name="ErrorPasswordExpired" xml:space="preserve">
     <value>Das Kennwort für {0} ist abgelaufen ! Zugriff verweigert !</value>

@@ -20,7 +20,7 @@ This extension works with Active Directory or an SQL Server Database for storing
 ## Downloads
 - <https://github.com/neos-sdi/adfsmfa/releases>
 
-- <https://github.com/neos-sdi/adfsmfa/releases/download/3.1/adfsmfa.3.1.2306.0.msi>
+- <https://github.com/neos-sdi/adfsmfa/releases/download/3.1/adfsmfa.3.1.2312.0.msi>
 
 ## Building Solution
 
@@ -46,7 +46,7 @@ ___
 * Can use TOTP code using Authenticator Apps like MS Authenticator, Google Authentication and more
 * Biometric authentication (Anders Åberg, Alex Seigler and others <https://github.com/abergs/fido2-net-lib>)
 * Enable self-registration
-* Enable self-registration with QR code (George Mamaladze and his team <https://qrcodenet.codeplex.com>)
+* Enable self-registration with QR code (George Mamaladze and his team)
 * Enable custom change password.
 * Can work with ADDS multi-forests with trust relationships
 * Can work with LDAP 3.0 Providers (ADFS 2016/2019/2022) when using SQL Storage mode

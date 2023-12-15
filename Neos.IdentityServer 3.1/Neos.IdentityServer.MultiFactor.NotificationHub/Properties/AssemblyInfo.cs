@@ -52,7 +52,7 @@ using System.Runtime.Versioning;
 // en utilisant '*', comme indiqué ci-dessous :
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("3.0.0.0")]
-[assembly: AssemblyFileVersion("3.1.2306.0")]
+[assembly: AssemblyFileVersion("3.1.2312.0")]
 [assembly: AssemblyInformationalVersion("3.0.0.0")]
 [assembly: NeutralResourcesLanguage("en")]
 

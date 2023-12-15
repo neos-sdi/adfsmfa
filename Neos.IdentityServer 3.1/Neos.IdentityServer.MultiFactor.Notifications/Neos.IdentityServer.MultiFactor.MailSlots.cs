@@ -1299,14 +1299,21 @@ namespace Neos.IdentityServer.MultiFactor
         internal static SECURITY_ATTRIBUTES CreateMailslotSecurity()
         {
             // Define the SDDL for the security descriptor.
-            string sddl = "D:" +           // Discretionary ACL
-                "(A;OICI;GRGW;;;AU)" +     // Allow read/write to authenticated users
-                "(A;OICI;GA;;;BA)" +       // Allow full control to administrators
-                "(A;OICI;GA;;;SY)" +       // Allow full control to local system
-                "(A;OICI;GA;;;LS)" +       // Allow full control to local service
-                "(A;OICI;GA;;;DA)" +       // Allow full control to domain admins
-                "(A;OICI;GA;;;EA)" +       // Allow full control to enterprise admins
-                "(A;OICI;GA;;;NS)";        // Allow full control to network services
+            /* string sddl = "D:" +           // Discretionary ACL
+                 "(A;OICI;GRGW;;;AU)" +     // Allow read/write to authenticated users
+                 "(A;OICI;GA;;;BA)" +       // Allow full control to administrators
+                 "(A;OICI;GA;;;SY)" +       // Allow full control to local system
+                 "(A;OICI;GA;;;LS)" +       // Allow full control to local service
+                 "(A;OICI;GA;;;DA)" +       // Allow full control to domain admins
+                 "(A;OICI;GA;;;EA)" +       // Allow full control to enterprise admins
+                 "(A;OICI;GA;;;NS)";        // Allow full control to network services
+             */
+            string sddl = "D:P" +       // Discretionary ACL
+                "(A;NP;GRGW;;;AU)" +    // Allow read/write to authenticated users
+                "(A;NP;GA;;;BA)" +      // Allow full control to administrators
+                "(A;NP;GA;;;SY)" +      // Allow full control to local system
+                "(A;NP;GA;;;DA)";       // Allow full control to domain admins
+
 
             if (!NativeMethod.ConvertStringSecurityDescriptorToSecurityDescriptor(sddl, 1, out SafeLocalMemHandle pSecurityDescriptor, IntPtr.Zero))
             {

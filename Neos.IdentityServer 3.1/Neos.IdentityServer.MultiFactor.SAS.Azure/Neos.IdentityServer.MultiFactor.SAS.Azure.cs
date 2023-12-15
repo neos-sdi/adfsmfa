@@ -419,13 +419,8 @@ namespace Neos.IdentityServer.MultiFactor.SAS
         {
             try
             {
-                if (LockUserOnDefaultProvider)
-                {
-                    if (ctx.PreferredMethod != this.Kind)
-                        return false;
-                }
                 var meths = GetAuthenticationMethods(ctx);
-                return true;
+                return this.Enabled;
             }
             catch (Exception)
             {
@@ -446,12 +441,10 @@ namespace Neos.IdentityServer.MultiFactor.SAS
         {
             try
             {
-                if (LockUserOnDefaultProvider)
-                {
-                    if (ctx.PreferredMethod != this.Kind)
-                        return false;
-                }
-                return GetAuthenticationMethods(ctx).Count > 0;
+                if (!this.IsAvailable(ctx))
+                    return false;
+                var meths = GetAuthenticationMethods(ctx);
+                return meths.Count > 0;
             }
             catch
             {
