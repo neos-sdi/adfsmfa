@@ -179,7 +179,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             if (!IsMFAUserRegistered(reg.UPN))
             {
                 if (caninsert)
-                    return AddMFAUser(reg, resetkey, false);
+                    return AddMFAUser(reg, resetkey, disableoninsert);
                 else
                     return GetMFAUser(reg.UPN);
             }
@@ -243,12 +243,12 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// AddMFAUser method implementation
         /// </summary>
-        public override MFAUser AddMFAUser(MFAUser reg, bool resetkey = false, bool canupdate = true, bool disableoninsert = false)
+        public override MFAUser AddMFAUser(MFAUser reg, bool resetkey = true, bool canupdate = true, bool disableoninsert = false)
         {
             if (IsMFAUserRegistered(reg.UPN))
             {
                 if (canupdate)
-                    return SetMFAUser(reg, resetkey, false);
+                    return SetMFAUser(reg, false, disableoninsert);
                 else
                     return GetMFAUser(reg.UPN);
             }
@@ -341,6 +341,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         {
                             using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr))
                             {
+                                DirEntry.Properties[ADHost.PublicKeyCredentialAttribute].Clear();
                                 ADDSUtils.SetMultiValued(DirEntry.Properties[ADHost.MailAttribute], _mailismulti, string.Empty);
                                 ADDSUtils.SetMultiValued(DirEntry.Properties[ADHost.PhoneAttribute], _phoneismulti, string.Empty);
                                 DirEntry.Properties[ADHost.TotpEnabledAttribute].Clear();
@@ -585,7 +586,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
 
                                             if (DirEntry.Properties[ADHost.KeyAttribute].Value != null)
                                                 reg.IsRegistered = true;
-                                            if (DirEntry.Properties[ADHost.PublicKeyCredentialAttribute].Count >0)
+                                            if (DirEntry.Properties[ADHost.PublicKeyCredentialAttribute].Count > 0)
                                                 reg.IsRegistered = true;
                                             if (ADDSUtils.GetMultiValued(DirEntry.Properties[ADHost.MailAttribute], _mailismulti) != null)
                                             {
@@ -1043,7 +1044,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                             {
                                 if (DirEntry.Properties[ADHost.KeyAttribute].Value != null)
                                     return true;
-                                if (DirEntry.Properties[ADHost.PublicKeyCredentialAttribute] != null)
+                                if (DirEntry.Properties[ADHost.PublicKeyCredentialAttribute].Count > 0)
                                     return true;
                                 if (ADDSUtils.GetMultiValued(DirEntry.Properties[ADHost.MailAttribute], _mailismulti) != null)
                                     return true;

@@ -103,7 +103,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             if (!SQLUtils.IsMFAUserRegistered(SQLHost, reg.UPN))
             {
                 if (caninsert)
-                    return AddMFAUser(reg, resetkey, false);
+                    return AddMFAUser(reg, resetkey, disableoninsert);
                 else
                     return GetMFAUser(reg.UPN);
             }
@@ -181,12 +181,12 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// AddMFAUser method implementation
         /// </summary>
-        public override MFAUser AddMFAUser(MFAUser reg, bool resetkey = false, bool canupdate = true, bool disableoninsert = false)
+        public override MFAUser AddMFAUser(MFAUser reg, bool resetkey = true, bool canupdate = true, bool disableoninsert = false)
         {
             if (SQLUtils.IsMFAUserRegistered(SQLHost, reg.UPN))
             {
                 if (canupdate)
-                    return SetMFAUser(reg, resetkey, false);
+                    return SetMFAUser(reg, false, disableoninsert);
                 else
                     return GetMFAUser(reg.UPN);
             }

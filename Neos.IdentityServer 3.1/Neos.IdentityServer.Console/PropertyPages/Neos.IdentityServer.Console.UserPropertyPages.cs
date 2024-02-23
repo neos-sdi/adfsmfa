@@ -38,7 +38,7 @@ namespace Neos.IdentityServer.Console
     {
         private IUserPropertiesDataObject userPropertiesControl = null;
         private UsersFormView usersFormView = null;
-        private readonly bool isnew = false;
+        private bool isnew = false;
         private readonly string seed = 0.ToString();
 
         /// <summary>
@@ -105,7 +105,7 @@ namespace Neos.IdentityServer.Console
                 MFAUserList registrations = GetSharedUserData();
                 foreach (MFAUser reg in registrations)
                 {
-                    if (CanApplyDataChanges(reg))
+                    if (CanApplyDataChanges(reg, isnew))
                     {
                         if (!reg.IsApplied)
                         {
@@ -113,6 +113,7 @@ namespace Neos.IdentityServer.Console
                                 usersFormView.AddUserStoreData(registrations);
                             else
                                 usersFormView.SetUserStoreData(registrations);
+                            isnew = false;
                         }
                         reg.IsApplied = true;
                     }
@@ -262,7 +263,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// CanApplyDataChanges method implementation
         /// </summary>
-        private bool CanApplyDataChanges(MFAUser registration)
+        private bool CanApplyDataChanges(MFAUser registration, bool isnew)
         {
             bool result = true;
             if (registration.IsApplied)
@@ -284,7 +285,7 @@ namespace Neos.IdentityServer.Console
                         ParentSheet.SetActivePage(0);
                         result = false;
                     }
-                    else if (string.IsNullOrEmpty(MMCService.GetEncodedUserKey(registration.UPN)))
+                    else if ((!isnew) && (string.IsNullOrEmpty(MMCService.GetEncodedUserKey(registration.UPN))))
                     {
                         MessageBoxParameters messageBoxParameters = new MessageBoxParameters
                         {

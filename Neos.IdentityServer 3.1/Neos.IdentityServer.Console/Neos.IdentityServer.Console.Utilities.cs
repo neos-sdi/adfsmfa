@@ -241,7 +241,7 @@ namespace Neos.IdentityServer.Console
             MFAUserList lst = new MFAUserList();
             foreach(MFAUser reg in registrations)
             {
-                lst.Add(ManagementService.AddUserRegistration(reg, false, false, false));
+                lst.Add(ManagementService.AddUserRegistration(reg, true, true, false));
             }
             return lst;
         }
