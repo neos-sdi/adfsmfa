@@ -20,7 +20,7 @@ This extension works with Active Directory or an SQL Server Database for storing
 ## Downloads
 - <https://github.com/neos-sdi/adfsmfa/releases>
 
-- <https://github.com/neos-sdi/adfsmfa/releases/download/3.1/adfsmfa.3.1.2312.0.msi>
+- <https://github.com/neos-sdi/adfsmfa/releases/download/3.1/adfsmfa.3.1.2402.0.msi>
 
 ## Building Solution
 
@@ -44,7 +44,7 @@ ___
 * Can send TOTP code by email (customizable template in resources)
 * Can send TOTP code by SMS (customizable and extensible with API (IExternalProvider interface))
 * Can use TOTP code using Authenticator Apps like MS Authenticator, Google Authentication and more
-* Biometric authentication (Anders Åberg, Alex Seigler and others <https://github.com/abergs/fido2-net-lib>)
+* Biometric authentication (Anders Åberg, Alex Seigler and others)
 * Enable self-registration
 * Enable self-registration with QR code (George Mamaladze and his team)
 * Enable custom change password.
