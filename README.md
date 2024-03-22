@@ -20,16 +20,12 @@ This extension works with Active Directory or an SQL Server Database for storing
 ## Downloads
 - <https://github.com/neos-sdi/adfsmfa/releases>
 
-- <https://github.com/neos-sdi/adfsmfa/releases/download/3.1/adfsmfa.3.1.2402.0.msi>
+- <https://github.com/neos-sdi/adfsmfa/releases/download/3.1/adfsmfa.3.1.2403.0.msi>
 
 ## Building Solution
 
 - <https://github.com/neos-sdi/adfsmfa/wiki/13-Build>
 
-___
-![Neos Logo](logo.png)
-
-___
 ## Features
 * Localized UI French/English/Spanish/Italian/German/Dutch/Portuguese/Polish/Swedish/Romanian/Russian/Danish/Japanese/Quebec/Ukrainian
 * TOTP, Email, Phone, Biometric, Azure Providers for MFA

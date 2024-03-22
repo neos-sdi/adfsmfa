@@ -2869,6 +2869,12 @@
             ExportFilePath property
             </summary>
         </member>
+        <member name="P:MFA.ExportMFASystemConfiguration.ForDebug">
+            <summary>
+            <para type="description">Disable RSA key Reset for MFA Passwords.</para>
+            NoRSAKeyReset property
+            </summary>
+        </member>
         <member name="M:MFA.ExportMFASystemConfiguration.BeginProcessing">
             <summary>
             BeginProcessing method implementation

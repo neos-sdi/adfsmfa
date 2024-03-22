@@ -2758,11 +2758,13 @@ namespace Neos.IdentityServer.MultiFactor
                     {
                         if (File.Exists(htmlfile))
                         {
-                            FileStream fileStream = new FileStream(htmlfile, FileMode.Open, FileAccess.Read);
-
-                            using (StreamReader reader = new StreamReader(fileStream))
+                            using (FileStream fileStream = new FileStream(htmlfile, FileMode.Open, FileAccess.Read))
                             {
-                                htmlres = reader.ReadToEnd();
+
+                                using (StreamReader reader = new StreamReader(fileStream))
+                                {
+                                    htmlres = reader.ReadToEnd();
+                                }
                             }
                         }
                         string textfile = Path.GetFileNameWithoutExtension(htmlfile) + ".txt";
@@ -2770,11 +2772,12 @@ namespace Neos.IdentityServer.MultiFactor
                         {
                             if (File.Exists(textfile))
                             {
-                                FileStream fileStream = new FileStream(textfile, FileMode.Open, FileAccess.Read);
-
-                                using (StreamReader reader = new StreamReader(fileStream))
+                                using (FileStream fileStream = new FileStream(textfile, FileMode.Open, FileAccess.Read))
                                 {
-                                    textres = reader.ReadToEnd();
+                                    using (StreamReader reader = new StreamReader(fileStream))
+                                    {
+                                        textres = reader.ReadToEnd();
+                                    }
                                 }
                             }
                         }
@@ -2877,11 +2880,12 @@ namespace Neos.IdentityServer.MultiFactor
                     {
                         if (File.Exists(htmlfile))
                         {
-                            FileStream fileStream = new FileStream(htmlfile, FileMode.Open, FileAccess.Read);
-
-                            using (StreamReader reader = new StreamReader(fileStream))
+                            using (FileStream fileStream = new FileStream(htmlfile, FileMode.Open, FileAccess.Read))
                             {
-                                htmlres = reader.ReadToEnd();
+                                using (StreamReader reader = new StreamReader(fileStream))
+                                {
+                                    htmlres = reader.ReadToEnd();
+                                }
                             }
                         }
                         string textfile = Path.GetFileNameWithoutExtension(htmlfile) + ".txt";
@@ -2889,11 +2893,12 @@ namespace Neos.IdentityServer.MultiFactor
                         {
                             if (File.Exists(textfile))
                             {
-                                FileStream fileStream = new FileStream(textfile, FileMode.Open, FileAccess.Read);
-
-                                using (StreamReader reader = new StreamReader(fileStream))
+                                using (FileStream fileStream = new FileStream(textfile, FileMode.Open, FileAccess.Read))
                                 {
-                                    textres = reader.ReadToEnd();
+                                    using (StreamReader reader = new StreamReader(fileStream))
+                                    {
+                                        textres = reader.ReadToEnd();
+                                    }
                                 }
                             }
                         }
@@ -3002,11 +3007,12 @@ namespace Neos.IdentityServer.MultiFactor
                     {
                         if (File.Exists(htmlfile))
                         {
-                            FileStream fileStream = new FileStream(htmlfile, FileMode.Open, FileAccess.Read);
-
-                            using (StreamReader reader = new StreamReader(fileStream))
+                            using (FileStream fileStream = new FileStream(htmlfile, FileMode.Open, FileAccess.Read))
                             {
-                                htmlres = reader.ReadToEnd();
+                                using (StreamReader reader = new StreamReader(fileStream))
+                                {
+                                    htmlres = reader.ReadToEnd();
+                                }
                             }
                         }
                         string textfile = Path.GetFileNameWithoutExtension(htmlfile) + ".txt";
@@ -3014,11 +3020,12 @@ namespace Neos.IdentityServer.MultiFactor
                         {
                             if (File.Exists(textfile))
                             {
-                                FileStream fileStream = new FileStream(textfile, FileMode.Open, FileAccess.Read);
-
-                                using (StreamReader reader = new StreamReader(fileStream))
+                                using (FileStream fileStream = new FileStream(textfile, FileMode.Open, FileAccess.Read))
                                 {
-                                    textres = reader.ReadToEnd();
+                                    using (StreamReader reader = new StreamReader(fileStream))
+                                    {
+                                        textres = reader.ReadToEnd();
+                                    }
                                 }
                             }
                         }
@@ -3143,11 +3150,12 @@ namespace Neos.IdentityServer.MultiFactor
                     {
                         if (File.Exists(htmlfile))
                         {
-                            FileStream fileStream = new FileStream(htmlfile, FileMode.Open, FileAccess.Read);
-
-                            using (StreamReader reader = new StreamReader(fileStream))
+                            using (FileStream fileStream = new FileStream(htmlfile, FileMode.Open, FileAccess.Read))
                             {
-                                htmlres = reader.ReadToEnd();
+                                using (StreamReader reader = new StreamReader(fileStream))
+                                {
+                                    htmlres = reader.ReadToEnd();
+                                }
                             }
                         }
                         string textfile = Path.GetFileNameWithoutExtension(htmlfile) + ".txt";
@@ -3155,11 +3163,12 @@ namespace Neos.IdentityServer.MultiFactor
                         {
                             if (File.Exists(textfile))
                             {
-                                FileStream fileStream = new FileStream(textfile, FileMode.Open, FileAccess.Read);
-
-                                using (StreamReader reader = new StreamReader(fileStream))
+                                using (FileStream fileStream = new FileStream(textfile, FileMode.Open, FileAccess.Read))
                                 {
-                                    textres = reader.ReadToEnd();
+                                    using (StreamReader reader = new StreamReader(fileStream))
+                                    {
+                                        textres = reader.ReadToEnd();
+                                    }
                                 }
                             }
                         }
@@ -3509,26 +3518,28 @@ namespace Neos.IdentityServer.MultiFactor
                     SPPowerShell?.Dispose();
                 }
 
-                FileStream stm = new FileStream(pth, FileMode.Open, FileAccess.Read);
-                XmlConfigSerializer xmlserializer = new XmlConfigSerializer(typeof(MFAConfig));
-                using (StreamReader reader = new StreamReader(stm))
+                using (FileStream stm = new FileStream(pth, FileMode.Open, FileAccess.Read))
                 {
-                    config = (MFAConfig)xmlserializer.Deserialize(stm);
-                    if ((!config.OTPProvider.Enabled) && (!config.MailProvider.Enabled) && (!config.ExternalProvider.Enabled) && (!config.AzureProvider.Enabled))
-                        config.OTPProvider.Enabled = true;   // always let an active option eg : aplication in this case
-                    using (SystemEncryption MSIS = new SystemEncryption())
+                    XmlConfigSerializer xmlserializer = new XmlConfigSerializer(typeof(MFAConfig));
+                    using (StreamReader reader = new StreamReader(stm))
                     {
-                        config.KeysConfig.XORSecret = MSIS.Decrypt(config.KeysConfig.XORSecret, "Pass Phrase Encryption");
-                        config.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(config.Hosts.ActiveDirectoryHost.Password, "ADDS Super Account Password");
-                        config.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(config.Hosts.SQLServerHost.SQLPassword, "SQL Super Account Password");
-                        config.MailProvider.Password = MSIS.Decrypt(config.MailProvider.Password, "Mail Provider Account Password");
-                        config.DefaultPin = MSIS.Decrypt(config.DefaultPin.ToString(), "Default Users Pin");
-                        config.AdministrationPin = MSIS.Decrypt(config.AdministrationPin.ToString(), "Administration Pin");
-                    };
-                    ADDSUtils.LoadForests(config.Hosts.ActiveDirectoryHost.DomainName, config.Hosts.ActiveDirectoryHost.Account, config.Hosts.ActiveDirectoryHost.Password, config.Hosts.ActiveDirectoryHost.UseSSL, true);
-                    KeysManager.Initialize(config);  // Important
-                    RuntimeAuthProvider.LoadProviders(config);
-                    ClientSIDsProxy.Initialize(config);
+                        config = (MFAConfig)xmlserializer.Deserialize(stm);
+                        if ((!config.OTPProvider.Enabled) && (!config.MailProvider.Enabled) && (!config.ExternalProvider.Enabled) && (!config.AzureProvider.Enabled))
+                            config.OTPProvider.Enabled = true;   // always let an active option eg : aplication in this case
+                        using (SystemEncryption MSIS = new SystemEncryption())
+                        {
+                            config.KeysConfig.XORSecret = MSIS.Decrypt(config.KeysConfig.XORSecret, "Pass Phrase Encryption");
+                            config.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(config.Hosts.ActiveDirectoryHost.Password, "ADDS Super Account Password");
+                            config.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(config.Hosts.SQLServerHost.SQLPassword, "SQL Super Account Password");
+                            config.MailProvider.Password = MSIS.Decrypt(config.MailProvider.Password, "Mail Provider Account Password");
+                            config.DefaultPin = MSIS.Decrypt(config.DefaultPin.ToString(), "Default Users Pin");
+                            config.AdministrationPin = MSIS.Decrypt(config.AdministrationPin.ToString(), "Administration Pin");
+                        };
+                        ADDSUtils.LoadForests(config.Hosts.ActiveDirectoryHost.DomainName, config.Hosts.ActiveDirectoryHost.Account, config.Hosts.ActiveDirectoryHost.Password, config.Hosts.ActiveDirectoryHost.UseSSL, true);
+                        KeysManager.Initialize(config);  // Important
+                        RuntimeAuthProvider.LoadProviders(config);
+                        ClientSIDsProxy.Initialize(config);
+                    }
                 }
             }
             catch (Exception ex)
@@ -3631,11 +3642,13 @@ namespace Neos.IdentityServer.MultiFactor
                     SPPowerShell?.Dispose();
                 }
 
-                FileStream stm = new FileStream(pth, FileMode.Open, FileAccess.Read);
-                XmlConfigSerializer xmlserializer = new XmlConfigSerializer(typeof(MFAConfig));
-                using (StreamReader reader = new StreamReader(stm))
+                using (FileStream stm = new FileStream(pth, FileMode.Open, FileAccess.Read))
                 {
-                    config = (MFAConfig)xmlserializer.Deserialize(stm);
+                    XmlConfigSerializer xmlserializer = new XmlConfigSerializer(typeof(MFAConfig));
+                    using (StreamReader reader = new StreamReader(stm))
+                    {
+                        config = (MFAConfig)xmlserializer.Deserialize(stm);
+                    }
                 }
             }
             catch (Exception ex)
@@ -3688,35 +3701,37 @@ namespace Neos.IdentityServer.MultiFactor
                     };
                 }
                 config.LastUpdated = DateTime.UtcNow;
-                FileStream stm = new FileStream(pth, FileMode.CreateNew, FileAccess.ReadWrite);
-                XmlConfigSerializer xmlserializer = new XmlConfigSerializer(typeof(MFAConfig));
-                stm.Position = 0;
-                using (StreamReader reader = new StreamReader(stm))
+                using (FileStream stm = new FileStream(pth, FileMode.CreateNew, FileAccess.ReadWrite))
                 {
-                    xmlserializer.Serialize(stm, config);
-                }
-                try
-                {
-                    SPRunSpace = RunspaceFactory.CreateRunspace();
+                    XmlConfigSerializer xmlserializer = new XmlConfigSerializer(typeof(MFAConfig));
+                    stm.Position = 0;
+                    using (StreamReader reader = new StreamReader(stm))
+                    {
+                        xmlserializer.Serialize(stm, config);
+                    }
+                    try
+                    {
+                        SPRunSpace = RunspaceFactory.CreateRunspace();
 
-                    SPPowerShell = PowerShell.Create();
-                    SPPowerShell.Runspace = SPRunSpace;
-                    SPRunSpace.Open();
+                        SPPowerShell = PowerShell.Create();
+                        SPPowerShell.Runspace = SPRunSpace;
+                        SPRunSpace.Open();
 
-                    Pipeline pipeline = SPRunSpace.CreatePipeline();
-                    Command exportcmd = new Command("Import-AdfsAuthenticationProviderConfigurationData", false);
-                    CommandParameter NParam = new CommandParameter("Name", "MultifactorAuthenticationProvider");
-                    exportcmd.Parameters.Add(NParam);
-                    CommandParameter PParam = new CommandParameter("FilePath", pth);
-                    exportcmd.Parameters.Add(PParam);
-                    pipeline.Commands.Add(exportcmd);
-                    Collection<PSObject> PSOutput = pipeline.Invoke();
+                        Pipeline pipeline = SPRunSpace.CreatePipeline();
+                        Command exportcmd = new Command("Import-AdfsAuthenticationProviderConfigurationData", false);
+                        CommandParameter NParam = new CommandParameter("Name", "MultifactorAuthenticationProvider");
+                        exportcmd.Parameters.Add(NParam);
+                        CommandParameter PParam = new CommandParameter("FilePath", pth);
+                        exportcmd.Parameters.Add(PParam);
+                        pipeline.Commands.Add(exportcmd);
+                        Collection<PSObject> PSOutput = pipeline.Invoke();
 
-                }
-                finally
-                {
-                    SPRunSpace?.Close();
-                    SPPowerShell?.Dispose();
+                    }
+                    finally
+                    {
+                        SPRunSpace?.Close();
+                        SPPowerShell?.Dispose();
+                    }
                 }
             }
             catch (Exception ex)

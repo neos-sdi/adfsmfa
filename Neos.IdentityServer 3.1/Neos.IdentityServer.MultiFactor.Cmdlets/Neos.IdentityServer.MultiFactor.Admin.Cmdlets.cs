@@ -1840,6 +1840,8 @@ namespace MFA
     [PrimaryServerRequired, ConfigurationRightsRequired, NotRemotable, AdministrationPin]
     public sealed class ExportMFASystemConfiguration : MFACmdlet
     {
+        private bool _fordebug = false;
+
         /// <summary>
         /// <para type="description">Set the name of the export file.</para>
         /// ExportFilePath property
@@ -1849,6 +1851,17 @@ namespace MFA
         {
             get;
             set;
+        }
+
+        /// <summary>
+        /// <para type="description">Disable RSA key Reset for MFA Passwords.</para>
+        /// NoRSAKeyReset property
+        /// </summary>
+        [Parameter(Mandatory = false, ParameterSetName = "Data")]
+        public SwitchParameter ForDebug
+        {
+            get { return _fordebug; }
+            set { _fordebug = value; }
         }
 
         /// <summary>
@@ -1878,7 +1891,7 @@ namespace MFA
                 {
                     PSHost hh = GetHostForVerbose();
                     ADFSServiceManager svc = ManagementService.ADFSManager;
-                    svc.ExportMFAProviderConfiguration(hh, ExportFilePath);
+                    svc.ExportMFAProviderConfiguration(hh, ExportFilePath, ForDebug);
                     this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosSystemExported, ExportFilePath));
                 }
             }

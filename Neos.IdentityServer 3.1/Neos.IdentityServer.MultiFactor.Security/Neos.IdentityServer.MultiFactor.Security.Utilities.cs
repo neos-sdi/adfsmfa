@@ -95,20 +95,22 @@ namespace Neos.IdentityServer.MultiFactor
                     SPPowerShell?.Dispose();
                 }
 
-                FileStream stm = new FileStream(pth, FileMode.Open, FileAccess.Read);
-                XmlConfigSerializer xmlserializer = new XmlConfigSerializer(typeof(MFAConfig));
-                using (StreamReader reader = new StreamReader(stm))
+                using (FileStream stm = new FileStream(pth, FileMode.Open, FileAccess.Read))
                 {
-                    config = (MFAConfig)xmlserializer.Deserialize(stm);
-                    using (SystemEncryption MSIS = new SystemEncryption())
-                    {                        
-                        config.KeysConfig.XORSecret = MSIS.Decrypt(config.KeysConfig.XORSecret, "Pass Phrase Encryption");
-                        config.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(config.Hosts.ActiveDirectoryHost.Password, "ADDS Super Account Password");
-                        config.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(config.Hosts.SQLServerHost.SQLPassword, "SQL Super Account Password");
-                        config.MailProvider.Password = MSIS.Decrypt(config.MailProvider.Password, "Mail Provider Account Password");
-                        config.DefaultPin = MSIS.Decrypt(config.DefaultPin, "Default Users Pin");
-                        config.AdministrationPin = MSIS.Decrypt(config.AdministrationPin, "Administration Pin");
-                    };
+                    XmlConfigSerializer xmlserializer = new XmlConfigSerializer(typeof(MFAConfig));
+                    using (StreamReader reader = new StreamReader(stm))
+                    {
+                        config = (MFAConfig)xmlserializer.Deserialize(stm);
+                        using (SystemEncryption MSIS = new SystemEncryption())
+                        {
+                            config.KeysConfig.XORSecret = MSIS.Decrypt(config.KeysConfig.XORSecret, "Pass Phrase Encryption");
+                            config.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(config.Hosts.ActiveDirectoryHost.Password, "ADDS Super Account Password");
+                            config.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(config.Hosts.SQLServerHost.SQLPassword, "SQL Super Account Password");
+                            config.MailProvider.Password = MSIS.Decrypt(config.MailProvider.Password, "Mail Provider Account Password");
+                            config.DefaultPin = MSIS.Decrypt(config.DefaultPin, "Default Users Pin");
+                            config.AdministrationPin = MSIS.Decrypt(config.AdministrationPin, "Administration Pin");
+                        };
+                    }
                 }
             }
             catch (Exception ex)

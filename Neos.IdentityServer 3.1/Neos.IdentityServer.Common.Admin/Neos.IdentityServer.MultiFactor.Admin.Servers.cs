@@ -482,40 +482,43 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             string pth = Path.GetTempPath() + Path.GetRandomFileName();
             try
             {
-                FileStream stm = new FileStream(pth, FileMode.CreateNew, FileAccess.ReadWrite);
-                XmlConfigSerializer xmlserializer = new XmlConfigSerializer(typeof(MFAConfig));
-                stm.Position = 0;
-                using (StreamReader reader = new StreamReader(stm))
+                using (FileStream stm = new FileStream(pth, FileMode.CreateNew, FileAccess.ReadWrite))
                 {
-                    xmlserializer.Serialize(stm, Config);
-                }
-                try
-                {
-                    SPRunSpace = RunspaceFactory.CreateRunspace();
+                    XmlConfigSerializer xmlserializer = new XmlConfigSerializer(typeof(MFAConfig));
+                    stm.Position = 0;
+                    using (StreamReader reader = new StreamReader(stm))
+                    {
+                        xmlserializer.Serialize(stm, Config);
+                        try
+                        {
+                            SPRunSpace = RunspaceFactory.CreateRunspace();
 
-                    SPPowerShell = PowerShell.Create();
-                    SPPowerShell.Runspace = SPRunSpace;
-                    SPRunSpace.Open();
+                            SPPowerShell = PowerShell.Create();
+                            SPPowerShell.Runspace = SPRunSpace;
+                            SPRunSpace.Open();
 
-                    Pipeline pipeline = SPRunSpace.CreatePipeline();
-                    Command exportcmd = new Command("Register-AdfsAuthenticationProvider", false);
-                    CommandParameter NParam = new CommandParameter("Name", "MultiFactorAuthenticationProvider");
-                    exportcmd.Parameters.Add(NParam);
-                    CommandParameter TParam = new CommandParameter("TypeName", "Neos.IdentityServer.MultiFactor.AuthenticationProvider, Neos.IdentityServer.MultiFactor, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey());
-                    exportcmd.Parameters.Add(TParam);
-                    CommandParameter PParam = new CommandParameter("ConfigurationFilePath", pth);
-                    exportcmd.Parameters.Add(PParam);
-                    pipeline.Commands.Add(exportcmd);
-                    Collection<PSObject> PSOutput = pipeline.Invoke();
-                    if (Host != null)
-                        Host.UI.WriteVerboseLine(DateTime.Now.ToLongTimeString() + " MFA System : Registered");
-                }
-                finally
-                {
-                    if (SPRunSpace != null)
-                        SPRunSpace.Close();
-                    if (SPPowerShell != null)
-                        SPPowerShell.Dispose();
+                            Pipeline pipeline = SPRunSpace.CreatePipeline();
+                            Command exportcmd = new Command("Register-AdfsAuthenticationProvider", false);
+                            CommandParameter NParam = new CommandParameter("Name", "MultiFactorAuthenticationProvider");
+                            exportcmd.Parameters.Add(NParam);
+                            CommandParameter TParam = new CommandParameter("TypeName", "Neos.IdentityServer.MultiFactor.AuthenticationProvider, Neos.IdentityServer.MultiFactor, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey());
+                            exportcmd.Parameters.Add(TParam);
+                            CommandParameter PParam = new CommandParameter("ConfigurationFilePath", pth);
+                            exportcmd.Parameters.Add(PParam);
+                            pipeline.Commands.Add(exportcmd);
+                            Collection<PSObject> PSOutput = pipeline.Invoke();
+                            if (Host != null)
+                                Host.UI.WriteVerboseLine(DateTime.Now.ToLongTimeString() + " MFA System : Registered");
+                        }
+                        finally
+                        {
+                            if (SPRunSpace != null)
+                                SPRunSpace.Close();
+                            if (SPPowerShell != null)
+                                SPPowerShell.Dispose();
+                        }
+
+                    }
                 }
             }
             finally
@@ -565,7 +568,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// internalExportConfiguration method implmentation
         /// </summary>
-        private void InternalExportConfiguration(PSHost Host, string backupfile)
+        private void InternalExportConfiguration(PSHost Host, string backupfile, bool forDebug = false)
         {
             Runspace SPRunSpace = null;
             PowerShell SPPowerShell = null;
@@ -599,6 +602,79 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     SPRunSpace.Close();
                 if (SPPowerShell != null)
                     SPPowerShell.Dispose();
+                if (forDebug)
+                {
+                    InternalStripConfigSensitiveInformations(pth);                    
+                    if (Host != null)
+                        Host.UI.WriteVerboseLine(DateTime.Now.ToLongTimeString() + " MFA Debug Configuration saved to => " + pth+".debug");
+                }
+            }
+        }
+
+        /// <summary>
+        /// StripConfigSensitiveInformations
+        /// </summary>
+        private void InternalStripConfigSensitiveInformations(string backupFile)
+        {
+            MFAConfig config = null;
+            using (FileStream stm = new FileStream(backupFile, FileMode.Open, FileAccess.Read))
+            {
+                XmlConfigSerializer xmlserializer = new XmlConfigSerializer(typeof(MFAConfig));
+                using (StreamReader reader = new StreamReader(stm))
+                {
+                    config = (MFAConfig)xmlserializer.Deserialize(stm);
+                    config.AdministrationPin = string.IsNullOrEmpty(config.AdministrationPin) ? string.Empty : "0007";
+                    config.DefaultPin = string.IsNullOrEmpty(config.DefaultPin) ? string.Empty : "0007";
+                    config.Issuer = string.IsNullOrEmpty(config.Issuer) ? string.Empty : "Fake Issuer";
+                    config.AdminContact = string.IsNullOrEmpty(config.AdminContact) ? string.Empty : "Fake@Contact.com";
+                    config.Hosts.SQLServerHost.ConnectionString = string.IsNullOrEmpty(config.Hosts.SQLServerHost.ConnectionString) ? string.Empty : "Fake ConnectionString";
+                    config.Hosts.SQLServerHost.SQLPassword = string.IsNullOrEmpty(config.Hosts.SQLServerHost.SQLPassword) ? string.Empty : "Fake SQL Password";
+                    config.Hosts.SQLServerHost.SQLAccount = string.IsNullOrEmpty(config.Hosts.SQLServerHost.SQLAccount) ? string.Empty : "Fake SQL Account";
+                    config.Hosts.ActiveDirectoryHost.DomainAddress = string.IsNullOrEmpty(config.Hosts.ActiveDirectoryHost.DomainAddress) ? string.Empty : "Fake Domain Address";
+                    config.Hosts.ActiveDirectoryHost.Account = string.IsNullOrEmpty(config.Hosts.ActiveDirectoryHost.Account) ? string.Empty : "Fake Domain Account";
+                    config.Hosts.ActiveDirectoryHost.Password = string.IsNullOrEmpty(config.Hosts.ActiveDirectoryHost.Password) ? string.Empty : "Fake Domain Password";
+                    config.Hosts.CustomStoreHost.Parameters.Value = string.IsNullOrEmpty(config.Hosts.CustomStoreHost.Parameters.Value) ? string.Empty : "Fake Parameters";
+                    config.Hosts.ADFSFarm.FarmIdentifier = string.IsNullOrEmpty(config.Hosts.ADFSFarm.FarmIdentifier) ? string.Empty : "Fake Farm Identifier";
+                    int i = 1;
+                    foreach (var s in config.Hosts.ADFSFarm.Servers)
+                    {
+                        s.FQDN = string.Format("Fake Server{0} FQDN", i);
+                        i++;
+                    }
+                    config.KeysConfig.XORSecret = "Fake Encryption Key";
+                    config.KeysConfig.CustomParameters.Value = string.IsNullOrEmpty(config.KeysConfig.CustomParameters.Value) ? string.Empty : "Fake Parameters";
+                    config.OTPProvider.Parameters.Value = string.IsNullOrEmpty(config.OTPProvider.Parameters.Value) ? string.Empty : "Fake Parameters";
+                    config.MailProvider.Parameters.Value = string.IsNullOrEmpty(config.MailProvider.Parameters.Value) ? string.Empty : "Fake Parameters";
+                    config.MailProvider.From = string.IsNullOrEmpty(config.MailProvider.From) ? string.Empty : "Fake From";
+                    config.MailProvider.UserName = string.IsNullOrEmpty(config.MailProvider.UserName) ? string.Empty : "Fake Account";
+                    config.MailProvider.Password = string.IsNullOrEmpty(config.MailProvider.Password) ? string.Empty : "Fake Password";
+                    config.MailProvider.Host = string.IsNullOrEmpty(config.MailProvider.Host) ? string.Empty : "Fake Host";
+                    config.MailProvider.Company = string.IsNullOrEmpty(config.MailProvider.Company) ? string.Empty : "Fake Company";
+                    if (config.MailProvider.AllowedDomains.Count != 0)
+                    {
+                        config.MailProvider.AllowedDomains.Clear();
+                        config.MailProvider.AllowedDomains.Add("Fake Domain List");
+                    }
+                    if (config.MailProvider.BlockedDomains.Count != 0)
+                    {
+                        config.MailProvider.BlockedDomains.Clear();
+                        config.MailProvider.BlockedDomains.Add("Fake Domain List");
+                    }
+                    config.ExternalProvider.Parameters.Value = string.IsNullOrEmpty(config.ExternalProvider.Parameters.Value) ? string.Empty : "Fake Parameters";
+                    config.AzureProvider.Parameters.Value = string.IsNullOrEmpty(config.AzureProvider.Parameters.Value) ? string.Empty : "Fake Parameters";
+                    config.AzureProvider.TenantId = string.IsNullOrEmpty(config.AzureProvider.TenantId) ? string.Empty : "Fake TenanId";
+                    config.WebAuthNProvider.Parameters.Value = string.IsNullOrEmpty(config.WebAuthNProvider.Parameters.Value) ? string.Empty : "Fake Parameters";
+                    config.WebAuthNProvider.Configuration.ServerDomain = string.IsNullOrEmpty(config.WebAuthNProvider.Configuration.ServerDomain) ? string.Empty : "Fake Domain";
+                    config.WebAuthNProvider.Configuration.Origin = string.IsNullOrEmpty(config.WebAuthNProvider.Configuration.Origin) ? string.Empty : "Fake Origin";
+                }
+            }
+            using (FileStream stm2 = new FileStream(backupFile, FileMode.Create, FileAccess.ReadWrite))
+            {
+                XmlConfigSerializer xmlserializer2 = new XmlConfigSerializer(typeof(MFAConfig));
+                using (StreamWriter writer = new StreamWriter(stm2))
+                {
+                    xmlserializer2.Serialize(stm2, config);
+                }
             }
         }
 
@@ -1172,9 +1248,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// ExportMFAProviderConfiguration method implementation
         /// </summary>
-        public void ExportMFAProviderConfiguration(PSHost Host, string exportfilepath)
+        public void ExportMFAProviderConfiguration(PSHost Host, string exportfilepath, bool forDebug = false)
         {
-            InternalExportConfiguration(Host, exportfilepath);
+            InternalExportConfiguration(Host, exportfilepath, forDebug);
         }
 
         /// <summary>

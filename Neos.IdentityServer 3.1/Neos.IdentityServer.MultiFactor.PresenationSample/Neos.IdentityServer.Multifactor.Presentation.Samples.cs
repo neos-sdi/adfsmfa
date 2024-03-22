@@ -452,19 +452,25 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                             {
                                 default:
                                 case PreferredMethod.Code:
-                                    if (usercontext.KeyStatus == SecretKeyStatus.Success)
+                                    if (itm.IsAvailableForUser(usercontext))
                                         value = "OK";
                                     else
                                         value = "None";
                                     break;
                                 case PreferredMethod.Email:
-                                    value = Utilities.StripEmailAddress(usercontext.MailAddress);
+                                    if (itm.IsAvailableForUser(usercontext))
+                                        value = Utilities.StripEmailAddress(usercontext.MailAddress);
+                                    else
+                                        value = string.Empty;
                                     break;
                                 case PreferredMethod.External:
-                                    value = Utilities.StripPhoneNumber(usercontext.PhoneNumber);
+                                    if (itm.IsAvailableForUser(usercontext))
+                                        value = Utilities.StripPhoneNumber(usercontext.PhoneNumber);
+                                    else
+                                        value = string.Empty;
                                     break;
                                 case PreferredMethod.Biometrics:
-                                    if (usercontext.KeyStatus == SecretKeyStatus.Success)
+                                    if (itm.IsAvailableForUser(usercontext))
                                         value = "OK";
                                     else
                                         value = "None";
@@ -645,19 +651,25 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                             {
                                 default:
                                 case PreferredMethod.Code:
-                                    if (usercontext.KeyStatus == SecretKeyStatus.Success)
+                                    if (itm.IsAvailableForUser(usercontext))
                                         value = "OK";
                                     else
                                         value = "None";
                                     break;
                                 case PreferredMethod.Email:
-                                    value = Utilities.StripEmailAddress(usercontext.MailAddress);
+                                    if (itm.IsAvailableForUser(usercontext))
+                                        value = Utilities.StripEmailAddress(usercontext.MailAddress);
+                                    else
+                                        value = string.Empty;
                                     break;
                                 case PreferredMethod.External:
-                                    value = Utilities.StripPhoneNumber(usercontext.PhoneNumber);
+                                    if (itm.IsAvailableForUser(usercontext))
+                                        value = Utilities.StripPhoneNumber(usercontext.PhoneNumber);
+                                    else
+                                        value = string.Empty;
                                     break;
                                 case PreferredMethod.Biometrics:
-                                    if (usercontext.KeyStatus == SecretKeyStatus.Success)
+                                    if (itm.IsAvailableForUser(usercontext))
                                         value = "OK";
                                     else
                                         value = "None";
