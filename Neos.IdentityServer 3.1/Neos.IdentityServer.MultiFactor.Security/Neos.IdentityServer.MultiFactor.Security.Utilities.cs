@@ -101,17 +101,17 @@ namespace Neos.IdentityServer.MultiFactor
                     using (StreamReader reader = new StreamReader(stm))
                     {
                         config = (MFAConfig)xmlserializer.Deserialize(stm);
-                        using (SystemEncryption MSIS = new SystemEncryption())
-                        {
-                            config.KeysConfig.XORSecret = MSIS.Decrypt(config.KeysConfig.XORSecret, "Pass Phrase Encryption");
-                            config.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(config.Hosts.ActiveDirectoryHost.Password, "ADDS Super Account Password");
-                            config.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(config.Hosts.SQLServerHost.SQLPassword, "SQL Super Account Password");
-                            config.MailProvider.Password = MSIS.Decrypt(config.MailProvider.Password, "Mail Provider Account Password");
-                            config.DefaultPin = MSIS.Decrypt(config.DefaultPin, "Default Users Pin");
-                            config.AdministrationPin = MSIS.Decrypt(config.AdministrationPin, "Administration Pin");
-                        };
                     }
                 }
+                using (SystemEncryption MSIS = new SystemEncryption())
+                {
+                    config.KeysConfig.XORSecret = MSIS.Decrypt(config.KeysConfig.XORSecret, "Pass Phrase Encryption");
+                    config.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(config.Hosts.ActiveDirectoryHost.Password, "ADDS Super Account Password");
+                    config.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(config.Hosts.SQLServerHost.SQLPassword, "SQL Super Account Password");
+                    config.MailProvider.Password = MSIS.Decrypt(config.MailProvider.Password, "Mail Provider Account Password");
+                    config.DefaultPin = MSIS.Decrypt(config.DefaultPin, "Default Users Pin");
+                    config.AdministrationPin = MSIS.Decrypt(config.AdministrationPin, "Administration Pin");
+                };
             }
             catch (Exception ex)
             {
@@ -153,17 +153,17 @@ namespace Neos.IdentityServer.MultiFactor
                         using (StreamReader reader = new StreamReader(ms))
                         {
                             config = (MFAConfig)xmlserializer.Deserialize(ms);
-                            using (SystemEncryption MSIS = new SystemEncryption())
-                            {
-                                config.KeysConfig.XORSecret = MSIS.Decrypt(config.KeysConfig.XORSecret, "Pass Phrase Encryption");
-                                config.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(config.Hosts.ActiveDirectoryHost.Password, "ADDS Super Account Password");
-                                config.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(config.Hosts.SQLServerHost.SQLPassword, "SQL Super Account Password");
-                                config.MailProvider.Password = MSIS.Decrypt(config.MailProvider.Password, "Mail Provider Account Password");
-                                config.DefaultPin = MSIS.Decrypt(config.DefaultPin, "Default Users Pin");
-                                config.AdministrationPin = MSIS.Decrypt(config.AdministrationPin, "Administration Pin");
-                            };
                         }
                     }
+                    using (SystemEncryption MSIS = new SystemEncryption())
+                    {
+                        config.KeysConfig.XORSecret = MSIS.Decrypt(config.KeysConfig.XORSecret, "Pass Phrase Encryption");
+                        config.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(config.Hosts.ActiveDirectoryHost.Password, "ADDS Super Account Password");
+                        config.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(config.Hosts.SQLServerHost.SQLPassword, "SQL Super Account Password");
+                        config.MailProvider.Password = MSIS.Decrypt(config.MailProvider.Password, "Mail Provider Account Password");
+                        config.DefaultPin = MSIS.Decrypt(config.DefaultPin, "Default Users Pin");
+                        config.AdministrationPin = MSIS.Decrypt(config.AdministrationPin, "Administration Pin");
+                    };
                 }
             }
             catch (Exception ex)
@@ -222,17 +222,17 @@ namespace Neos.IdentityServer.MultiFactor
                 using (StreamReader reader = new StreamReader(ms))
                 {
                     result = (MFAConfig)xmlserializer.Deserialize(ms);
-                    using (SystemEncryption MSIS = new SystemEncryption())
-                    {
-                        result.KeysConfig.XORSecret = MSIS.Decrypt(result.KeysConfig.XORSecret, "Pass Phrase Encryption");
-                        result.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(result.Hosts.ActiveDirectoryHost.Password, "ADDS Super Account Password");
-                        result.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(result.Hosts.SQLServerHost.SQLPassword, "SQL Super Account Password");
-                        result.MailProvider.Password = MSIS.Decrypt(result.MailProvider.Password, "Mail Provider Account Password");
-                        result.DefaultPin = MSIS.Decrypt(result.DefaultPin, "Default Users Pin");
-                        result.AdministrationPin = MSIS.Decrypt(result.AdministrationPin, "Administration Pin");
-                    };
                 }
             }
+            using (SystemEncryption MSIS = new SystemEncryption())
+            {
+                result.KeysConfig.XORSecret = MSIS.Decrypt(result.KeysConfig.XORSecret, "Pass Phrase Encryption");
+                result.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(result.Hosts.ActiveDirectoryHost.Password, "ADDS Super Account Password");
+                result.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(result.Hosts.SQLServerHost.SQLPassword, "SQL Super Account Password");
+                result.MailProvider.Password = MSIS.Decrypt(result.MailProvider.Password, "Mail Provider Account Password");
+                result.DefaultPin = MSIS.Decrypt(result.DefaultPin, "Default Users Pin");
+                result.AdministrationPin = MSIS.Decrypt(result.AdministrationPin, "Administration Pin");
+            };
             return result;
         }
         #endregion

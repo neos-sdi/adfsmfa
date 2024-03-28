@@ -3524,23 +3524,23 @@ namespace Neos.IdentityServer.MultiFactor
                     using (StreamReader reader = new StreamReader(stm))
                     {
                         config = (MFAConfig)xmlserializer.Deserialize(stm);
-                        if ((!config.OTPProvider.Enabled) && (!config.MailProvider.Enabled) && (!config.ExternalProvider.Enabled) && (!config.AzureProvider.Enabled))
-                            config.OTPProvider.Enabled = true;   // always let an active option eg : aplication in this case
-                        using (SystemEncryption MSIS = new SystemEncryption())
-                        {
-                            config.KeysConfig.XORSecret = MSIS.Decrypt(config.KeysConfig.XORSecret, "Pass Phrase Encryption");
-                            config.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(config.Hosts.ActiveDirectoryHost.Password, "ADDS Super Account Password");
-                            config.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(config.Hosts.SQLServerHost.SQLPassword, "SQL Super Account Password");
-                            config.MailProvider.Password = MSIS.Decrypt(config.MailProvider.Password, "Mail Provider Account Password");
-                            config.DefaultPin = MSIS.Decrypt(config.DefaultPin.ToString(), "Default Users Pin");
-                            config.AdministrationPin = MSIS.Decrypt(config.AdministrationPin.ToString(), "Administration Pin");
-                        };
-                        ADDSUtils.LoadForests(config.Hosts.ActiveDirectoryHost.DomainName, config.Hosts.ActiveDirectoryHost.Account, config.Hosts.ActiveDirectoryHost.Password, config.Hosts.ActiveDirectoryHost.UseSSL, true);
-                        KeysManager.Initialize(config);  // Important
-                        RuntimeAuthProvider.LoadProviders(config);
-                        ClientSIDsProxy.Initialize(config);
                     }
                 }
+                if ((!config.OTPProvider.Enabled) && (!config.MailProvider.Enabled) && (!config.ExternalProvider.Enabled) && (!config.AzureProvider.Enabled))
+                    config.OTPProvider.Enabled = true;   // always let an active option eg : aplication in this case
+                using (SystemEncryption MSIS = new SystemEncryption())
+                {
+                    config.KeysConfig.XORSecret = MSIS.Decrypt(config.KeysConfig.XORSecret, "Pass Phrase Encryption");
+                    config.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(config.Hosts.ActiveDirectoryHost.Password, "ADDS Super Account Password");
+                    config.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(config.Hosts.SQLServerHost.SQLPassword, "SQL Super Account Password");
+                    config.MailProvider.Password = MSIS.Decrypt(config.MailProvider.Password, "Mail Provider Account Password");
+                    config.DefaultPin = MSIS.Decrypt(config.DefaultPin.ToString(), "Default Users Pin");
+                    config.AdministrationPin = MSIS.Decrypt(config.AdministrationPin.ToString(), "Administration Pin");
+                };
+                ADDSUtils.LoadForests(config.Hosts.ActiveDirectoryHost.DomainName, config.Hosts.ActiveDirectoryHost.Account, config.Hosts.ActiveDirectoryHost.Password, config.Hosts.ActiveDirectoryHost.UseSSL, true);
+                KeysManager.Initialize(config);  // Important
+                RuntimeAuthProvider.LoadProviders(config);
+                ClientSIDsProxy.Initialize(config);
             }
             catch (Exception ex)
             {
@@ -3582,22 +3582,22 @@ namespace Neos.IdentityServer.MultiFactor
                         using (StreamReader reader = new StreamReader(ms))
                         {
                             config = (MFAConfig)xmlserializer.Deserialize(ms);
-                            if ((!config.OTPProvider.Enabled) && (!config.MailProvider.Enabled) && (!config.ExternalProvider.Enabled) && (!config.AzureProvider.Enabled))
-                                config.OTPProvider.Enabled = true;   // always let an active option eg : aplication in this case
-                            using (SystemEncryption MSIS = new SystemEncryption())
-                            {
-                                config.KeysConfig.XORSecret = MSIS.Decrypt(config.KeysConfig.XORSecret, "Pass Phrase Encryption");
-                                config.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(config.Hosts.ActiveDirectoryHost.Password, "ADDS Super Account Password");
-                                config.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(config.Hosts.SQLServerHost.SQLPassword, "SQL Super Account Password");
-                                config.MailProvider.Password = MSIS.Decrypt(config.MailProvider.Password, "Mail Provider Account Password");
-                                config.DefaultPin = MSIS.Decrypt(config.DefaultPin, "Default Users Pin");
-                                config.AdministrationPin = MSIS.Decrypt(config.AdministrationPin, "Administration Pin");
-                            };
-                            ADDSUtils.LoadForests(config.Hosts.ActiveDirectoryHost.DomainName, config.Hosts.ActiveDirectoryHost.Account, config.Hosts.ActiveDirectoryHost.Password, config.Hosts.ActiveDirectoryHost.UseSSL, true);
-                            KeysManager.Initialize(config);  // Important
-                            RuntimeAuthProvider.LoadProviders(config);
                         }
                     }
+                    if ((!config.OTPProvider.Enabled) && (!config.MailProvider.Enabled) && (!config.ExternalProvider.Enabled) && (!config.AzureProvider.Enabled))
+                        config.OTPProvider.Enabled = true;   // always let an active option eg : aplication in this case
+                    using (SystemEncryption MSIS = new SystemEncryption())
+                    {
+                        config.KeysConfig.XORSecret = MSIS.Decrypt(config.KeysConfig.XORSecret, "Pass Phrase Encryption");
+                        config.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(config.Hosts.ActiveDirectoryHost.Password, "ADDS Super Account Password");
+                        config.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(config.Hosts.SQLServerHost.SQLPassword, "SQL Super Account Password");
+                        config.MailProvider.Password = MSIS.Decrypt(config.MailProvider.Password, "Mail Provider Account Password");
+                        config.DefaultPin = MSIS.Decrypt(config.DefaultPin, "Default Users Pin");
+                        config.AdministrationPin = MSIS.Decrypt(config.AdministrationPin, "Administration Pin");
+                    };
+                    ADDSUtils.LoadForests(config.Hosts.ActiveDirectoryHost.DomainName, config.Hosts.ActiveDirectoryHost.Account, config.Hosts.ActiveDirectoryHost.Password, config.Hosts.ActiveDirectoryHost.UseSSL, true);
+                    KeysManager.Initialize(config);  // Important
+                    RuntimeAuthProvider.LoadProviders(config);
                 }
                 return config;
             }
@@ -3709,29 +3709,29 @@ namespace Neos.IdentityServer.MultiFactor
                     {
                         xmlserializer.Serialize(stm, config);
                     }
-                    try
-                    {
-                        SPRunSpace = RunspaceFactory.CreateRunspace();
+                }
+                try
+                {
+                    SPRunSpace = RunspaceFactory.CreateRunspace();
 
-                        SPPowerShell = PowerShell.Create();
-                        SPPowerShell.Runspace = SPRunSpace;
-                        SPRunSpace.Open();
+                    SPPowerShell = PowerShell.Create();
+                    SPPowerShell.Runspace = SPRunSpace;
+                    SPRunSpace.Open();
 
-                        Pipeline pipeline = SPRunSpace.CreatePipeline();
-                        Command exportcmd = new Command("Import-AdfsAuthenticationProviderConfigurationData", false);
-                        CommandParameter NParam = new CommandParameter("Name", "MultifactorAuthenticationProvider");
-                        exportcmd.Parameters.Add(NParam);
-                        CommandParameter PParam = new CommandParameter("FilePath", pth);
-                        exportcmd.Parameters.Add(PParam);
-                        pipeline.Commands.Add(exportcmd);
-                        Collection<PSObject> PSOutput = pipeline.Invoke();
+                    Pipeline pipeline = SPRunSpace.CreatePipeline();
+                    Command exportcmd = new Command("Import-AdfsAuthenticationProviderConfigurationData", false);
+                    CommandParameter NParam = new CommandParameter("Name", "MultifactorAuthenticationProvider");
+                    exportcmd.Parameters.Add(NParam);
+                    CommandParameter PParam = new CommandParameter("FilePath", pth);
+                    exportcmd.Parameters.Add(PParam);
+                    pipeline.Commands.Add(exportcmd);
+                    Collection<PSObject> PSOutput = pipeline.Invoke();
 
-                    }
-                    finally
-                    {
-                        SPRunSpace?.Close();
-                        SPPowerShell?.Dispose();
-                    }
+                }
+                finally
+                {
+                    SPRunSpace?.Close();
+                    SPPowerShell?.Dispose();
                 }
             }
             catch (Exception ex)

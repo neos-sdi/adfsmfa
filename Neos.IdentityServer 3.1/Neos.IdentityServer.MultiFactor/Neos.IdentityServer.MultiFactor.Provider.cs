@@ -341,25 +341,25 @@ namespace Neos.IdentityServer.MultiFactor
                          XmlConfigSerializer xmlserializer = new XmlConfigSerializer(typeof(MFAConfig));
                          using (StreamReader reader = new StreamReader(stm))
                          {
-                             _config = (MFAConfig)xmlserializer.Deserialize(stm);
-                            CFGUtilities.WriteConfigurationToCache(_config, false);
-                            if ((!_config.OTPProvider.Enabled) && (!_config.MailProvider.Enabled) && (!_config.ExternalProvider.Enabled) && (!_config.AzureProvider.Enabled))
-                                 _config.OTPProvider.Enabled = true;   // always let an active option eg : aplication in this case
-                            using (SystemEncryption MSIS = new SystemEncryption())
-                            {
-                                _config.KeysConfig.XORSecret = MSIS.Decrypt(_config.KeysConfig.XORSecret, "Pass Phrase Encryption");
-                                _config.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(_config.Hosts.ActiveDirectoryHost.Password, "ADDS Super Account Password");
-                                _config.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(_config.Hosts.SQLServerHost.SQLPassword, "SQL Super Account Password");
-                                _config.MailProvider.Password = MSIS.Decrypt(_config.MailProvider.Password, "Mail Provider Account Password");
-                                _config.DefaultPin = MSIS.Decrypt(_config.DefaultPin.ToString(), "Default Users Pin");
-                                _config.AdministrationPin = MSIS.Decrypt(_config.AdministrationPin, "Administration Pin");
-                            };
-                            ADDSUtils.LoadForests(_config.Hosts.ActiveDirectoryHost.DomainName, _config.Hosts.ActiveDirectoryHost.Account, _config.Hosts.ActiveDirectoryHost.Password, _config.Hosts.ActiveDirectoryHost.UseSSL, true);
-                            KeysManager.Initialize(_config);  // Always Bind KeysManager Otherwise this is made in CFGUtilities.ReadConfiguration
-                            RuntimeAuthProvider.LoadProviders(_config); // Load Available providers
+                            _config = (MFAConfig)xmlserializer.Deserialize(stm);
                          }
-                         RuntimeRepository.MailslotServer.MailSlotMessageArrived += this.OnMessageArrived;
-                         RuntimeRepository.MailslotServer.Start();                         
+                         CFGUtilities.WriteConfigurationToCache(_config, false);
+                        if ((!_config.OTPProvider.Enabled) && (!_config.MailProvider.Enabled) && (!_config.ExternalProvider.Enabled) && (!_config.AzureProvider.Enabled))
+                                _config.OTPProvider.Enabled = true;   // always let an active option eg : aplication in this case
+                        using (SystemEncryption MSIS = new SystemEncryption())
+                        {
+                            _config.KeysConfig.XORSecret = MSIS.Decrypt(_config.KeysConfig.XORSecret, "Pass Phrase Encryption");
+                            _config.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(_config.Hosts.ActiveDirectoryHost.Password, "ADDS Super Account Password");
+                            _config.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(_config.Hosts.SQLServerHost.SQLPassword, "SQL Super Account Password");
+                            _config.MailProvider.Password = MSIS.Decrypt(_config.MailProvider.Password, "Mail Provider Account Password");
+                            _config.DefaultPin = MSIS.Decrypt(_config.DefaultPin.ToString(), "Default Users Pin");
+                            _config.AdministrationPin = MSIS.Decrypt(_config.AdministrationPin, "Administration Pin");
+                        };
+                        ADDSUtils.LoadForests(_config.Hosts.ActiveDirectoryHost.DomainName, _config.Hosts.ActiveDirectoryHost.Account, _config.Hosts.ActiveDirectoryHost.Password, _config.Hosts.ActiveDirectoryHost.UseSSL, true);
+                        KeysManager.Initialize(_config);  // Always Bind KeysManager Otherwise this is made in CFGUtilities.ReadConfiguration
+                        RuntimeAuthProvider.LoadProviders(_config); // Load Available providers
+                        RuntimeRepository.MailslotServer.MailSlotMessageArrived += this.OnMessageArrived;
+                        RuntimeRepository.MailslotServer.Start();                         
                         // CFGUtilities.WriteConfigurationToCache(_config);
                      }
                      catch (Exception ex)
