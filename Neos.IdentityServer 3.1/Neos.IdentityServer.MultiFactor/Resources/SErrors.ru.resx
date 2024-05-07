@@ -118,19 +118,19 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ErrorAccountActivate" xml:space="preserve">
-    <value>Доступ к этому приложению требует дополнительной аутентификации. &lt;br&gt;&lt;br&gt; Нажмите «Активировать», чтобы активировать свою учетную запись, или «Продолжить».!</value>
+    <value>Доступ к этому приложению требует дополнительной аутентификации. &lt;br&gt;&lt;br&gt; Нажмите «Активировать», чтобы активировать свою учетную запись, или «Продолжить».</value>
   </data>
   <data name="ErrorAccountAdminAuthorized" xml:space="preserve">
-    <value>Авторизованный доступ! дополнительная аутентификация еще не активирована. Пожалуйста, свяжитесь с вашими администраторами.</value>
+    <value>Авторизованный доступ! Дополнительная аутентификация ещё не активирована. Пожалуйста, свяжитесь с командой технической поддержки.</value>
   </data>
   <data name="ErrorAccountAdminNotEnabled" xml:space="preserve">
-    <value>Несанкционированный доступ! дополнительная аутентификация еще не активирована. &lt;br&gt;&lt;br&gt; Пожалуйста, свяжитесь с вашими администраторами.</value>
+    <value>Несанкционированный доступ! Дополнительная аутентификация еще не активирована. &lt;br&gt;&lt;br&gt; Пожалуйста, свяжитесь с командой технической поддержки..</value>
   </data>
   <data name="ErrorAccountAuthorized" xml:space="preserve">
     <value>Доступ к этому приложению требует дополнительной аутентификации. &lt;br&gt;&lt;br&gt; Нажмите «Регистрация», чтобы продолжить.</value>
   </data>
   <data name="ErrorAccountNoAccess" xml:space="preserve">
-    <value>Несанкционированный доступ ! Пожалуйста, свяжитесь с вашими администраторами!</value>
+    <value>Несанкционированный доступ! Пожалуйста, свяжитесь с командой технической поддержки!</value>
   </data>
   <data name="ErrorAccountNotEnabled" xml:space="preserve">
     <value>Доступ к этому приложению требует дополнительной аутентификации, которая в настоящее время не активирована. &lt;br&gt;&lt;br&gt; нажмите на «Запрос регистрации».!</value>
@@ -148,43 +148,40 @@
     <value>Неправильно. Пожалуйста, попробуйте еще раз.</value>
   </data>
   <data name="ErrorInvalidKey" xml:space="preserve">
-    <value>Неверный секретный ключ</value>
+    <value>Неверный код безопасности</value>
   </data>
   <data name="ErrorInvalidPassword" xml:space="preserve">
     <value>Операция отменена, пароль неверен!</value>
   </data>
   <data name="ErrorInvalidPhoneException" xml:space="preserve">
-    <value>Неверный формат номера телефона</value>
+    <value>Некорректный формат номера телефона</value>
   </data>
   <data name="ErrorLoadingConfigurationFile" xml:space="preserve">
     <value>Ошибка при загрузке конфигурации {0}</value>
   </data>
   <data name="ErrorLoadingConfigurationFileNotFound" xml:space="preserve">
-    <value>Ошибка загрузки Конфигурация файл : Не найдено!</value>
+    <value>Ошибка загрузки файла конфигурации: Не найден!</value>
   </data>
   <data name="ErrorLoadingUserRegistration" xml:space="preserve">
-    <value>Ошибка загрузки Регистрация пользователей! 
+    <value>Ошибка при регистрации пользователя! 
 {0}</value>
   </data>
   <data name="ErrorPinLength" xml:space="preserve">
-    <value>Недействительная длина PIN-кода, требуется {0} номеров!</value>
+    <value>Неверная длина PIN-кода, требуется {0} номеров!</value>
   </data>
   <data name="ErrorPinValue" xml:space="preserve">
-    <value>Недействительное значение PIN-кода!</value>
+    <value>Неверное значение PIN-кода!</value>
   </data>
   <data name="ErrorReplayToken" xml:space="preserve">
-    <value>Ошибка во время аутентификации ! Один раз пароль был сыгран раньше</value>
+    <value>Ошибка во время аутентификации! Одноразовый код безопасности уже был использован ранее!</value>
   </data>
   <data name="ErrorSendingToastInformation" xml:space="preserve">
     <value>Ошибка при отправке запроса на идентификацию!</value>
   </data>
-  <data name="ErrorValidationTimeWindowElapsed" xml:space="preserve">
-    <value>Время проверки окна прошло.</value>
-  </data>
   <data name="ErrorSendingToastInformationRetry" xml:space="preserve">
-    <value>Ошибка при отправке запроса на идентификацию! пожалуйста, попробуйте еще раз.</value>
+    <value>Ошибка при отправке запроса на идентификацию! Повтор!</value>
   </data>
-  <data name="ErrorPasswordExpired" xml:space="preserve">
-    <value>Пароль для {0} истек ! Доступ отказано !</value>
+  <data name="ErrorValidationTimeWindowElapsed" xml:space="preserve">
+    <value>Время проверки превышено</value>
   </data>
 </root>

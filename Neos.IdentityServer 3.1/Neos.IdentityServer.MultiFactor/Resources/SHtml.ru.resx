@@ -133,7 +133,7 @@
     <value>Режим аутентификации по умолчанию</value>
   </data>
   <data name="HtmlCHOOSEOptionSendCode" xml:space="preserve">
-    <value>Отправить код</value>
+    <value>Отправить код безопасности</value>
   </data>
   <data name="HtmlEnrollBiometric" xml:space="preserve">
     <value>Зарегистрируйте биометрическое устройство</value>
@@ -142,52 +142,52 @@
     <value>Зарегистрируйте биометрическое устройство</value>
   </data>
   <data name="HtmlEnrollOTP" xml:space="preserve">
-    <value>Зарегистрируйте мое приложение проверки подлинности</value>
+    <value>Регистрация через приложение проверки подлинности</value>
   </data>
   <data name="HtmlEnrollPhone" xml:space="preserve">
-    <value>Зарегистрируйте свой телефон</value>
+    <value>Регистрация через мой телефон</value>
   </data>
   <data name="HtmlEnrollPinCode" xml:space="preserve">
-    <value>Установите ПИН-код</value>
+    <value>Установите PIN-код</value>
   </data>
   <data name="HtmlEnrollPinTaskLabel" xml:space="preserve">
-    <value>Установка ПИН-кода</value>
+    <value>Установка PIN-кода</value>
   </data>
   <data name="HtmlErrorRestartSession" xml:space="preserve">
-    <value>неправильно идентификации, пожалуйста, перезапустите сеанс</value>
+    <value>Идентификация не пройдена, пожалуйста, перезапустите сеанс</value>
   </data>
   <data name="HtmlINSRequest" xml:space="preserve">
     <value>Отправить запрос</value>
   </data>
   <data name="HtmlINSWaitRequest" xml:space="preserve">
-    <value>Отправка запроса на надписи по электронной почте администраторам</value>
+    <value>Отправка запроса по электронной почте команде технической поддержки</value>
   </data>
   <data name="HtmlLabelVERIFYOTPOK" xml:space="preserve">
-    <value>отделка</value>
+    <value>Завершить</value>
   </data>
   <data name="HtmlLabelVERIFYOTPPRIOR" xml:space="preserve">
-    <value>Nредыдущий</value>
+    <value>Назад</value>
   </data>
   <data name="HtmlLabelWREGOTP" xml:space="preserve">
-    <value>Вы должны иметь приложение проверки подлинности, такие как Microsoft Authenticator, Google Authenticator установлен на вашем устройстве, прежде чем вы можете продолжить и зарегистрировать свою учетную запись</value>
+    <value>Вы должны установить приложение проверки подлинности: Google Authenticator, Microsoft Authenticator или иное, рекомендованного командой технической поддержки, прежде чем Вы можете продолжить и зарегистрировать свою учетную запись</value>
   </data>
   <data name="HtmlLabelWREGOTPWarning" xml:space="preserve">
-    <value>Продолжая, ваш текущий ключ будет признан недействительным и сбросить</value>
+    <value>Продолжая, ваш текущий ключ будет признан недействительным и сброшен</value>
   </data>
   <data name="HtmlLabelWREmail" xml:space="preserve">
-    <value>Вы должны ввести адрес электронной почты, чтобы подтвердить свой identiy. Это письмо должно быть доступным без проверки предприятия (личный адрес электронной почты)</value>
+    <value>Вы должны ввести адрес электронной почты, чтобы подтвердить свои учётные данные. Получение письма должно быть достижимо без необходимости дополнительной проверки предприятием (личный адрес электронной почты)</value>
   </data>
   <data name="HtmlLabelWRPhone" xml:space="preserve">
-    <value>Чтобы подтвердить свою личность, необходимо ввести свой номер телефона. Этот телефон должен быть довисто.</value>
+    <value>Чтобы подтвердить свои учётные данные, необходимо ввести свой номер телефона. Этот телефон должен быть в пределах доступности.</value>
   </data>
   <data name="HtmlLabelWRPinCode" xml:space="preserve">
-    <value>Для подтверждения вашей личности необходимо ввести секретный код ({0} цифры). Не используйте коды вашей банковской карты или телефона, а также сведения о дате рождения.</value>
+    <value>Для подтверждения своих учётных данных необходимо ввести секретный код безопасности ({0} цифры). Не используйте коды Вашей банковской карты или телефона, а также сведения о дате рождения.</value>
   </data>
   <data name="HtmlLabelWRQRCode" xml:space="preserve">
-    <value>Сканирование кода с помощью приложения TOTP, такого как Microsoft Authenticator, Google Authenticator для регистрации вашей учетной записи</value>
+    <value>Сканирование QR-кода с помощью приложения проверки подлинности: Google Authenticator, Microsoft Authenticator или иного, рекомендованного командой технической поддержки, для регистрации своей учетной записи</value>
   </data>
   <data name="HtmlLabelWVERIFYOTP" xml:space="preserve">
-    <value>продолжать</value>
+    <value>Продолжить</value>
   </data>
   <data name="HtmlPWDCancel" xml:space="preserve">
     <value>Отмена</value>
@@ -199,7 +199,7 @@
     <value>Новый пароль</value>
   </data>
   <data name="HtmlPWDLabelNewConfirmation" xml:space="preserve">
-    <value>Подтверждение пароля</value>
+    <value>Подтвердить пароль</value>
   </data>
   <data name="HtmlPWDSave" xml:space="preserve">
     <value>Сохранить</value>
@@ -227,19 +227,19 @@
     <value>Доступ к моим опциям после проверки подлинности</value>
   </data>
   <data name="HtmlUIMCheck" xml:space="preserve">
-    <value>Nроверка</value>
+    <value>Проверить</value>
   </data>
   <data name="HtmlUIMConnexion" xml:space="preserve">
     <value>Войти</value>
   </data>
   <data name="HtmlUIMDisableMFA" xml:space="preserve">
-    <value>Отключить многофакторную аутентификацию</value>
+    <value>Отключить многофакторную аутентификацию (MFA)</value>
   </data>
   <data name="HtmlUIMGotoInscription" xml:space="preserve">
-    <value>Запрос на надпись</value>
+    <value>Запрос на подтверждение</value>
   </data>
   <data name="HtmlUIMGoToRegistration" xml:space="preserve">
-    <value>регистрация</value>
+    <value>Регистрация</value>
   </data>
   <data name="HtmlUIMOk" xml:space="preserve">
     <value>Ok</value>
@@ -254,65 +254,35 @@
     <value>PIN-код</value>
   </data>
   <data name="HtmlUIResultLabel" xml:space="preserve">
-    <value>Информация предоставлена :</value>
+    <value>Предоставлены следующие данные:</value>
   </data>
   <data name="HtmlLabelWRBiometrics" xml:space="preserve">
-    <value>Для подтверждения личности необходимо активировать биометрическое устройство (отпечаток пальца, распознавание лиц, NFC и т.д.).</value>
+    <value>Для подтверждения личности необходимо активировать биометрическое устройство (отпечаток пальца, распознавание лица, NFC и т.д.).</value>
   </data>
   <data name="HtmlLabelVERIFYOTPError" xml:space="preserve">
-    <value>Ваша учетная запись не действительна! &lt;br&gt;
-Вы можете попробовать операцию еще раз, выбрав "Предыдущий".</value>
+    <value>Ваша учетная запись недействительна! &lt;br&gt;
+Вы можете попробовать операцию еще раз, выбрав "Назад".</value>
   </data>
   <data name="HtmlLabelVERIFYOTPSuccess" xml:space="preserve">
     <value>Ваша учетная запись проверена! &lt;br&gt;
-Вы сможете использовать проверку МИД в будущем.</value>
+Вы теперь можете использовать мультифакторную проверку выбранным способом.</value>
   </data>
   <data name="HtmlLabelWRManageBiometrics" xml:space="preserve">
-    <value>Управляйте своими биометрическими устройствами. Выберите добавить, заменить или удалить отдельные устройства.!</value>
+    <value>Управляйте своими биометрическими устройствами. Выберите добавление, замену или удаление устройства.</value>
   </data>
   <data name="HtmlLabelWRAddBiometrics" xml:space="preserve">
     <value>Добавьте биометрическое устройство</value>
   </data>
   <data name="HtmlUIMRecordNewKey" xml:space="preserve">
-    <value>продолжать</value>
+    <value>Продолжить</value>
   </data>
   <data name="HtmlUINext" xml:space="preserve">
     <value>Игнорировать</value>
   </data>
   <data name="HtmlEnrollEmail" xml:space="preserve">
-    <value>Зарегистрируйте свой адрес электронной почты</value>
+    <value>Зарегистрируйте адрес своей электронной почты</value>
   </data>
   <data name="HtmlUIMNoCode" xml:space="preserve">
-    <value>Подпишитесь по-другому</value>
-  </data>
-  <data name="HtmlMustChangePassword" xml:space="preserve">
-    <value>Вам нужно изменить пароль до : &lt;br/&gt; {0}</value>
-  </data>
-  <data name="HtmlUIMNickNamesLabel" xml:space="preserve">
-    <value>Введите имя устройства</value>
-  </data>
-  <data name="HtmlUIMNickNamesMessage" xml:space="preserve">
-    <value>Введите имя биометрического устройства или оставьте пустоту, а затем выберите "Продолжить"</value>
-  </data>
-  <data name="HtmlUIMRegisterDevice" xml:space="preserve">
-    <value>Регистрация устройства</value>
-  </data>
-  <data name="HtmlUIMPauseForToday" xml:space="preserve">
-    <value>Больше не показывать это сообщение</value>
-  </data>
-  <data name="HtmlUIMYes" xml:space="preserve">
-    <value>Да</value>
-  </data>
-  <data name="HtmlUIMNo" xml:space="preserve">
-    <value>Нет</value>
-  </data>
-  <data name="HtmlUIMPauseLabel" xml:space="preserve">
-    <value>Оставайтесь на связи ?</value>
-  </data>
-  <data name="HtmlUIMPauseDescriptionToday" xml:space="preserve">
-    <value>Это позволяет уже сегодня прекратить подавать заявки на МИД.</value>
-  </data>
-  <data name="HtmlUIMPauseDescription" xml:space="preserve">
-    <value>Это позволяет перестать запрашивать МИД на {0} дней.</value>
+    <value>Другой способ аутентификации</value>
   </data>
 </root>
