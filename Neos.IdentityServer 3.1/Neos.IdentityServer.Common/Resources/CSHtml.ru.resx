@@ -118,10 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ADMINInscriptionEmail" xml:space="preserve">
-    <value>Мы отправили электронное письмо, содержащее регистрационную информацию.</value>
+    <value>Отправлено письмо по электронной почте, содержащее регистрационную информацию.</value>
   </data>
   <data name="ADMINKeyEmail" xml:space="preserve">
-    <value>Мы отправили вам электронное письмо с секретным ключом. (конфиденциально)</value>
+    <value>Отправлено письмо по электронной почте с секретным ключом (Конфиденциально)</value>
   </data>
   <data name="GLOBALListChoiceDefaultLabel" xml:space="preserve">
     <value>Используйте опцию по умолчанию</value>
@@ -133,19 +133,19 @@
     <value>Введите свой PIN-код</value>
   </data>
   <data name="GLOBALUIPINLabel" xml:space="preserve">
-    <value>Зарегистрируйте свой Пин-код</value>
+    <value>Зарегистрируйте свой PIN-код</value>
   </data>
   <data name="GLOBALWarnOverNetwork" xml:space="preserve">
     <value>(Данные передаются через Интернет)</value>
   </data>
   <data name="GLOBALWarnThirdParty" xml:space="preserve">
-    <value>(аутентификация выполняется третьей стороной)</value>
+    <value>(Аутентификация выполняется внешним сервисом)</value>
   </data>
   <data name="MAILUIEnrollValidatedLabel" xml:space="preserve">
-    <value>Учетная запись проверена&lt;br&gt;&lt;br&gt;Теперь вы можете использовать свой почтовый адрес для проверки подлинности</value>
+    <value>Учетная запись проверена&lt;br&gt;&lt;br&gt;Теперь Вы можете использовать адрес электронной почты для проверки подлинности</value>
   </data>
   <data name="MAILUIMessage" xml:space="preserve">
-    <value>Мы отправили электронное письмо, содержащее код проверки.</value>
+    <value>Мы отправили письмо на Ваш адрес электронной почты, содержащее код безопасности для проверки.</value>
   </data>
   <data name="MAILUIOTPLabel" xml:space="preserve">
     <value>Введите код</value>
@@ -154,19 +154,19 @@
     <value>Зарегистрируйте свой адрес электронной почты</value>
   </data>
   <data name="OTPUICFGLabel" xml:space="preserve">
-    <value>Код доступа к единому использованию</value>
+    <value>Одноразовый код безопасности</value>
   </data>
   <data name="OTPUIChoiceLabel" xml:space="preserve">
-    <value>Используйте мое приложение проверки подлинности</value>
+    <value>Используйте приложение проверки подлинности</value>
   </data>
   <data name="OTPUIConfigLabel" xml:space="preserve">
-    <value>Используйте мое приложение проверки подлинности</value>
+    <value>Используйте приложение проверки подлинности</value>
   </data>
   <data name="OTPUIEnrollTaskLabel" xml:space="preserve">
-    <value>Зарегистрировать приложение проверки подлинности</value>
+    <value>Зарегистрироваться в приложении проверки подлинности</value>
   </data>
   <data name="OTPUIEnrollValidatedLabel" xml:space="preserve">
-    <value>Проверка учетной записи&lt;br&gt;&lt;br&gt;Теперь вы можете использовать приложение для проверки подлинности</value>
+    <value>Проверка учетной записи&lt;br&gt;&lt;br&gt;Теперь Вы можете использовать приложение для проверки подлинности</value>
   </data>
   <data name="OTPUIListChoiceLabel" xml:space="preserve">
     <value>Используйте приложение проверки подлинности</value>
@@ -181,31 +181,31 @@
     <value>Введите код</value>
   </data>
   <data name="OTPUIWIZLabel" xml:space="preserve">
-    <value>Регистрация приложения для проверки подлинности</value>
+    <value>Регистрация в приложении для проверки подлинности</value>
   </data>
   <data name="OTPWIZEnroll" xml:space="preserve">
-    <value>Зарегистрируйте мое приложение проверки подлинности</value>
+    <value>Зарегистрируйтесь в приложении проверки подлинности</value>
   </data>
   <data name="SMSUICFGLabel" xml:space="preserve">
     <value>Номер телефона</value>
   </data>
   <data name="SMSUIChoiceLabel" xml:space="preserve">
-    <value>Отправить сообщение на моем мобильном телефоне</value>
+    <value>Отправить код на мой мобильный телефон</value>
   </data>
   <data name="SMSUIChoiceLabel2" xml:space="preserve">
-    <value>Возврат кода, полученного на моем мобильном телефоне</value>
+    <value>Предоставить код, полученный на моём мобильном телефоне</value>
   </data>
   <data name="SMSUIConfigLabel" xml:space="preserve">
-    <value>Текстовое сообщение на моем мобильном телефоне</value>
+    <value>Текстовое сообщение на моём мобильном телефоне</value>
   </data>
   <data name="SMSUIConfigLabel2" xml:space="preserve">
-    <value>Текстовое сообщение на моем мобильном телефоне {0}</value>
+    <value>Текстовое сообщение на моём мобильном телефоне {0}</value>
   </data>
   <data name="SMSUIEnrollTaskLabel" xml:space="preserve">
     <value>Укажите номер мобильного телефона</value>
   </data>
   <data name="SMSUIEnrollValidatedLabel" xml:space="preserve">
-    <value>Учетная запись проверена&lt;br&gt;&lt;br&gt;Теперь вы можете использовать свой мобильный телефон для проверки подлинности</value>
+    <value>Учетная запись проверена&lt;br&gt;&lt;br&gt;Теперь Вы можете использовать свой мобильный телефон для проверки подлинности</value>
   </data>
   <data name="SMSUIListChoiceLabel" xml:space="preserve">
     <value>Получение сообщения на мобильный телефон</value>
@@ -220,43 +220,43 @@
     <value>Код доступа, полученный по телефону</value>
   </data>
   <data name="SMSUIWIZLabel" xml:space="preserve">
-    <value>Зарегистрируйте свой мобильный</value>
+    <value>Зарегистрируйте свой мобильный телефон</value>
   </data>
   <data name="SMSWIZEnroll" xml:space="preserve">
     <value>Зарегистрируйте свой телефон</value>
   </data>
   <data name="PROVIDEROTPDESCRIPTION" xml:space="preserve">
-    <value>Поставщик многофакторов TOTP</value>
+    <value>Сервис отправки кодов безопасности (TOTP)</value>
   </data>
   <data name="PROVIDERSMSDESCRIPTION" xml:space="preserve">
-    <value>Образец мультифакторного поставщика SMS</value>
+    <value>Сервис отправки кодов безопасности по SMS</value>
   </data>
   <data name="PROVIDEREMAILDESCRIPTION" xml:space="preserve">
-    <value>Отправить по электронной почте мультифакторный провайдер</value>
+    <value>Сервис отправки кодов безопасности по электронной почте</value>
   </data>
   <data name="OTPUIWIZComment" xml:space="preserve">
-    <value>Сканирование кода с помощью приложения TOTP, такого как Microsoft Authenticator, Google Authenticator для регистрации учетной записи</value>
+    <value>Сканируйте QR-код с помощью специального приложения, такого как Google Authenticator, Microsoft Authenticator или иного, рекомендуемого командой технической поддержки, для регистрации учетной записи</value>
   </data>
   <data name="MAILUIWIZComment" xml:space="preserve">
-    <value>Для того, чтобы подтверждать свою личность, необходимо предоставить адрес личной электронной почты, который будет доступен для Вас в любое время и не является служебным электронным адресом.</value>
+    <value>Вы должны ввести адрес электронной почты, чтобы подтвердить учётные данные. Получение письма должно быть достижимо без необходимости дополнительной проверки предприятием (личный адрес электронной почты)</value>
   </data>
   <data name="SMSUIWIZComment" xml:space="preserve">
-    <value>Вы должны ввести свой номер телефона, чтобы подтвердить свою личность. Этот телефон должен быть достижим.</value>
+    <value>Вы должны ввести свой номер телефона, чтобы подтвердить свою личность. Этот телефон должен быть в пределах доступности.</value>
   </data>
   <data name="PROVIDERPLUGDESCRIPTION" xml:space="preserve">
-    <value>{0} многофакторный поставщик (Plug)</value>
+    <value>{0} сервис мультифакторной проверки (Plug)</value>
   </data>
   <data name="MAILUICFGLabel" xml:space="preserve">
     <value>Адрес электронной почты</value>
   </data>
   <data name="MAILUIChoiceLabel" xml:space="preserve">
-    <value>Получение электронной почты</value>
+    <value>Проверьте электронную почту</value>
   </data>
   <data name="MAILUIConfigLabel" xml:space="preserve">
-    <value>Отправить электронное письмо</value>
+    <value>Отправить сообщение по электронной почте</value>
   </data>
   <data name="MAILUIConfigLabel2" xml:space="preserve">
-    <value>Отправить электронное письмо на мой {0} адрес</value>
+    <value>Отправить сообщение по электронной почте на мой {0} адрес</value>
   </data>
   <data name="MAILUIEnrollTaskLabel" xml:space="preserve">
     <value>Предоставить адрес электронной почты</value>

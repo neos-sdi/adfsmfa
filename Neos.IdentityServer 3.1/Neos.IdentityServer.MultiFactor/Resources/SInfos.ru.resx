@@ -118,18 +118,18 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InfosConfigurationModified" xml:space="preserve">
-    <value>Конфигурация была правильно обновлена!</value>
+    <value>Конфигурация была корректно обновлена!</value>
   </data>
   <data name="InfosConfigurationReloaded" xml:space="preserve">
-    <value>Конфигурация загружена! выписывается : {0}</value>
+    <value>Конфигурация загружена! Вызвано: {0}</value>
   </data>
   <data name="InfosPasswordModified" xml:space="preserve">
     <value>Пароль изменен !</value>
   </data>
   <data name="InfosConfigurationCacheCreated" xml:space="preserve">
-    <value>Кэш конфигурации создан! выставлено: {0}</value>
+    <value>Кэш конфигурации создан! Вызвано: {0}</value>
   </data>
   <data name="InfosConfigurationCacheDeleted" xml:space="preserve">
-    <value>Кэш конфигурации удален! выставлено: {0}</value>
+    <value>Кэш конфигурации удален! Вызвано: {0}</value>
   </data>
 </root>
