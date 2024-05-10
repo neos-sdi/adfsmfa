@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2023 redhook (adfsmfa@gmail.com)                                                                                                                                        //                        
+// Copyright (c) 2024 redhook (adfsmfa@gmail.com)                                                                                                                                        //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -1397,7 +1397,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
             if (ctx.SelectedMethod == AuthenticationResponseKind.Error)
                 GetAuthenticationContext(ctx);
 
-            ctx.Notification = _sasprovider.GetUserCodeWithExternalSystem(ctx.UPN, ctx.PhoneNumber, ctx.MailAddress, this.Data, new CultureInfo(ctx.Lcid));
+            ctx.Notification = _sasprovider.GetUserCodeWithExternalSystem(ctx.UPN, ctx.PhoneNumber, ctx.MailAddress, this.Data, Utilities.CheckForLCID(ctx.Lcid));
             ctx.SessionId = Guid.NewGuid().ToString();
             ctx.SessionDate = DateTime.Now;
             if (ctx.Notification == (int)AuthenticationResponseKind.Error)
@@ -1848,7 +1848,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
             if (ctx.SelectedMethod == AuthenticationResponseKind.Error)
                 GetAuthenticationContext(ctx);
 
-            ctx.Notification = Utilities.GetEmailOTP(ctx, Data, new CultureInfo(ctx.Lcid));
+            ctx.Notification = Utilities.GetEmailOTP(ctx, Data, Utilities.CheckForLCID(ctx.Lcid));
             ctx.SessionId = Guid.NewGuid().ToString();
             ctx.SessionDate = DateTime.Now;
             if (ctx.Notification == (int)AuthenticationResponseKind.Error)
@@ -2371,7 +2371,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
                 if (!IsInitialized)
                     throw new Exception("Provider not initialized !");
                 CheckUser(ctx);
-                MailUtilities.SendInscriptionMail(Data.AdminContact, (MFAUser)ctx, Data.MailProvider, new CultureInfo(ctx.Lcid));
+                MailUtilities.SendInscriptionMail(Data.AdminContact, (MFAUser)ctx, Data.MailProvider, Utilities.CheckForLCID(ctx.Lcid));
                 ctx.Notification = (int)AuthenticationResponseKind.EmailForInscription;
                 return ctx.Notification;
             }
@@ -2431,7 +2431,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
                     throw new Exception("Provider not initialized !");
                 CheckUser(ctx);
                 string qrcode = KeysManager.EncodedKey(ctx.UPN);
-                MailUtilities.SendKeyByEmail(ctx.MailAddress, ctx.UPN, qrcode, Data.MailProvider, Data, new CultureInfo(ctx.Lcid));
+                MailUtilities.SendKeyByEmail(ctx.MailAddress, ctx.UPN, qrcode, Data.MailProvider, Data, Utilities.CheckForLCID(ctx.Lcid));
                 ctx.Notification = (int)AuthenticationResponseKind.EmailForKey;
             }
             catch (Exception ex)
