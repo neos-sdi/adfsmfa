@@ -7228,7 +7228,7 @@ namespace MFA
         /// <summary>
         /// <para type="description">ADDS LDAP path to query (dc=domain,dc=com)</para>
         /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = "Identity")]
+        [Parameter(Mandatory = false, ParameterSetName = "Identity")]
         public string LDAPFilter { get; set; } = string.Empty;
 
         /// <summary>

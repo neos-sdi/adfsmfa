@@ -1,5 +1,6 @@
-﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
-  <Package Name="MFA Provider for ADFS 2022/2019/2016/2012 R2" Language="1033" Version="3.1.2405.0" Manufacturer="neos-sdi" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" ProductCode="a23dd485-5365-4d82-8309-103494000001">
+﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui" >
+
+  <Package Name="MFA Provider for ADFS 2022/2019/2016/2012 R2" Language="1033" Version="3.1.2409.0" Manufacturer="neos-sdi" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" ProductCode="a23dd485-5365-4d82-8309-103494000001">
 
     <SummaryInformation Description="Multi-Factor Authentication for ADFS 2022/2019/2016/2012R2" />
 
@@ -67,7 +68,7 @@
       <ComponentGroupRef Id="Neos.IdentityServer.MultiFactor.Cmdlets" />    
     </Feature>
 
-		<Feature Id="AzureFeature" Title="adfsmfa Azure Samples" Description="Neos Identity Service Samples" InstallDefault="local" TypicalDefault="install" Level="1">
+	<Feature Id="AzureFeature" Title="adfsmfa Azure Samples" Description="Neos Identity Service Samples" InstallDefault="local" TypicalDefault="install" Level="1">
       <ComponentGroupRef Id="Neos.IdentityServer.MultiFactor.Samples" />
     </Feature>
 
@@ -88,9 +89,10 @@
     <Launch Condition="Privileged" Message="This installation requires administration privileges" />
     <Launch Condition="REINSTALL=&quot;&quot;" Message="Repair not allowed, you must uninstall and reinstall" />
     <!--  <![CDATA[(WIXNETFX4RELEASEINSTALLED >= "#528040")]]> 4.8 -->
-    <Launch Condition="(WIXNETFX4RELEASEINSTALLED &gt;= &quot;#461808&quot;)" Message="This application requires .NET Framework 4.7.2 or upper. Please install the .NET Framework then run this installer again." />   
-    
-    <ui:WixUI Id="WixUI_Minimal" />
+    <Launch Condition="(WIXNETFX4RELEASEINSTALLED &gt;= &quot;#461808&quot;)" Message="This application requires .NET Framework 4.7.2 or upper. Please install the .NET Framework then run this installer again." />
+
+	<ui:WixUI Id="WixUI_Minimal" /> 
+	  
     <WixVariable Id="WixUILicenseRtf" Value="$(var.Neos.IdentityServer.MultiFactor.ProjectDir)Installer\License.rtf" />
     <WixVariable Id="WixUIBannerBmp" Value="$(var.Neos.IdentityServer.MultiFactor.ProjectDir)Installer\banner.bmp" />
     <WixVariable Id="WixUIDialogBmp" Value="$(var.Neos.IdentityServer.MultiFactor.ProjectDir)Installer\dialog.bmp" />
