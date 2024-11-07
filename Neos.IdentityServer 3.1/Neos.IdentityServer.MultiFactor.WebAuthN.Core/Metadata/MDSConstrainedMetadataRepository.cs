@@ -1,4 +1,5 @@
-﻿//******************************************************************************************************************************************************************************************//
+﻿#define SPVER
+//******************************************************************************************************************************************************************************************//
 // Copyright (c) 2024 redhook (adfsmfa@gmail.com)                                                                                                                                        //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
@@ -139,27 +140,6 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Metadata
             certChain.ChainPolicy.ExtraStore.Add(rootCert);
             certChain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
 
-            var validationParameters = new TokenValidationParameters
-            {
-                ValidateIssuer = false,
-                ValidateAudience = false,
-                ValidateLifetime = false,
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKeys = blobPublicKeys,
-            };
-
-            var tokenHandler = new JwtSecurityTokenHandler()
-            {
-                // 250k isn't enough bytes for conformance test tool
-                // https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/issues/1097
-                MaximumTokenSizeInBytes = infos.BLOB.Length
-            };
-
-            tokenHandler.ValidateToken(
-                infos.BLOB,
-                validationParameters,
-                out var validatedToken);
-
             if (blobCerts.Length > 1)
             {
                 certChain.ChainPolicy.ExtraStore.AddRange(blobCerts.Skip(1).ToArray());
@@ -191,10 +171,34 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Metadata
 
             if (!certChainIsValid)
                 throw new VerificationException("Failed to validate cert chain while parsing BLOB");
+#if !SPVER
+            var tokenHandler = new JsonWebTokenHandler
+            {
+                  // 250k isn't enough bytes for conformance test tool
+                  // https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/issues/1097
+                  MaximumTokenSizeInBytes = infos.BLOB.Length
+            };
 
+            var validateTokenResult = tokenHandler.ValidateToken(infos.BLOB, new TokenValidationParameters
+            {
+                  ValidateIssuer = false,
+                  ValidateAudience = false,
+                  ValidateLifetime = false,
+                  ValidateIssuerSigningKey = false,
+                  IssuerSigningKeys = blobPublicKeys
+            });
+
+            if (!validateTokenResult.IsValid)
+            {
+                 throw new Exception("Blob is not valid");
+            }
+            var blobPayload = ((JsonWebToken)validateTokenResult.SecurityToken).EncodedPayload;
             var blobPayload = ((JwtSecurityToken)validatedToken).Payload.SerializeToJson();
-
+#else
+            var blobPayload = Encoding.UTF8.GetString(Base64Url.Decode(jwtParts[1]));
+#endif    
             var blob = JsonConvert.DeserializeObject<MetadataBLOBPayload>(blobPayload);
+
             infos.Number = blob.Number;
             infos.NextUpdate = Convert.ToDateTime(blob.NextUpdate);
             infos.CanDownload = false; // Constrained Repository

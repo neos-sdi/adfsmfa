@@ -13,6 +13,7 @@
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
 using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Neos.IdentityServer.MultiFactor.WebAuthN
 {
@@ -22,6 +23,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
     /// <remarks>
     /// <see xref="https://fidoalliance.org/specs/mds/fido-metadata-service-v3.0-ps-20210518.html#metadata-blob-payload-dictionary"/>
     /// </remarks>
+    [JsonSerializable(typeof(MetadataBLOBPayload))]
     public class MetadataBLOBPayload
     {
         /// <summary>

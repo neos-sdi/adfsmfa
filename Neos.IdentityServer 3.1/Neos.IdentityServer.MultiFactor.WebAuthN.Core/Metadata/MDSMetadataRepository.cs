@@ -1,4 +1,5 @@
-﻿//******************************************************************************************************************************************************************************************//
+﻿#define SPVER
+//******************************************************************************************************************************************************************************************//
 // Copyright (c) 2024 redhook (adfsmfa@gmail.com)                                                                                                                                        //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
@@ -16,10 +17,12 @@
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.IdentityModel.JsonWebTokens;
+using System.Text.Json.Serialization;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
+// using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
@@ -88,126 +91,132 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Metadata
         /// </summary>
         protected override MetadataBLOBPayload DeserializeAndValidateBlob(BLOBPayloadInformations infos)
         {
-              if (string.IsNullOrWhiteSpace(infos.BLOB))
-                  throw new ArgumentNullException(nameof(infos.BLOB));
+            if (string.IsNullOrWhiteSpace(infos.BLOB))
+                throw new ArgumentNullException(nameof(infos.BLOB));
 
-              var jwtParts = infos.BLOB.Split('.');
+            var jwtParts = infos.BLOB.Split('.');
 
-              if (jwtParts.Length != 3)
-                  throw new ArgumentException("The JWT does not have the 3 expected components");
+            if (jwtParts.Length != 3)
+                throw new ArgumentException("The JWT does not have the 3 expected components");
 
-              var blobHeaderString = jwtParts.First();
-              var blobHeader = JObject.Parse(Encoding.UTF8.GetString(Base64Url.Decode(blobHeaderString)));
+            var blobHeaderString = jwtParts.First();
+            var blobHeader = JObject.Parse(Encoding.UTF8.GetString(Base64Url.Decode(blobHeaderString)));
 
-              var blobAlg = (blobHeader["alg"]?.Value<string>()) ?? throw new ArgumentNullException("No alg value was present in the BLOB header.");
+            var blobAlg = (blobHeader["alg"]?.Value<string>()) ?? throw new ArgumentNullException("No alg value was present in the BLOB header.");
 
-              if (!(blobHeader["x5c"] is JArray x5cArray))
-                 throw new Exception("No x5c array was present in the BLOB header.");
+            if (!(blobHeader["x5c"] is JArray x5cArray))
+                throw new Exception("No x5c array was present in the BLOB header.");
 
-              List<string> keyStrings = x5cArray.Values<string>().ToList();
+            List<string> keyStrings = x5cArray.Values<string>().ToList();
 
-              if (keyStrings.Count == 0)
-                  throw new ArgumentException("No keys were present in the BLOB header.");
+            if (keyStrings.Count == 0)
+                throw new ArgumentException("No keys were present in the BLOB header.");
 
-              var rootCert = GetX509Certificate(ROOT_CERT);
-              var blobCerts = keyStrings.Select(o => GetX509Certificate(o)).ToArray();
+            var rootCert = GetX509Certificate(ROOT_CERT);
+            var blobCerts = keyStrings.Select(o => GetX509Certificate(o)).ToArray();
 
-              var keys = new List<SecurityKey>();
+            var keys = new List<SecurityKey>();
 
-              foreach (var certString in keyStrings)
-              {
-                  var cert = GetX509Certificate(certString);
+            foreach (var certString in keyStrings)
+            {
+                var cert = GetX509Certificate(certString);
 
-                  var ecdsaPublicKey = cert.GetECDsaPublicKey();
-                  if (ecdsaPublicKey != null)
-                  {
-                      keys.Add(new ECDsaSecurityKey(ecdsaPublicKey));
-                      continue;
-                  }
+                var ecdsaPublicKey = cert.GetECDsaPublicKey();
+                if (ecdsaPublicKey != null)
+                {
+                    keys.Add(new ECDsaSecurityKey(ecdsaPublicKey));
+                    continue;
+                }
 
-                  var rsaPublicKey = cert.GetRSAPublicKey();
-                  if (rsaPublicKey != null)
-                  {
-                      keys.Add(new RsaSecurityKey(rsaPublicKey));
-                      continue;
-                  }
-                  throw new MetadataException("Unknown certificate algorithm");
-              }
-              var blobPublicKeys = keys.ToArray();
+                var rsaPublicKey = cert.GetRSAPublicKey();
+                if (rsaPublicKey != null)
+                {
+                    keys.Add(new RsaSecurityKey(rsaPublicKey));
+                    continue;
+                }
+                throw new MetadataException("Unknown certificate algorithm");
+            }
+            var blobPublicKeys = keys.ToArray();
 
-              var certChain = new X509Chain();
-              certChain.ChainPolicy.ExtraStore.Add(rootCert);
-              certChain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
+            var certChain = new X509Chain();
+            certChain.ChainPolicy.ExtraStore.Add(rootCert);
+            certChain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
+            
+            if (blobCerts.Length > 1)
+            {
+                certChain.ChainPolicy.ExtraStore.AddRange(blobCerts.Skip(1).ToArray());
+            }
 
-              var validationParameters = new TokenValidationParameters
-              {
-                  ValidateIssuer = false,
-                  ValidateAudience = false,
-                  ValidateLifetime = false,
-                  ValidateIssuerSigningKey = true,
-                  IssuerSigningKeys = blobPublicKeys,
-              };
+            var certChainIsValid = certChain.Build(blobCerts.First());
+            // if the root is trusted in the context we are running in, valid should be true here
+            if (!certChainIsValid)
+            {
+                foreach (var element in certChain.ChainElements)
+                {
+                    if (element.Certificate.Issuer != element.Certificate.Subject)
+                    {
+                        var cdp = CryptoUtils.CDPFromCertificateExts(element.Certificate.Extensions);
+                        var crlFile = DownloadData(cdp);
+                        if (true == CryptoUtils.IsCertInCRL(crlFile, element.Certificate))
+                            throw new VerificationException(string.Format("Cert {0} found in CRL {1}", element.Certificate.Subject, cdp));
+                    }
+                }
 
-              var tokenHandler = new JwtSecurityTokenHandler()
-              {
+                // otherwise we have to manually validate that the root in the chain we are testing is the root we downloaded
+                if (rootCert.Thumbprint == certChain.ChainElements[certChain.ChainElements.Count - 1].Certificate.Thumbprint &&
+                    // and that the number of elements in the chain accounts for what was in x5c plus the root we added
+                    certChain.ChainElements.Count == (keyStrings.Count + 1) &&
+                    // and that the root cert has exactly one status listed against it
+                    certChain.ChainElements[certChain.ChainElements.Count - 1].ChainElementStatus.Length == 1 &&
+                    // and that that status is a status of exactly UntrustedRoot
+                    certChain.ChainElements[certChain.ChainElements.Count - 1].ChainElementStatus[0].Status == X509ChainStatusFlags.UntrustedRoot)
+                {
+                    // if we are good so far, that is a good sign
+                    certChainIsValid = true;
+                    for (var i = 0; i < certChain.ChainElements.Count - 1; i++)
+                    {
+                        // check each non-root cert to verify zero status listed against it, otherwise, invalidate chain
+                        if (0 != certChain.ChainElements[i].ChainElementStatus.Length)
+                            certChainIsValid = false;
+                    }
+                }
+            }
+
+            if (!certChainIsValid)
+                throw new VerificationException("Failed to validate cert chain while parsing BLOB");
+
+#if !SPVER
+            var tokenHandler = new JsonWebTokenHandler
+            {
                   // 250k isn't enough bytes for conformance test tool
                   // https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/issues/1097
                   MaximumTokenSizeInBytes = infos.BLOB.Length
-              };
+            };
 
-              tokenHandler.ValidateToken(infos.BLOB, validationParameters,out var validatedToken); 
+            var validateTokenResult = tokenHandler.ValidateToken(infos.BLOB, new TokenValidationParameters
+            {
+                  ValidateIssuer = false,
+                  ValidateAudience = false,
+                  ValidateLifetime = false,
+                  ValidateIssuerSigningKey = false,
+                  IssuerSigningKeys = blobPublicKeys
+            });
 
-              if (blobCerts.Length > 1)
-              {
-                 certChain.ChainPolicy.ExtraStore.AddRange(blobCerts.Skip(1).ToArray());
-              }
+            if (!validateTokenResult.IsValid)
+            {
+                 throw new Exception("Blob is not valid");
+            }
+            var blobPayload = ((JsonWebToken)validateTokenResult.SecurityToken).EncodedPayload;
+#else
+            var blobPayload = Encoding.UTF8.GetString(Base64Url.Decode(jwtParts[1]));
+#endif            
+            var blob = Newtonsoft.Json.JsonConvert.DeserializeObject<MetadataBLOBPayload>(blobPayload);
 
-              var certChainIsValid = certChain.Build(blobCerts.First());
-               // if the root is trusted in the context we are running in, valid should be true here
-              if (!certChainIsValid)
-              {
-                 foreach (var element in certChain.ChainElements)
-                 {
-                     if (element.Certificate.Issuer != element.Certificate.Subject)
-                     {
-                         var cdp = CryptoUtils.CDPFromCertificateExts(element.Certificate.Extensions);
-                         var crlFile = DownloadData(cdp);
-                         if (true == CryptoUtils.IsCertInCRL(crlFile, element.Certificate))
-                             throw new VerificationException(string.Format("Cert {0} found in CRL {1}", element.Certificate.Subject, cdp));
-                     }
-                 }
-
-                 // otherwise we have to manually validate that the root in the chain we are testing is the root we downloaded
-                 if (rootCert.Thumbprint == certChain.ChainElements[certChain.ChainElements.Count - 1].Certificate.Thumbprint &&
-                     // and that the number of elements in the chain accounts for what was in x5c plus the root we added
-                     certChain.ChainElements.Count == (keyStrings.Count + 1) &&
-                     // and that the root cert has exactly one status listed against it
-                     certChain.ChainElements[certChain.ChainElements.Count - 1].ChainElementStatus.Length == 1 &&
-                     // and that that status is a status of exactly UntrustedRoot
-                     certChain.ChainElements[certChain.ChainElements.Count - 1].ChainElementStatus[0].Status == X509ChainStatusFlags.UntrustedRoot)
-                 {
-                     // if we are good so far, that is a good sign
-                     certChainIsValid = true;
-                     for (var i = 0; i < certChain.ChainElements.Count - 1; i++)
-                     {
-                         // check each non-root cert to verify zero status listed against it, otherwise, invalidate chain
-                         if (0 != certChain.ChainElements[i].ChainElementStatus.Length)
-                             certChainIsValid = false;
-                     }
-                 }
-              }
-
-              if (!certChainIsValid)
-                 throw new VerificationException("Failed to validate cert chain while parsing BLOB");
-
-              var blobPayload = ((JwtSecurityToken)validatedToken).Payload.SerializeToJson();
-
-              var blob = Newtonsoft.Json.JsonConvert.DeserializeObject<MetadataBLOBPayload>(blobPayload);
-              infos.Number = blob.Number;
-              infos.NextUpdate = Convert.ToDateTime(blob.NextUpdate);
-              infos.CanDownload = true; 
-              blob.JwtAlg = blobAlg;
-              return blob;
+            infos.Number = blob.Number;
+            infos.NextUpdate = Convert.ToDateTime(blob.NextUpdate);
+            infos.CanDownload = true; 
+            blob.JwtAlg = blobAlg;
+            return blob;
         }
 
         #region downloads

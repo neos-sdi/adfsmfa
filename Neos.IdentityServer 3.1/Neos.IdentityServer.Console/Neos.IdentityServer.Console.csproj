@@ -1709,10 +1709,14 @@
     <EmbeddedResource Include="Resources\errors_strings.ru.resx" />
     <EmbeddedResource Include="Resources\errors_strings.sv.resx" />
     <EmbeddedResource Include="Resources\errors_strings.uk.resx" />
-    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Ctrls.da.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Ctrls.da.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Ctrls.de.resx" />
     <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Ctrls.es.resx" />
-    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Ctrls.fr-CA.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Ctrls.fr-CA.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Ctrls.fr.resx" />
     <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Ctrls.it.resx" />
     <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Ctrls.ja.resx" />

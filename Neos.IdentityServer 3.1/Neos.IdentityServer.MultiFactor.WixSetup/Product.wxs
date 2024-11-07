@@ -1,6 +1,6 @@
 ﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui" >
 
-  <Package Name="MFA Provider for ADFS 2022/2019/2016/2012 R2" Language="1033" Version="3.1.2410.0" Manufacturer="neos-sdi" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" ProductCode="a23dd485-5365-4d82-8309-103494000001">
+  <Package Name="MFA Provider for ADFS 2022/2019/2016/2012 R2" Language="1033" Version="3.1.2411.0" Manufacturer="neos-sdi" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" ProductCode="a23dd485-5365-4d82-8309-103494000001">
 
     <SummaryInformation Description="Multi-Factor Authentication for ADFS 2022/2019/2016/2012R2" />
 
@@ -713,6 +713,10 @@
       <Component Id="GACDeployment684" Guid="E7173CAB-E43F-4A07-1962-018000006684" Directory="AssemblyFolder" DiskId="1" Bitness="always64">
         <File Assembly=".net" KeyPath="yes" Id="System.ValueTuple.dll" Name="System.ValueTuple.dll" Source="$(var.Neos.IdentityServer.MultiFactor.WebAuthN.Core.TargetDir)System.ValueTuple.dll" />
       </Component>
+	      <Component Id="GACDeployment685" Guid="E7173CAB-E43F-4A07-1962-018000006685" Directory="AssemblyFolder" DiskId="1" Bitness="always64">
+        <File Assembly=".net" KeyPath="yes" Id="Microsoft.Bcl.TimeProvider.dll" Name="Microsoft.Bcl.TimeProvider.dll" Source="$(var.Neos.IdentityServer.MultiFactor.WebAuthN.Core.TargetDir)Microsoft.Bcl.TimeProvider.dll" />
+      </Component>
+
     </ComponentGroup>
   </Fragment>
       
