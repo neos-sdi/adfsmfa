@@ -1,4 +1,4 @@
-﻿# Multi-Factor Authentication for Microsoft ADFS 2022/2019/2016/2012r2 (with biometric authentication)
+﻿# Multi-Factor Authentication for Microsoft ADFS 2025/2022/2019/2016/2012r2 (with biometric authentication)
 ___
 
 This project can help you to implement multi-factor authentication without requiring any additional provider.
