@@ -57,4 +57,4 @@ This extension works with Active Directory or an SQL Server Database for storing
 * You must deploy the solution on each of your ADFS servers, not on Proxy Servers.
 * To work with ADDS, the ADFS Service account must have read and write to users properties (or use the superaccount feature).
 * To work with SQL Server Database, you must deploy the database on a separate SQL Server
-* Working with ADFS Windows server 2012r2, 2016, 2019 and 2022
+* Working with ADFS Windows server 2012r2, 2016, 2019, 2022 and 2025
