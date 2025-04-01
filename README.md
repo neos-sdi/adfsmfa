@@ -16,20 +16,20 @@ This extension, allow to use second factor with secondary email code transmissio
 This extension works with Active Directory or an SQL Server Database for storing secret keys.
 
 ## Installation & Documentation
-* <https://github.com/neos-sdi/adfsmfa/wiki/Home>
+* <https://github.com/redhook62/adfsmfa/wiki/Home>
 ## Downloads
-- <https://github.com/neos-sdi/adfsmfa/releases>
+- <https://github.com/redhook62/adfsmfa/releases>
 
-- <https://github.com/neos-sdi/adfsmfa/releases/download/3.1/adfsmfa.3.1.2411.0.msi>
+- <https://github.com/redhook62/adfsmfa/releases/download/3.1/adfsmfa.3.1.2411.0.msi>
 
 ## Building Solution
 
-- <https://github.com/neos-sdi/adfsmfa/wiki/13-Build>
+- <https://github.com/redhook62/adfsmfa/wiki/13-Build>
 
 ## Features
 * Localized UI French/English/Spanish/Italian/German/Dutch/Portuguese/Polish/Swedish/Romanian/Russian/Danish/Japanese/Quebec/Ukrainian
 * TOTP, Email, Phone, Biometric, Azure Providers for MFA
-* Run with ADFS 2012 R2, 2016, 2019 and 2022
+* Run with ADFS 2012 R2, 2016, 2019, 2022 and 2025
 * Secret Keys length (Guid, 128, 256, 384 & 512 bytes) RNG generator
 * Secret Keys RSA asymmetric encryption length (2048 bytes) RSA
 * Secret Keys AES symmetric encryption length (256 bytes) AES256, ECDH_P256
@@ -45,12 +45,12 @@ This extension works with Active Directory or an SQL Server Database for storing
 * Enable self-registration with QR code (George Mamaladze and his team)
 * Enable custom change password.
 * Can work with ADDS multi-forests with trust relationships
-* Can work with LDAP 3.0 Providers (ADFS 2016/2019/2022) when using SQL Storage mode
+* Can work with LDAP 3.0 Providers (ADFS 2016/2019/2022/2025) when using SQL Storage mode
 * Full sample for Azure MFA (additional configuration tasks and costs implied)
 * Developers can easily extend this component for other verification modes (Azure MFA, RSA,…) with the IExternalProvider, ISecretKeyManager interfaces
 * Developers can easily extend this component for other storages modes (AD & SQL by default)
 * Developers can easily replace the default UI, subclassing BasePresentation or BaseMFAPresentation classes
-* Full support for ADFS 2019/2022 themes
+* Full support for ADFS 2019/2022/2025 themes
 
 ## Remarks
 * Due to security, Developers must sign their Visual Studio solution with their own generated .pfx certificate (see custom development)
